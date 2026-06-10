@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1781096700000,
+    "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson",
+    "title": "USGS All Earthquakes, Past Day"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "us7000abcd",
+      "properties": {
+        "title": "M 5.4 - 12 km S of Example, Alaska",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000abcd",
+        "time": 1781092800000,
+        "updated": 1781096400000,
+        "mag": 5.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-149.9, 61.2, 20.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000minor",
+      "properties": {
+        "title": "M 2.1 - 4 km W of Example, California",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000minor",
+        "time": 1781091000000,
+        "updated": 1781091900000,
+        "mag": 2.1
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-121.5, 36.7, 8.1]
+      }
+    }
+  ]
+}
