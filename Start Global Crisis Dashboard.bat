@@ -5,6 +5,7 @@ title Global Crisis Dashboard Launcher
 
 set "LOCAL_APP_URL=http://127.0.0.1:5173/"
 set "INSTALL_COMMAND=npm install"
+set "LAUNCH_COMMAND=npm run dev -- --open"
 
 pushd "%~dp0" >nul 2>nul
 if errorlevel 1 (
@@ -82,21 +83,23 @@ echo Starting the Global Crisis Dashboard from the project root:
 echo   %CD%
 echo.
 echo Launch command:
-echo   npm run dev
+echo   %LAUNCH_COMMAND%
 echo.
-echo When startup finishes, open this local URL:
+echo The dashboard will open automatically in your default browser when the local server is ready.
+echo If the browser does not open, manually open this exact local URL:
 echo   %LOCAL_APP_URL%
 echo If Vite prints a different local URL below, open that exact URL instead.
 echo.
 echo Keep this window open while using the Global Crisis Dashboard.
 echo Press Ctrl+C to stop the local server.
 echo.
-call npm run dev
+call %LAUNCH_COMMAND%
 set "LAUNCH_EXIT=%ERRORLEVEL%"
 echo.
 if not "%LAUNCH_EXIT%"=="0" (
     echo The local server stopped or failed with exit code %LAUNCH_EXIT%.
-    echo Review the startup messages above.
+    echo Review the startup messages above, then manually open this exact local URL if the server is running:
+    echo   %LOCAL_APP_URL%
 ) else (
     echo The local server stopped.
 )

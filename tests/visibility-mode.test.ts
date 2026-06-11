@@ -120,6 +120,9 @@ describe("Visibility Mode persistence", () => {
     await waitForRenderedDashboard();
 
     const highContrastControl = document.querySelector<HTMLSelectElement>("[data-visibility-mode-control]");
+    const visibilityModeControls = document.querySelectorAll("[data-visibility-mode-control]");
+    expect(visibilityModeControls).toHaveLength(1);
+    expect(highContrastControl?.closest("[data-settings-control]")).not.toBeNull();
     expect(document.documentElement.dataset.visibilityMode).toBe("high-contrast");
     expect(window.localStorage.getItem(VISIBILITY_MODE_STORAGE_KEY)).toBe("high-contrast");
     expect(highContrastControl?.value).toBe("high-contrast");
@@ -127,7 +130,7 @@ describe("Visibility Mode persistence", () => {
     expect(document.querySelector(".settings-control")?.textContent).toContain(
       "Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.",
     );
-    expect(document.querySelector('[aria-label="Map area with styled Incident markers"]')?.textContent).toContain(
+    expect(document.querySelector('[aria-label="Spherical Globe Map with styled Incident Markers"]')?.textContent).toContain(
       "Select an Incident Marker or feed row to focus the Globe Map.",
     );
     expect(document.querySelector('[aria-labelledby="incident-detail-title"]')?.textContent).toContain("No selected Incident");
@@ -142,11 +145,34 @@ describe("Visibility Mode persistence", () => {
     expect(window.localStorage.getItem(VISIBILITY_MODE_STORAGE_KEY)).toBe("light");
     expect(lightControl?.value).toBe("light");
     expect(document.querySelector(".settings-control")?.textContent).toContain("Current Visibility Mode: Light");
-    expect(document.querySelector('[aria-label="Map area with styled Incident markers"]')?.textContent).toContain(
+    expect(document.querySelector('[aria-label="Spherical Globe Map with styled Incident Markers"]')?.textContent).toContain(
       "Select an Incident Marker or feed row to focus the Globe Map.",
     );
     expect(document.querySelector('[aria-labelledby="incident-detail-title"]')?.textContent).toContain("No selected Incident");
     expect(document.querySelector('[aria-labelledby="ai-briefing-title"]')?.textContent).toContain("Public-data AI Briefing");
     expect(document.querySelector('[aria-labelledby="saved-events-title"]')?.textContent).toContain("Saved Events View");
+  });
+
+  it("keeps the only visible Visibility Mode selector inside the Settings Control from load through refresh", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    window.localStorage.setItem(VISIBILITY_MODE_STORAGE_KEY, "light");
+    stubPublicFeedFetch();
+
+    await import("../src/main");
+
+    const loadingControls = document.querySelectorAll<HTMLSelectElement>("[data-visibility-mode-control]");
+    expect(loadingControls).toHaveLength(1);
+    expect(loadingControls[0]?.closest("[data-settings-control]")).not.toBeNull();
+    expect(document.querySelector(".filters-panel [data-visibility-mode-control]")).toBeNull();
+    expect(document.querySelector(".metrics-grid [data-visibility-mode-control]")).toBeNull();
+
+    await waitForRenderedDashboard();
+
+    const renderedControls = document.querySelectorAll<HTMLSelectElement>("[data-visibility-mode-control]");
+    expect(renderedControls).toHaveLength(1);
+    expect(renderedControls[0]?.closest("[data-settings-control]")).not.toBeNull();
+    expect(renderedControls[0]?.value).toBe("light");
+    expect(document.querySelector(".filters-panel [data-visibility-mode-control]")).toBeNull();
+    expect(document.querySelector(".metrics-grid [data-visibility-mode-control]")).toBeNull();
   });
 });

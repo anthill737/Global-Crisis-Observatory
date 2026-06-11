@@ -1,0 +1,36 @@
+- main "Global Crisis Observatory" [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e7]
+      - paragraph [ref=e8]: A Global Crisis Dashboard view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e9]:
+      - generic [ref=e10]: Refreshing
+      - generic [ref=e11]: Awaiting first refresh
+      - button "Refreshing…" [ref=e12] [cursor=pointer]
+    - region "Settings Control" [ref=e13]:
+      - paragraph [ref=e14]: Settings Control
+      - generic [ref=e15]:
+        - generic [ref=e16]: Visibility Mode
+        - combobox "Visibility Mode" [ref=e17]:
+          - option "Light"
+          - option "Dark" [selected]
+          - option "High contrast"
+        - generic [ref=e18]: "Current Visibility Mode: Dark"
+        - generic [ref=e19]: Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.
+      - generic [ref=e20]:
+        - generic [ref=e21]: AI Briefing Choice
+        - combobox "AI Briefing Choice" [ref=e22]:
+          - option "Choose an AI Briefing Provider" [disabled] [selected]
+          - option "OpenAI"
+          - option "Anthropic"
+          - option "Gemini"
+          - option "Disabled"
+        - generic [ref=e23]: Choose an AI Briefing Provider to enable AI Briefings, or select Disabled to keep them off.
+        - generic [ref=e24]: Choose OpenAI, Anthropic, Gemini, or Disabled. The choice is saved locally on this device.
+        - paragraph [ref=e25]: Welcome — choose an AI Briefing Provider to use AI Briefings, or select Disabled to keep them off for this browser.
+  - status [ref=e26]:
+    - paragraph [ref=e27]: Incident pipeline
+    - heading "Connecting to Public Feeds" [level=2] [ref=e28]
+    - paragraph [ref=e29]: Loading public Incidents from the adapter pipeline.
+    - button "Refresh Source Status" [ref=e30] [cursor=pointer]

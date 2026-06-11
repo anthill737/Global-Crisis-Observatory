@@ -1,7 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import { AI_BRIEFING_API_ENDPOINT, AiBriefingConfigurationError, type AiBriefingRequestPayload } from "./src/lib/ai-briefing";
-import { generateOpenAiBriefing } from "./src/lib/ai-briefing-server";
+import { isAiBriefingChoice, type AiBriefingChoice } from "./src/lib/ai-briefing-choice";
+import { generateProviderAiBriefing, type AiBriefingProviderApiKeys } from "./src/lib/ai-briefing-server";
+import { GDACS_RSS_FEED_ENDPOINT, GDACS_RSS_PROXY_ENDPOINT, GDACS_RSS_REQUEST_HEADERS } from "./src/lib/incidents";
 
 const MAX_AI_BRIEFING_REQUEST_BYTES = 64_000;
 
@@ -9,30 +11,82 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    plugins: [aiBriefingApiPlugin(env.OPENAI_API_KEY ?? process.env.OPENAI_API_KEY)],
+    plugins: [
+      aiBriefingApiPlugin({
+        openai: env.OPENAI_API_KEY ?? process.env.OPENAI_API_KEY,
+        anthropic: env.ANTHROPIC_API_KEY ?? process.env.ANTHROPIC_API_KEY,
+        gemini: env.GEMINI_API_KEY ?? process.env.GEMINI_API_KEY,
+      }),
+      gdacsPublicFeedProxyPlugin(),
+    ],
   };
 });
 
-function aiBriefingApiPlugin(apiKey: string | undefined): Plugin {
+function aiBriefingApiPlugin(apiKeys: AiBriefingProviderApiKeys): Plugin {
   return {
     name: "global-crisis-observatory-ai-briefing-api",
     configureServer(server) {
       server.middlewares.use(AI_BRIEFING_API_ENDPOINT, (request, response) => {
-        void handleAiBriefingApiRequest(request, response, apiKey);
+        void handleAiBriefingApiRequest(request, response, apiKeys);
       });
     },
     configurePreviewServer(server) {
       server.middlewares.use(AI_BRIEFING_API_ENDPOINT, (request, response) => {
-        void handleAiBriefingApiRequest(request, response, apiKey);
+        void handleAiBriefingApiRequest(request, response, apiKeys);
       });
     },
   };
 }
 
+function gdacsPublicFeedProxyPlugin(): Plugin {
+  return {
+    name: "global-crisis-observatory-gdacs-public-feed-proxy",
+    configureServer(server) {
+      server.middlewares.use(GDACS_RSS_PROXY_ENDPOINT, (request, response) => {
+        void handleGdacsPublicFeedProxyRequest(request, response);
+      });
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(GDACS_RSS_PROXY_ENDPOINT, (request, response) => {
+        void handleGdacsPublicFeedProxyRequest(request, response);
+      });
+    },
+  };
+}
+
+async function handleGdacsPublicFeedProxyRequest(
+  request: IncomingMessage,
+  response: ServerResponse<IncomingMessage>,
+): Promise<void> {
+  if (request.method === "OPTIONS") {
+    writeText(response, 204, "");
+    return;
+  }
+
+  if (request.method !== "GET") {
+    writeText(response, 405, "GDACS Public Feed proxy requests must use GET.");
+    return;
+  }
+
+  try {
+    const upstreamResponse = await fetch(GDACS_RSS_FEED_ENDPOINT, {
+      headers: {
+        ...GDACS_RSS_REQUEST_HEADERS,
+        "User-Agent": "Global Crisis Observatory Public Feed proxy (no-secret localhost demo)",
+      },
+    });
+    const rssText = await upstreamResponse.text();
+    writeText(response, upstreamResponse.status, rssText, upstreamResponse.statusText);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown error";
+    writeText(response, 502, `GDACS Public Feed proxy could not reach ${GDACS_RSS_FEED_ENDPOINT}: ${message}.`);
+  }
+}
+
 async function handleAiBriefingApiRequest(
   request: IncomingMessage,
   response: ServerResponse<IncomingMessage>,
-  apiKey: string | undefined,
+  apiKeys: AiBriefingProviderApiKeys,
 ): Promise<void> {
   if (request.method === "OPTIONS") {
     writeJson(response, 204, null);
@@ -47,7 +101,8 @@ async function handleAiBriefingApiRequest(
   try {
     const body = await readJsonBody(request);
     const payload = readAiBriefingPayload(body);
-    const briefing = await generateOpenAiBriefing({ payload, apiKey });
+    const aiBriefingProvider = readAiBriefingProvider(body);
+    const briefing = await generateProviderAiBriefing({ payload, aiBriefingProvider, apiKeys });
     writeJson(response, 200, briefing);
   } catch (error) {
     const status = error instanceof AiBriefingConfigurationError ? 401 : 400;
@@ -82,10 +137,32 @@ function readAiBriefingPayload(value: unknown): AiBriefingRequestPayload {
   return value.payload as unknown as AiBriefingRequestPayload;
 }
 
+function readAiBriefingProvider(value: unknown): AiBriefingChoice {
+  if (!isRecord(value) || !isAiBriefingChoice(value.aiBriefingProvider)) {
+    throw new Error("The AI Briefing request body is missing a valid AI Briefing Choice.");
+  }
+
+  return value.aiBriefingProvider;
+}
+
 function writeJson(response: ServerResponse<IncomingMessage>, statusCode: number, payload: unknown): void {
   response.statusCode = statusCode;
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.end(payload === null ? "" : JSON.stringify(payload));
+}
+
+function writeText(
+  response: ServerResponse<IncomingMessage>,
+  statusCode: number,
+  payload: string,
+  statusMessage?: string,
+): void {
+  response.statusCode = statusCode;
+  if (statusMessage !== undefined && statusMessage.trim() !== "") {
+    response.statusMessage = statusMessage;
+  }
+  response.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+  response.end(payload);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

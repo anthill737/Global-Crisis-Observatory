@@ -1,7 +1,9 @@
+import type { AiBriefingChoice } from "./ai-briefing-choice";
 import type { Coordinates, Incident, IncidentCategory, IncidentFilters, PublicFeedId, SeverityLabel } from "./incidents";
 
 export const AI_BRIEFING_API_ENDPOINT = "/api/ai-briefing";
 const MAX_FILTERED_INCIDENT_SET_ITEMS = 12;
+const MAX_PUBLIC_SOCIAL_CONTEXT_SIGNALS = 4;
 
 export type AiBriefingScope = "single-incident" | "filtered-incident-set";
 
@@ -33,6 +35,7 @@ export interface AiBriefingRequestPayload {
     uncertaintyNotes: true;
   };
   publicDataNotice: string;
+  publicSocialContext?: PublicSocialContext;
   scope:
     | {
         kind: "selected_incident";
@@ -54,6 +57,35 @@ export interface PublicIncidentFilters {
   severityLabels?: readonly SeverityLabel[];
   minSeverityScore?: number | null;
   maxSeverityScore?: number | null;
+}
+
+export type PublicSocialContextSourceType = "public_official" | "public_web" | "public_social";
+
+export interface PublicSocialContextInput {
+  locality?: unknown;
+  signals?: readonly PublicSocialContextSignalInput[] | null;
+}
+
+export interface PublicSocialContextSignalInput {
+  topic?: unknown;
+  localizedSummary?: unknown;
+  sourceType?: unknown;
+  observedAt?: unknown;
+  sourceUrl?: unknown;
+}
+
+export interface PublicSocialContext {
+  safetyNotice: "Localized public signal summaries aggregated from public sources.";
+  locality: string;
+  signals: PublicSocialContextSignal[];
+}
+
+export interface PublicSocialContextSignal {
+  topic: string;
+  localizedSummary: string;
+  sourceType: PublicSocialContextSourceType;
+  observedAt: string | null;
+  sourceUrl: string | null;
 }
 
 export interface AiBriefing {
@@ -86,6 +118,7 @@ export type AiBriefingFetch = (
 
 export interface RequestAiBriefingOptions {
   fetcher?: AiBriefingFetch | null;
+  aiBriefingChoice?: AiBriefingChoice;
 }
 
 export class AiBriefingError extends Error {
@@ -109,25 +142,36 @@ export class AiBriefingRequestError extends AiBriefingError {
   }
 }
 
-export function buildSingleIncidentBriefingRequest(incident: Incident | null): AiBriefingRequestPayload {
+export interface BuildAiBriefingRequestOptions {
+  aiBriefingChoice?: AiBriefingChoice | null;
+  publicSocialContext?: PublicSocialContextInput | null;
+}
+
+export function buildSingleIncidentBriefingRequest(
+  incident: Incident | null,
+  options: BuildAiBriefingRequestOptions = {},
+): AiBriefingRequestPayload {
   if (incident === null) {
     throw new AiBriefingRequestError("Select an Incident before requesting an AI Briefing for one Incident.");
   }
 
-  return buildAiBriefingRequestPayload({ selectedIncident: incident, filteredIncidentSet: [] });
+  return buildAiBriefingRequestPayload({ selectedIncident: incident, filteredIncidentSet: [], ...options });
 }
 
 export function buildFilteredIncidentSetBriefingRequest(
   filteredIncidentSet: readonly Incident[],
   filters: IncidentFilters = {},
+  options: BuildAiBriefingRequestOptions = {},
 ): AiBriefingRequestPayload {
-  return buildAiBriefingRequestPayload({ selectedIncident: null, filteredIncidentSet, filters });
+  return buildAiBriefingRequestPayload({ selectedIncident: null, filteredIncidentSet, filters, ...options });
 }
 
 export function buildAiBriefingRequestPayload(input: {
   selectedIncident: Incident | null;
   filteredIncidentSet: readonly Incident[];
   filters?: IncidentFilters;
+  aiBriefingChoice?: AiBriefingChoice | null;
+  publicSocialContext?: PublicSocialContextInput | null;
 }): AiBriefingRequestPayload {
   const requestedOutput = {
     situationSummary: true,
@@ -136,11 +180,13 @@ export function buildAiBriefingRequestPayload(input: {
     uncertaintyNotes: true,
   } as const;
   const publicDataNotice = "Use only the public Incident fields in this payload. Do not request PII, confidential context, or private operational data.";
+  const publicSocialContext = toProviderSafePublicSocialContext(input.publicSocialContext ?? null, input.aiBriefingChoice);
 
   if (input.selectedIncident !== null) {
     return {
       requestedOutput,
       publicDataNotice,
+      ...(publicSocialContext === null ? {} : { publicSocialContext }),
       scope: {
         kind: "selected_incident",
         label: "selected Incident",
@@ -152,6 +198,7 @@ export function buildAiBriefingRequestPayload(input: {
   return {
     requestedOutput,
     publicDataNotice,
+    ...(publicSocialContext === null ? {} : { publicSocialContext }),
     scope: {
       kind: "filtered_incident_set",
       label: "Filtered Incident Set",
@@ -173,14 +220,41 @@ export function validateAiBriefingRequestPayload(payload: AiBriefingRequestPaylo
     if (incident.id.trim() === "" || incident.title.trim() === "" || incident.startedAt.trim() === "") {
       throw new AiBriefingRequestError("The AI Briefing payload contains an Incident missing required public fields.");
     }
+
+    if (incident.sourceUrl !== null && readNullablePublicUrl(incident.sourceUrl) === null) {
+      throw new AiBriefingRequestError("The AI Briefing payload contains an unsafe public sourceUrl.");
+    }
   }
 
-  const forbiddenKeys = new Set(["rawsource", "payload", "email", "phone", "pii", "confidentialcontext", "privatecontext", "text"]);
+  if (payload.publicSocialContext !== undefined) {
+    validatePublicSocialContext(payload.publicSocialContext);
+  }
+
+  const forbiddenKeyFragments = [
+    "rawsource",
+    "payload",
+    "email",
+    "phone",
+    "pii",
+    "confidential",
+    "private",
+    "username",
+    "userhandle",
+    "directquote",
+    "privatemessage",
+    "privatepost",
+    "contactdetail",
+  ];
   for (const key of collectObjectKeys(payload)) {
-    if (forbiddenKeys.has(key.toLowerCase())) {
+    const normalizedKey = key.toLowerCase();
+    if (normalizedKey === "text" || forbiddenKeyFragments.some((forbiddenKeyFragment) => normalizedKey.includes(forbiddenKeyFragment))) {
       throw new AiBriefingRequestError("The AI Briefing payload contains a non-public field: " + key + ".");
     }
   }
+}
+
+export function supportsPublicSocialContext(aiBriefingChoice: AiBriefingChoice | null | undefined): boolean {
+  return aiBriefingChoice === undefined || aiBriefingChoice === "openai" || aiBriefingChoice === "anthropic" || aiBriefingChoice === "gemini";
 }
 
 export async function generateAiBriefing(
@@ -188,6 +262,13 @@ export async function generateAiBriefing(
   options: RequestAiBriefingOptions = {},
 ): Promise<AiBriefingOutput> {
   validateAiBriefingRequestPayload(payload);
+
+  const aiBriefingChoice = options.aiBriefingChoice ?? "openai";
+  if (aiBriefingChoice === "disabled") {
+    throw new AiBriefingConfigurationError(
+      "AI Briefing Choice is Disabled, so no AI Briefing request was sent. The Global Crisis Dashboard remains interactive.",
+    );
+  }
 
   const fetcher = options.fetcher ?? readGlobalFetch();
   if (fetcher === null) {
@@ -199,7 +280,7 @@ export async function generateAiBriefing(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ payload }),
+    body: JSON.stringify({ aiBriefingProvider: aiBriefingChoice, payload }),
   });
   const responsePayload = await readResponseJson(response);
 
@@ -254,7 +335,7 @@ export function normalizeAiBriefingOutput(value: unknown): AiBriefingOutput {
 
 export function normalizeAiBriefing(value: unknown): AiBriefing {
   if (!isRecord(value)) {
-    throw new AiBriefingRequestError("OpenAI returned an AI Briefing response in an unexpected format.");
+    throw new AiBriefingRequestError("AI Briefing Provider returned an AI Briefing response in an unexpected format.");
   }
 
   const situationSummary = readNonEmptyString(value.situationSummary);
@@ -270,7 +351,7 @@ export function normalizeAiBriefing(value: unknown): AiBriefing {
     responsePriorityRecommendations.length === 0 ||
     uncertaintyNotes.length === 0
   ) {
-    throw new AiBriefingRequestError("OpenAI returned an incomplete AI Briefing.");
+    throw new AiBriefingRequestError("AI Briefing Provider returned an incomplete AI Briefing.");
   }
 
   return {
@@ -292,7 +373,7 @@ function toPublicAiBriefingIncident(incident: Incident): PublicAiBriefingInciden
     category: incident.category,
     source: incident.source,
     sourceName: incident.sourceName,
-    sourceUrl: incident.sourceUrl,
+    sourceUrl: readNullablePublicUrl(incident.sourceUrl),
     coordinates: incident.coordinates,
     startedAt: incident.startedAt,
     updatedAt: incident.updatedAt,
@@ -305,6 +386,141 @@ function toPublicAiBriefingIncident(incident: Incident): PublicAiBriefingInciden
       retrievedAt: incident.rawSource.retrievedAt,
     },
   };
+}
+
+function toProviderSafePublicSocialContext(
+  publicSocialContext: PublicSocialContextInput | null,
+  aiBriefingChoice: AiBriefingChoice | null | undefined,
+): PublicSocialContext | null {
+  if (publicSocialContext === null || !supportsPublicSocialContext(aiBriefingChoice)) {
+    return null;
+  }
+
+  const locality = readSafePublicSocialContextText(publicSocialContext.locality, 80);
+  if (locality === null || !Array.isArray(publicSocialContext.signals)) {
+    return null;
+  }
+
+  const signals = publicSocialContext.signals
+    .flatMap(toPublicSocialContextSignal)
+    .slice(0, MAX_PUBLIC_SOCIAL_CONTEXT_SIGNALS);
+
+  if (signals.length === 0) {
+    return null;
+  }
+
+  return {
+    safetyNotice: "Localized public signal summaries aggregated from public sources.",
+    locality,
+    signals,
+  };
+}
+
+function toPublicSocialContextSignal(signal: PublicSocialContextSignalInput): PublicSocialContextSignal[] {
+  const topic = readSafePublicSocialContextText(signal.topic, 80);
+  const localizedSummary = readSafePublicSocialContextText(signal.localizedSummary, 240);
+  const sourceType = readPublicSocialContextSourceType(signal.sourceType);
+
+  if (topic === null || localizedSummary === null || sourceType === null) {
+    return [];
+  }
+
+  return [
+    {
+      topic,
+      localizedSummary,
+      sourceType,
+      observedAt: readIsoTimestamp(signal.observedAt),
+      sourceUrl: readNullablePublicUrl(signal.sourceUrl),
+    },
+  ];
+}
+
+function validatePublicSocialContext(publicSocialContext: PublicSocialContext): void {
+  if (publicSocialContext.signals.length === 0) {
+    throw new AiBriefingRequestError("The Public Social Context payload needs at least one localized public signal.");
+  }
+
+  const valuesToCheck = [
+    publicSocialContext.locality,
+    ...publicSocialContext.signals.flatMap((signal) => [signal.topic, signal.localizedSummary, signal.sourceUrl]),
+  ];
+  if (valuesToCheck.some((value) => value !== null && hasUnsafePublicSocialContextContent(value))) {
+    throw new AiBriefingRequestError("The Public Social Context payload contains non-public or identifying content.");
+  }
+}
+
+function readPublicSocialContextSourceType(value: unknown): PublicSocialContextSourceType | null {
+  switch (value) {
+    case "public_official":
+    case "public_web":
+    case "public_social":
+      return value;
+    default:
+      return null;
+  }
+}
+
+function readSafePublicSocialContextText(value: unknown, maxLength: number): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalizedValue = value.replace(/\s+/gu, " ").trim();
+  if (normalizedValue === "" || normalizedValue.length > maxLength || hasUnsafePublicSocialContextContent(normalizedValue)) {
+    return null;
+  }
+
+  return normalizedValue;
+}
+
+function hasUnsafePublicSocialContextContent(value: string): boolean {
+  return (
+    /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/iu.test(value) ||
+    /(^|[\s/])@[a-z0-9_]{2,}\b/iu.test(value) ||
+    /\+?\d[\d\s().-]{7,}\d/u.test(value) ||
+    /"[^"]+"|'[^']+'|“[^”]+”|‘[^’]+’/u.test(value) ||
+    /\b(?:address|confidential|contact details?|direct quote|dm|email|phone|pii|private|username|user name)\b/iu.test(value)
+  );
+}
+
+function readIsoTimestamp(value: unknown): string | null {
+  if (!(typeof value === "string" || typeof value === "number" || value instanceof Date)) {
+    return null;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function readNullablePublicUrl(value: unknown): string | null {
+  if (typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+    const normalizedUrl = url.toString();
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return null;
+    }
+
+    if (hasUnsafePublicSocialContextContent(normalizedUrl) || hasUnsafePublicSocialContextContent(decodeUriComponentSafe(normalizedUrl))) {
+      return null;
+    }
+
+    return normalizedUrl;
+  } catch {
+    return null;
+  }
+}
+
+function decodeUriComponentSafe(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function toPublicIncidentFilters(filters: IncidentFilters): PublicIncidentFilters {

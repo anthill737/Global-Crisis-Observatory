@@ -8,13 +8,17 @@ import {
   fetchUsgsEarthquakeFeed,
   filterIncidents,
   GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+  GDACS_RSS_PROXY_ENDPOINT,
   GDACS_RSS_FEED_ENDPOINT,
+  GDACS_RSS_REQUEST_HEADERS,
   normalizeIncident,
+  normalizeGdacsRssIncident,
   normalizeNasaEonetIncident,
   normalizeUsgsEarthquakeIncident,
   scoreIncidentSeverity,
   type FeedAdapterFetch,
   type FeedAdapterResult,
+  type GdacsRssIncidentPayload,
   type Incident,
   type NasaEonetFeedPayload,
   type UsgsEarthquakeFeedPayload,
@@ -428,7 +432,8 @@ describe("USGS Earthquakes Feed Adapter", () => {
       state: "unavailable",
       lastAttemptedAt: "2026-06-10T14:00:00.000Z",
       lastSuccessfulAt: null,
-      message: "USGS Earthquakes fetch failed: network unavailable.",
+      message:
+        "USGS Earthquakes could not be reached from this local runtime; local access may be blocked or missing browser CORS access (network unavailable).",
     });
   });
 
@@ -459,6 +464,35 @@ describe("USGS Earthquakes Feed Adapter", () => {
       message: "Skipped 1 USGS Earthquakes features missing required Incident fields.",
     });
   });
+
+  it("explains endpoint-change and unusable-payload USGS limitations without inventing replacement Incidents", async () => {
+    const movedEndpointFetcher: FeedAdapterFetch = async () => ({
+      ok: false,
+      status: 404,
+      statusText: "Not Found",
+      json: async () => ({}),
+    });
+    const unusablePayloadFetcher: FeedAdapterFetch = async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ type: "FeatureCollection" }),
+    });
+
+    const movedEndpointResult = await fetchUsgsEarthquakeFeed({ fetcher: movedEndpointFetcher, now: () => retrievedAt });
+    const unusablePayloadResult = await fetchUsgsEarthquakeFeed({ fetcher: unusablePayloadFetcher, now: () => retrievedAt });
+
+    expect(movedEndpointResult.incidents).toEqual([]);
+    expect(movedEndpointResult.sourceStatus).toMatchObject({
+      state: "unavailable",
+      message:
+        "USGS Earthquakes endpoint appears to have changed or been removed (404 Not Found); no replacement Incidents were invented.",
+    });
+    expect(unusablePayloadResult.incidents).toEqual([]);
+    expect(unusablePayloadResult.sourceStatus).toMatchObject({
+      state: "degraded",
+      message: "USGS Earthquakes returned unusable public data: expected a GeoJSON features list.",
+    });
+  });
 });
 
 describe("Combined Incident collection", () => {
@@ -484,8 +518,23 @@ describe("Combined Incident collection", () => {
       },
     ],
   };
+  const gdacsRss = `<?xml version="1.0" encoding="UTF-8"?>
+    <rss version="2.0">
+      <channel>
+        <item>
+          <title><![CDATA[Orange tropical cyclone alert for Example Islands]]></title>
+          <link>https://www.gdacs.org/report.aspx?eventid=1001&amp;episodeid=2&amp;eventtype=TC</link>
+          <guid>TC-1001-2</guid>
+          <pubDate>Wed, 10 Jun 2026 09:00:00 GMT</pubDate>
+          <gdacs:eventtype>TC</gdacs:eventtype>
+          <gdacs:alertlevel>Orange</gdacs:alertlevel>
+          <geo:lat>14.5</geo:lat>
+          <geo:long>121</geo:long>
+        </item>
+      </channel>
+    </rss>`;
 
-  it("merges USGS and NASA EONET output while keeping the GDACS limitation visible in Source Status", async () => {
+  it("merges USGS, NASA EONET, and restored GDACS output with Source Status for each Public Feed", async () => {
     const fetcher: FeedAdapterFetch = async (input) => {
       const url = String(input);
 
@@ -497,6 +546,10 @@ describe("Combined Incident collection", () => {
         return { ok: true, status: 200, json: async () => eonetPayload };
       }
 
+      if (url === GDACS_RSS_PROXY_ENDPOINT) {
+        return { ok: true, status: 200, json: async () => ({}), text: async () => gdacsRss };
+      }
+
       throw new Error(`Unexpected Public Feed URL: ${url}`);
     };
 
@@ -504,11 +557,13 @@ describe("Combined Incident collection", () => {
       now: () => refreshedAt,
       usgsEarthquakes: { fetcher },
       nasaEonet: { fetcher, limit: 1 },
+      gdacs: { fetcher },
     });
 
     expect(collection.refreshedAt).toBe("2026-06-10T15:00:00.000Z");
-    expect(collection.incidents).toHaveLength(3);
+    expect(collection.incidents).toHaveLength(4);
     expect(collection.incidents.map((incident) => incident.source).sort()).toEqual([
+      "gdacs",
       "nasa-eonet",
       "usgs-earthquakes",
       "usgs-earthquakes",
@@ -533,17 +588,17 @@ describe("Combined Incident collection", () => {
       {
         publicFeed: "gdacs",
         publicFeedName: "GDACS",
-        state: "unavailable",
+        state: "success",
         lastAttemptedAt: "2026-06-10T15:00:00.000Z",
-        lastSuccessfulAt: null,
-        message: GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+        lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
+        message: null,
       },
     ]);
     expect(collection.sourceStatusSummary).toEqual({
       sourceCount: 3,
-      successCount: 2,
+      successCount: 3,
       degradedCount: 0,
-      unavailableCount: 1,
+      unavailableCount: 0,
       lastAttemptedAt: "2026-06-10T15:00:00.000Z",
       lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
     });
@@ -557,6 +612,10 @@ describe("Combined Incident collection", () => {
         return { ok: true, status: 200, json: async () => usgsPayload };
       }
 
+      if (url === GDACS_RSS_PROXY_ENDPOINT) {
+        return { ok: true, status: 200, json: async () => ({}), text: async () => gdacsRss };
+      }
+
       throw new Error("NASA EONET outage");
     };
 
@@ -564,6 +623,7 @@ describe("Combined Incident collection", () => {
       now: () => refreshedAt,
       usgsEarthquakes: { fetcher },
       nasaEonet: { fetcher },
+      gdacs: { fetcher },
       previousSourceStatuses: [
         {
           publicFeed: "nasa-eonet",
@@ -576,8 +636,12 @@ describe("Combined Incident collection", () => {
       ],
     });
 
-    expect(collection.incidents).toHaveLength(2);
-    expect(collection.incidents.every((incident) => incident.source === "usgs-earthquakes")).toBe(true);
+    expect(collection.incidents).toHaveLength(3);
+    expect(collection.incidents.map((incident) => incident.source).sort()).toEqual([
+      "gdacs",
+      "usgs-earthquakes",
+      "usgs-earthquakes",
+    ]);
     expect(collection.sourceStatuses).toContainEqual({
       publicFeed: "usgs-earthquakes",
       publicFeedName: "USGS Earthquakes",
@@ -597,21 +661,60 @@ describe("Combined Incident collection", () => {
     expect(collection.sourceStatuses).toContainEqual({
       publicFeed: "gdacs",
       publicFeedName: "GDACS",
-      state: "unavailable",
+      state: "success",
       lastAttemptedAt: "2026-06-10T15:00:00.000Z",
-      lastSuccessfulAt: null,
-      message: GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+      lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
+      message: null,
     });
     expect(collection.sourceStatusSummary).toMatchObject({
       sourceCount: 3,
-      successCount: 1,
+      successCount: 2,
       degradedCount: 0,
-      unavailableCount: 2,
+      unavailableCount: 1,
     });
   });
 });
 
 describe("GDACS Public Feed resolution", () => {
+  const gdacsRss = `<?xml version="1.0" encoding="UTF-8"?>
+    <rss version="2.0">
+      <channel>
+        <item>
+          <title><![CDATA[Orange tropical cyclone alert for Example Islands]]></title>
+          <link>https://www.gdacs.org/report.aspx?eventid=1001&amp;episodeid=2&amp;eventtype=TC</link>
+          <guid>TC-1001-2</guid>
+          <pubDate>Wed, 10 Jun 2026 09:00:00 GMT</pubDate>
+          <gdacs:eventtype>TC</gdacs:eventtype>
+          <gdacs:alertlevel>Orange</gdacs:alertlevel>
+          <geo:lat>14.5</geo:lat>
+          <geo:long>121</geo:long>
+        </item>
+      </channel>
+    </rss>`;
+
+  it("uses GDACS-compatible RSS request headers so the no-secret proxy can refresh live Incidents", async () => {
+    const requestedHeaders: Array<Record<string, string> | undefined> = [];
+    const fetcher: FeedAdapterFetch = async (_input, init) => {
+      requestedHeaders.push(init?.headers);
+      return { ok: true, status: 200, json: async () => ({}), text: async () => gdacsRss };
+    };
+
+    const result = await fetchGdacsIncidents({
+      endpoint: GDACS_RSS_FEED_ENDPOINT,
+      fetcher,
+      now: () => new Date("2026-06-10T14:00:00Z"),
+    });
+
+    expect(GDACS_RSS_REQUEST_HEADERS).toEqual({ Accept: "*/*" });
+    expect(requestedHeaders[0]).toEqual(GDACS_RSS_REQUEST_HEADERS);
+    expect(result.sourceStatus.state).toBe("success");
+    expect(result.incidents[0]).toMatchObject({
+      source: "gdacs",
+      sourceName: "GDACS",
+      title: "Orange tropical cyclone alert for Example Islands",
+    });
+  });
+
   it("documents the probed GDACS RSS endpoint while reporting it unavailable in the browser app runtime", async () => {
     const retrievedAt = new Date("2026-06-10T14:00:00Z");
     const result = await fetchGdacsIncidents({ now: () => retrievedAt });
@@ -749,7 +852,8 @@ describe("NASA EONET Feed Adapter", () => {
       state: "unavailable",
       lastAttemptedAt: "2026-06-10T14:00:00.000Z",
       lastSuccessfulAt: null,
-      message: "NASA EONET fetch failed: network unavailable.",
+      message:
+        "NASA EONET could not be reached from this local runtime; local access may be blocked or missing browser CORS access (network unavailable).",
     });
   });
 

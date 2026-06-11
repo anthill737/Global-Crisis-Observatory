@@ -1,0 +1,370 @@
+- main "Global Crisis Observatory" [ref=e59971]:
+  - generic [ref=e59972]:
+    - generic [ref=e59973]:
+      - paragraph [ref=e59974]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e59975]
+      - paragraph [ref=e59976]: A Global Crisis Dashboard view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e59977]:
+      - generic [ref=e59978]: Operational
+      - generic [ref=e59979]: Refreshed Jun 11, 2026, 8:57 PM UTC
+      - button "Refresh" [ref=e59980] [cursor=pointer]
+    - region "Settings Control" [ref=e59981]:
+      - paragraph [ref=e59982]: Settings Control
+      - generic [ref=e59983]:
+        - generic [ref=e59984]: Visibility Mode
+        - combobox "Visibility Mode" [ref=e59985]:
+          - option "Light" [selected]
+          - option "Dark"
+          - option "High contrast"
+        - generic [ref=e59986]: "Current Visibility Mode: Light"
+        - generic [ref=e59987]: Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.
+      - generic [ref=e59988]:
+        - generic [ref=e59989]: AI Briefing Choice
+        - combobox "AI Briefing Choice" [ref=e59990]:
+          - option "Choose an AI Briefing Provider" [disabled]
+          - option "OpenAI" [selected]
+          - option "Anthropic"
+          - option "Gemini"
+          - option "Disabled"
+        - generic [ref=e59991]: "AI Briefing Choice: OpenAI"
+        - generic [ref=e59992]: Choose OpenAI, Anthropic, Gemini, or Disabled. The choice is saved locally on this device.
+  - region "summary metrics" [ref=e59993]:
+    - article [ref=e59994]:
+      - generic [ref=e59995]: Filtered Incident Set
+      - strong [ref=e59996]: "1"
+      - paragraph [ref=e59997]: 407 total Incidents from reachable Public Feeds
+    - article [ref=e59998]:
+      - generic [ref=e59999]: Public Feeds Online
+      - strong [ref=e60000]: 3/3
+      - paragraph [ref=e60001]: All Source Status checks are successful
+    - article [ref=e60002]:
+      - generic [ref=e60003]: Source Status Attention
+      - strong [ref=e60004]: "0"
+      - paragraph [ref=e60005]: 0 degraded, 0 unavailable
+    - article [ref=e60006]:
+      - generic [ref=e60007]: Last Refresh
+      - strong [ref=e60008]: Jun 11, 2026, 8:57 PM
+      - paragraph [ref=e60009]: "Latest successful refresh: Jun 11, 2026, 8:57 PM"
+  - region "Global Crisis Dashboard layout" [ref=e60010]:
+    - region "Primary geographic Incident view" [ref=e60011]:
+      - generic [ref=e60013]:
+        - paragraph [ref=e60014]: Globe Map
+        - heading "Primary geographic Incident view" [level=2] [ref=e60015]
+        - paragraph [ref=e60016]: Incident Markers are projected onto a spherical Globe Map with rotation, zoom, and Public Feed attribution visible on the surface.
+      - region "Focus place or region" [ref=e60017]:
+        - generic [ref=e60018]:
+          - generic [ref=e60019]:
+            - paragraph [ref=e60020]: Area Search
+            - heading "Focus place or region" [level=3] [ref=e60021]
+          - generic [ref=e60022]: Globe Map focus
+        - generic [ref=e60023]:
+          - generic [ref=e60024]: Place or region query
+          - generic [ref=e60025]:
+            - searchbox "Place or region query" [ref=e60026]
+            - button "Search area" [ref=e60027] [cursor=pointer]
+            - button "Clear" [ref=e60028] [cursor=pointer]
+        - status [ref=e60029]:
+          - paragraph [ref=e60030]: Enter a place or region to focus the Globe Map and emphasize nearby Incidents.
+      - group "Spherical Globe Map with styled Incident Markers" [ref=e60031]:
+        - generic "Globe Map rotation and zoom controls":
+          - button "Spin Globe Map west" [ref=e60032] [cursor=pointer]: ◀
+          - button "Spin Globe Map east" [ref=e60033] [cursor=pointer]: ▶
+          - button "Spin Globe Map north" [ref=e60034] [cursor=pointer]: ▲
+          - button "Spin Globe Map south" [ref=e60035] [cursor=pointer]: ▼
+          - button "Zoom Globe Map out" [ref=e60036] [cursor=pointer]: −
+          - button "Zoom Globe Map in" [ref=e60037] [cursor=pointer]: +
+          - generic: Center 61°, -150° · 158% zoom
+        - button "Select M 1.7 - 12 km NW of Progreso, B.C., MX from USGS Earthquakes" [pressed] [ref=e60040] [cursor=pointer]:
+          - generic [ref=e60041]: M 1.7 - 12 km NW of Progreso, B.C., MX
+          - generic: USGS
+        - generic "Visible Public Feed attribution":
+          - generic: Visible Public Feeds
+          - generic:
+            - 'generic "Public Feed: USGS Earthquakes"':
+              - generic: USGS
+              - generic: USGS Earthquakes
+        - paragraph: Globe Map focused on M 1.7 - 12 km NW of Progreso, B.C., MX.
+        - generic "Globe Map selected Incident Saved Event controls" [ref=e60042]:
+          - generic [ref=e60043]:
+            - generic [ref=e60044]: Saved Event
+            - button "Unsave M 1.7 - 12 km NW of Progreso, B.C., MX from Globe Map selection" [ref=e60045] [cursor=pointer]: Unsave Incident
+    - complementary "Refine the Filtered Incident Set" [ref=e60046]:
+      - generic [ref=e60047]:
+        - paragraph [ref=e60048]: Filters
+        - heading "Refine the Filtered Incident Set" [level=2] [ref=e60049]
+      - generic [ref=e60050]:
+        - generic [ref=e60051]:
+          - text: Text search
+          - searchbox "Text search" [ref=e60052]: Progreso
+        - generic [ref=e60053]:
+          - text: Category
+          - combobox "Category" [ref=e60054]:
+            - option "All categories" [selected]
+            - option "Earthquake"
+            - option "Wildfire"
+            - option "Severe Storm"
+            - option "Volcano"
+            - option "Flood"
+            - option "Drought"
+            - option "Other"
+        - generic [ref=e60055]:
+          - text: Public Feed
+          - combobox "Public Feed" [ref=e60056]:
+            - option "All Public Feeds" [selected]
+            - option "GDACS"
+            - option "NASA EONET"
+            - option "USGS Earthquakes"
+        - generic [ref=e60057]:
+          - text: Severity Score
+          - combobox "Severity Score" [ref=e60058]:
+            - option "All severities" [selected]
+            - option "minor"
+            - option "moderate"
+            - option "strong"
+            - option "major"
+        - button "Reset filters" [ref=e60059] [cursor=pointer]
+    - region "Live public Incidents" [ref=e60060]:
+      - generic [ref=e60061]:
+        - paragraph [ref=e60062]: Incident Feed
+        - heading "Live public Incidents" [level=2] [ref=e60063]
+      - article [ref=e60065]:
+        - button "Earthquake minor · 17.4 USGS Earthquakes M 1.7 - 12 km NW of Progreso, B.C., MX" [ref=e60067] [cursor=pointer]:
+          - generic [ref=e60068]: Earthquake
+          - generic [ref=e60069]: minor · 17.4
+          - 'generic "Public Feed: USGS Earthquakes" [ref=e60070]':
+            - generic [ref=e60071]: USGS
+            - generic [ref=e60072]: USGS Earthquakes
+          - generic [ref=e60073]: M 1.7 - 12 km NW of Progreso, B.C., MX
+        - generic [ref=e60074]:
+          - generic [ref=e60075]:
+            - term [ref=e60076]: Public Feed
+            - definition [ref=e60077]: USGS Earthquakes
+          - generic [ref=e60078]:
+            - term [ref=e60079]: Severity Score
+            - definition [ref=e60080]: minor · 17.4
+          - generic [ref=e60081]:
+            - term [ref=e60082]: Started
+            - definition [ref=e60083]: Jun 11, 2026, 8:50 PM
+          - generic [ref=e60084]:
+            - term [ref=e60085]: Coordinates
+            - definition [ref=e60086]: 32.67, -115.66
+        - generic [ref=e60087]:
+          - generic [ref=e60088]:
+            - generic [ref=e60089]: Saved Event
+            - button "Unsave M 1.7 - 12 km NW of Progreso, B.C., MX from feed" [ref=e60090] [cursor=pointer]: Unsave Incident
+          - link "Open source attribution" [ref=e60091] [cursor=pointer]:
+            - /url: https://earthquake.usgs.gov/earthquakes/eventpage/ci41484760
+    - generic [ref=e60092]:
+      - complementary "Selected Incident" [ref=e60093]:
+        - generic [ref=e60094]:
+          - paragraph [ref=e60095]: Incident Detail
+          - heading "Selected Incident" [level=2] [ref=e60096]
+        - article [ref=e60097]:
+          - generic [ref=e60098]:
+            - generic [ref=e60099]: Earthquake
+            - generic [ref=e60100]: minor · 17.4
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e60101]':
+              - generic [ref=e60102]: USGS
+              - generic [ref=e60103]: USGS Earthquakes
+            - generic [ref=e60104]: Saved Event
+          - heading "M 1.7 - 12 km NW of Progreso, B.C., MX" [level=3] [ref=e60105]
+          - generic [ref=e60106]:
+            - generic [ref=e60107]:
+              - term [ref=e60108]: Public Feed
+              - definition [ref=e60109]: USGS Earthquakes
+            - generic [ref=e60110]:
+              - term [ref=e60111]: Category
+              - definition [ref=e60112]: Earthquake
+            - generic [ref=e60113]:
+              - term [ref=e60114]: Severity Score
+              - definition [ref=e60115]: minor · 17.4
+            - generic [ref=e60116]:
+              - term [ref=e60117]: Location
+              - definition [ref=e60118]: 32.6670, -115.6622
+            - generic [ref=e60119]:
+              - term [ref=e60120]: Started
+              - definition [ref=e60121]: Jun 11, 2026, 8:50 PM
+            - generic [ref=e60122]:
+              - term [ref=e60123]: Updated
+              - definition [ref=e60124]: Jun 11, 2026, 8:53 PM
+            - generic [ref=e60125]:
+              - term [ref=e60126]: Source link
+              - definition [ref=e60127]:
+                - link "Open source attribution" [ref=e60128] [cursor=pointer]:
+                  - /url: https://earthquake.usgs.gov/earthquakes/eventpage/ci41484760
+            - generic [ref=e60129]:
+              - term [ref=e60130]: Source record
+              - definition [ref=e60131]: USGS Earthquakes source record ci41484760 · Retrieved Jun 11, 2026, 8:57 PM
+          - region "Event-specific metrics" [ref=e60132]:
+            - heading "Event-specific metrics" [level=4] [ref=e60133]
+            - generic [ref=e60135]:
+              - term [ref=e60136]: Earthquake magnitude
+              - definition [ref=e60137]: 1.7 from USGS Earthquakes
+          - generic [ref=e60139]:
+            - generic [ref=e60140]: Saved Event
+            - button "Unsave M 1.7 - 12 km NW of Progreso, B.C., MX from Incident Detail" [ref=e60141] [cursor=pointer]: Unsave Incident
+      - region "Public-data AI Briefing" [ref=e60142]:
+        - generic [ref=e60144]:
+          - paragraph [ref=e60145]: AI Briefing
+          - heading "Public-data AI Briefing" [level=2] [ref=e60146]
+        - generic "AI Briefing request controls" [ref=e60147]:
+          - button "Brief selected Incident" [ref=e60148] [cursor=pointer]
+          - button "Brief Filtered Incident Set" [ref=e60149] [cursor=pointer]
+        - paragraph [ref=e60150]: Sends only public Incident fields from the dashboard. Do not enter PII, confidential context, or private operational data.
+        - paragraph [ref=e60151]: AI Briefing Choice is OpenAI.
+        - generic "AI Briefing source attribution" [ref=e60152]:
+          - generic [ref=e60153]: AI Briefing source context
+          - 'generic "Public Feed: USGS Earthquakes" [ref=e60155]':
+            - generic [ref=e60156]: USGS
+            - generic [ref=e60157]: USGS Earthquakes
+          - generic [ref=e60158]: "Selected Incident source record: ci41484760."
+        - status [ref=e60159]:
+          - paragraph [ref=e60160]: Choose a selected Incident or the current Filtered Incident Set to generate an AI Briefing.
+      - complementary "Public Feed freshness" [ref=e60161]:
+        - generic [ref=e60162]:
+          - paragraph [ref=e60163]: Source Status
+          - heading "Public Feed freshness" [level=2] [ref=e60164]
+        - generic [ref=e60165]:
+          - article [ref=e60166]:
+            - generic [ref=e60167]:
+              - strong [ref=e60168]: USGS Earthquakes
+              - generic [ref=e60169]: Success
+            - paragraph [ref=e60170]: Public Feed refreshed successfully.
+            - generic [ref=e60171]:
+              - generic [ref=e60172]: "Last attempted refresh: Jun 11, 2026, 8:57 PM UTC"
+              - generic [ref=e60173]: "Latest successful refresh: Jun 11, 2026, 8:57 PM UTC"
+          - article [ref=e60174]:
+            - generic [ref=e60175]:
+              - strong [ref=e60176]: NASA EONET
+              - generic [ref=e60177]: Success
+            - paragraph [ref=e60178]: Public Feed refreshed successfully.
+            - generic [ref=e60179]:
+              - generic [ref=e60180]: "Last attempted refresh: Jun 11, 2026, 8:57 PM UTC"
+              - generic [ref=e60181]: "Latest successful refresh: Jun 11, 2026, 8:57 PM UTC"
+          - article [ref=e60182]:
+            - generic [ref=e60183]:
+              - strong [ref=e60184]: GDACS
+              - generic [ref=e60185]: Success
+            - paragraph [ref=e60186]: Public Feed refreshed successfully.
+            - generic [ref=e60187]:
+              - generic [ref=e60188]: "Last attempted refresh: Jun 11, 2026, 8:57 PM UTC"
+              - generic [ref=e60189]: "Latest successful refresh: Jun 11, 2026, 8:57 PM UTC"
+    - region "Saved Events View" [ref=e60190]:
+      - generic [ref=e60191]:
+        - generic [ref=e60192]:
+          - paragraph [ref=e60193]: Saved Events
+          - heading "Saved Events View" [level=2] [ref=e60194]
+        - generic [ref=e60195]: "4"
+      - generic [ref=e60196]:
+        - article [ref=e60197]:
+          - generic [ref=e60198]:
+            - generic [ref=e60199]: Earthquake
+            - generic [ref=e60200]: minor · 17.4
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e60201]':
+              - generic [ref=e60202]: USGS
+              - generic [ref=e60203]: USGS Earthquakes
+            - generic [ref=e60204]: Live in the current Public Feed refresh.
+          - heading "M 1.7 - 12 km NW of Progreso, B.C., MX" [level=3] [ref=e60205]
+          - generic [ref=e60206]:
+            - generic [ref=e60207]:
+              - term [ref=e60208]: Public Feed
+              - definition [ref=e60209]: USGS Earthquakes
+            - generic [ref=e60210]:
+              - term [ref=e60211]: Started
+              - definition [ref=e60212]: Jun 11, 2026, 8:50 PM
+            - generic [ref=e60213]:
+              - term [ref=e60214]: Updated
+              - definition [ref=e60215]: Jun 11, 2026, 8:53 PM
+            - generic [ref=e60216]:
+              - term [ref=e60217]: Coordinates
+              - definition [ref=e60218]: 32.67, -115.66
+          - paragraph [ref=e60219]: "Original source id: ci41484760 · Source retrieved: Jun 11, 2026, 8:57 PM · Saved: Jun 11, 2026, 8:57 PM"
+          - generic [ref=e60220]:
+            - button "Revisit live Incident" [ref=e60221] [cursor=pointer]
+            - button "Remove Saved Event" [ref=e60222] [cursor=pointer]
+            - link "Open saved source attribution" [ref=e60223] [cursor=pointer]:
+              - /url: https://earthquake.usgs.gov/earthquakes/eventpage/ci41484760
+        - article [ref=e60224]:
+          - generic [ref=e60225]:
+            - generic [ref=e60226]: Earthquake
+            - generic [ref=e60227]: minor · 11.9
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e60228]':
+              - generic [ref=e60229]: USGS
+              - generic [ref=e60230]: USGS Earthquakes
+            - generic [ref=e60231]: Live in the current Public Feed refresh.
+          - heading "M 1.2 - 7 km NW of The Geysers, CA" [level=3] [ref=e60232]
+          - generic [ref=e60233]:
+            - generic [ref=e60234]:
+              - term [ref=e60235]: Public Feed
+              - definition [ref=e60236]: USGS Earthquakes
+            - generic [ref=e60237]:
+              - term [ref=e60238]: Started
+              - definition [ref=e60239]: Jun 11, 2026, 7:20 PM
+            - generic [ref=e60240]:
+              - term [ref=e60241]: Updated
+              - definition [ref=e60242]: Jun 11, 2026, 7:22 PM
+            - generic [ref=e60243]:
+              - term [ref=e60244]: Coordinates
+              - definition [ref=e60245]: 38.81, -122.82
+          - paragraph [ref=e60246]: "Original source id: nc75374976 · Source retrieved: Jun 11, 2026, 7:24 PM · Saved: Jun 11, 2026, 7:25 PM"
+          - generic [ref=e60247]:
+            - button "Revisit live Incident" [ref=e60248] [cursor=pointer]
+            - button "Remove Saved Event" [ref=e60249] [cursor=pointer]
+            - link "Open saved source attribution" [ref=e60250] [cursor=pointer]:
+              - /url: https://earthquake.usgs.gov/earthquakes/eventpage/nc75374976
+        - article [ref=e60251]:
+          - generic [ref=e60252]:
+            - generic [ref=e60253]: Earthquake
+            - generic [ref=e60254]: minor · 13
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e60255]':
+              - generic [ref=e60256]: USGS
+              - generic [ref=e60257]: USGS Earthquakes
+            - generic [ref=e60258]: Live in the current Public Feed refresh.
+          - heading "M 1.3 - 18 km WSW of Rotan, Texas" [level=3] [ref=e60259]
+          - generic [ref=e60260]:
+            - generic [ref=e60261]:
+              - term [ref=e60262]: Public Feed
+              - definition [ref=e60263]: USGS Earthquakes
+            - generic [ref=e60264]:
+              - term [ref=e60265]: Started
+              - definition [ref=e60266]: Jun 11, 2026, 9:30 AM
+            - generic [ref=e60267]:
+              - term [ref=e60268]: Updated
+              - definition [ref=e60269]: Jun 11, 2026, 4:23 PM
+            - generic [ref=e60270]:
+              - term [ref=e60271]: Coordinates
+              - definition [ref=e60272]: 32.76, -100.63
+          - paragraph [ref=e60273]: "Original source id: tx2026lkgvjg · Source retrieved: Jun 11, 2026, 4:24 PM · Saved: Jun 11, 2026, 4:25 PM"
+          - generic [ref=e60274]:
+            - button "Revisit live Incident" [ref=e60275] [cursor=pointer]
+            - button "Remove Saved Event" [ref=e60276] [cursor=pointer]
+            - link "Open saved source attribution" [ref=e60277] [cursor=pointer]:
+              - /url: https://earthquake.usgs.gov/earthquakes/eventpage/tx2026lkgvjg
+        - article [ref=e60278]:
+          - generic [ref=e60279]:
+            - generic [ref=e60280]: Earthquake
+            - generic [ref=e60281]: minor · 21.6
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e60282]':
+              - generic [ref=e60283]: USGS
+              - generic [ref=e60284]: USGS Earthquakes
+            - generic [ref=e60285]: Live in the current Public Feed refresh.
+          - heading "M 2.2 - 3 km SSE of Tallaboa, Puerto Rico" [level=3] [ref=e60286]
+          - generic [ref=e60287]:
+            - generic [ref=e60288]:
+              - term [ref=e60289]: Public Feed
+              - definition [ref=e60290]: USGS Earthquakes
+            - generic [ref=e60291]:
+              - term [ref=e60292]: Started
+              - definition [ref=e60293]: Jun 11, 2026, 2:57 PM
+            - generic [ref=e60294]:
+              - term [ref=e60295]: Updated
+              - definition [ref=e60296]: Jun 11, 2026, 4:23 PM
+            - generic [ref=e60297]:
+              - term [ref=e60298]: Coordinates
+              - definition [ref=e60299]: 17.96, -66.71
+          - paragraph [ref=e60300]: "Original source id: pr71519548 · Source retrieved: Jun 11, 2026, 4:24 PM · Saved: Jun 11, 2026, 4:24 PM"
+          - generic [ref=e60301]:
+            - button "Revisit live Incident" [ref=e60302] [cursor=pointer]
+            - button "Remove Saved Event" [ref=e60303] [cursor=pointer]
+            - link "Open saved source attribution" [ref=e60304] [cursor=pointer]:
+              - /url: https://earthquake.usgs.gov/earthquakes/eventpage/pr71519548
