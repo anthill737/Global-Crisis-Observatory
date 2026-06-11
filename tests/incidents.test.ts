@@ -3,9 +3,12 @@ import { readFileSync } from "node:fs";
 import {
   buildNasaEonetEventsEndpoint,
   fetchCombinedIncidentCollection,
+  fetchGdacsIncidents,
   fetchNasaEonetIncidents,
   fetchUsgsEarthquakeFeed,
   filterIncidents,
+  GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+  GDACS_RSS_FEED_ENDPOINT,
   normalizeIncident,
   normalizeNasaEonetIncident,
   normalizeUsgsEarthquakeIncident,
@@ -51,6 +54,60 @@ describe("Incident normalization", () => {
         payload: rawPayload,
       },
     });
+  });
+
+  it("sanitizes optional model fields while preserving raw-source attribution", () => {
+    const rawPayload = { id: "model-1", nested: { source: "fixture" } };
+
+    const incident = normalizeIncident({
+      rawId: " model-1 ",
+      title: " Source-linked Incident ",
+      category: "other",
+      source: "usgs-earthquakes",
+      sourceName: "USGS Earthquakes",
+      sourceUrl: " https://example.org/incidents/model-1 ",
+      coordinates: { latitude: 95, longitude: 200 },
+      startedAt: new Date("2026-06-10T12:00:00Z"),
+      updatedAt: "not-a-date",
+      retrievedAt: "2026-06-10T12:05:00Z",
+      severityScore: 100.4,
+      rawPayload,
+    });
+
+    expect(incident).toMatchObject<Incident<typeof rawPayload>>({
+      id: "usgs-earthquakes:model-1",
+      title: "Source-linked Incident",
+      category: "other",
+      source: "usgs-earthquakes",
+      sourceName: "USGS Earthquakes",
+      sourceUrl: "https://example.org/incidents/model-1",
+      coordinates: null,
+      startedAt: "2026-06-10T12:00:00.000Z",
+      updatedAt: null,
+      severityScore: 100,
+      severityLabel: "major",
+      rawSource: {
+        publicFeed: "usgs-earthquakes",
+        publicFeedName: "USGS Earthquakes",
+        originalId: "model-1",
+        retrievedAt: "2026-06-10T12:05:00.000Z",
+        payload: rawPayload,
+      },
+    });
+  });
+
+  it("rejects shared Incident inputs missing stable required fields", () => {
+    const requiredFields = {
+      category: "other" as const,
+      source: "nasa-eonet" as const,
+      sourceName: "NASA EONET",
+      startedAt: "2026-06-10T12:00:00Z",
+      rawPayload: { id: "required-fields" },
+    };
+
+    expect(normalizeIncident({ ...requiredFields, rawId: " ", title: "Missing raw id" })).toBeNull();
+    expect(normalizeIncident({ ...requiredFields, rawId: "missing-title", title: " " })).toBeNull();
+    expect(normalizeIncident({ ...requiredFields, rawId: "missing-start", title: "Missing start", startedAt: "" })).toBeNull();
   });
 
   it("normalizes a raw USGS earthquake payload into a source-attributed Incident", () => {
@@ -251,12 +308,35 @@ describe("Incident severity scoring and filters", () => {
     });
   });
 
+  it("normalizes Severity Score boundaries before assigning Severity Score labels", () => {
+    expect(scoreIncidentSeverity({ category: "other", severityScore: -10 })).toEqual({
+      severityScore: 0,
+      severityLabel: "minor",
+    });
+    expect(scoreIncidentSeverity({ category: "other", severityScore: 49.96 })).toEqual({
+      severityScore: 50,
+      severityLabel: "strong",
+    });
+    expect(scoreIncidentSeverity({ category: "other", severityScore: 120 })).toEqual({
+      severityScore: 100,
+      severityLabel: "major",
+    });
+  });
+
   it("narrows the Incident set by category, source, severity, and text filters", () => {
     const filtered = filterIncidents(incidents, {
       categories: ["wildfire", "earthquake"],
       sources: ["nasa-eonet"],
       severityLabels: ["strong"],
       text: "British Columbia",
+    });
+
+    expect(filtered.map((incident) => incident.id)).toEqual(["nasa-eonet:wildfire-1"]);
+  });
+
+  it("matches text filters across Incident identity, source attribution, and severity without reordering results", () => {
+    const filtered = filterIncidents(incidents, {
+      text: "nasa eonet strong",
     });
 
     expect(filtered.map((incident) => incident.id)).toEqual(["nasa-eonet:wildfire-1"]);
@@ -405,7 +485,7 @@ describe("Combined Incident collection", () => {
     ],
   };
 
-  it("merges USGS and NASA EONET output into one live Incident collection with Source Status freshness", async () => {
+  it("merges USGS and NASA EONET output while keeping the GDACS limitation visible in Source Status", async () => {
     const fetcher: FeedAdapterFetch = async (input) => {
       const url = String(input);
 
@@ -450,12 +530,20 @@ describe("Combined Incident collection", () => {
         lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
         message: null,
       },
+      {
+        publicFeed: "gdacs",
+        publicFeedName: "GDACS",
+        state: "unavailable",
+        lastAttemptedAt: "2026-06-10T15:00:00.000Z",
+        lastSuccessfulAt: null,
+        message: GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+      },
     ]);
     expect(collection.sourceStatusSummary).toEqual({
-      sourceCount: 2,
+      sourceCount: 3,
       successCount: 2,
       degradedCount: 0,
-      unavailableCount: 0,
+      unavailableCount: 1,
       lastAttemptedAt: "2026-06-10T15:00:00.000Z",
       lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
     });
@@ -476,6 +564,16 @@ describe("Combined Incident collection", () => {
       now: () => refreshedAt,
       usgsEarthquakes: { fetcher },
       nasaEonet: { fetcher },
+      previousSourceStatuses: [
+        {
+          publicFeed: "nasa-eonet",
+          publicFeedName: "NASA EONET",
+          state: "success",
+          lastAttemptedAt: "2026-06-10T14:45:00.000Z",
+          lastSuccessfulAt: "2026-06-10T14:45:00.000Z",
+          message: null,
+        },
+      ],
     });
 
     expect(collection.incidents).toHaveLength(2);
@@ -493,15 +591,43 @@ describe("Combined Incident collection", () => {
       publicFeedName: "NASA EONET",
       state: "unavailable",
       lastAttemptedAt: "2026-06-10T15:00:00.000Z",
-      lastSuccessfulAt: null,
+      lastSuccessfulAt: "2026-06-10T14:45:00.000Z",
       message: "NASA EONET fetch failed: NASA EONET outage.",
     });
+    expect(collection.sourceStatuses).toContainEqual({
+      publicFeed: "gdacs",
+      publicFeedName: "GDACS",
+      state: "unavailable",
+      lastAttemptedAt: "2026-06-10T15:00:00.000Z",
+      lastSuccessfulAt: null,
+      message: GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+    });
     expect(collection.sourceStatusSummary).toMatchObject({
-      sourceCount: 2,
+      sourceCount: 3,
       successCount: 1,
       degradedCount: 0,
-      unavailableCount: 1,
+      unavailableCount: 2,
     });
+  });
+});
+
+describe("GDACS Public Feed resolution", () => {
+  it("documents the probed GDACS RSS endpoint while reporting it unavailable in the browser app runtime", async () => {
+    const retrievedAt = new Date("2026-06-10T14:00:00Z");
+    const result = await fetchGdacsIncidents({ now: () => retrievedAt });
+
+    expect(GDACS_RSS_FEED_ENDPOINT).toBe("https://www.gdacs.org/xml/rss.xml");
+    expect(result.incidents).toEqual([]);
+    expect(result.sourceStatus).toEqual({
+      publicFeed: "gdacs",
+      publicFeedName: "GDACS",
+      state: "unavailable",
+      lastAttemptedAt: "2026-06-10T14:00:00.000Z",
+      lastSuccessfulAt: null,
+      message: GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE,
+    });
+    expect(result.sourceStatus.message).toContain("browser CORS access");
+    expect(result.sourceStatus.message).toContain("USGS Earthquakes and NASA EONET remain active");
   });
 });
 

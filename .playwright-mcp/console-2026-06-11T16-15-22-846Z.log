@@ -1,0 +1,3 @@
+[   17843ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0
+[   17942ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0
+[   28803ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0

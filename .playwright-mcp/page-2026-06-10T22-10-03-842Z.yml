@@ -1,0 +1,15 @@
+- main "Global Crisis Observatory" [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e7]
+      - paragraph [ref=e8]: A command-center view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e9]:
+      - generic [ref=e10]: Refreshing
+      - generic [ref=e11]: Awaiting first refresh
+      - button "Refreshing…" [ref=e12] [cursor=pointer]
+  - status [ref=e13]:
+    - paragraph [ref=e14]: Incident pipeline
+    - heading "Connecting to Public Feeds" [level=2] [ref=e15]
+    - paragraph [ref=e16]: Loading public Incidents from the adapter pipeline.
+    - button "Refresh Source Status" [ref=e17] [cursor=pointer]

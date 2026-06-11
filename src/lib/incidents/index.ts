@@ -9,7 +9,7 @@ export type IncidentCategory =
   | "dust_haze"
   | "other";
 
-export type PublicFeedId = "usgs-earthquakes" | "nasa-eonet";
+export type PublicFeedId = "usgs-earthquakes" | "nasa-eonet" | "gdacs";
 
 export type SourceStatusState = "success" | "degraded" | "unavailable";
 
@@ -81,6 +81,7 @@ export interface CombinedIncidentCollection {
 export interface CombinedIncidentCollectionOptions {
   usgsEarthquakes?: UsgsEarthquakeFeedAdapterOptions;
   nasaEonet?: NasaEonetFeedAdapterOptions;
+  previousSourceStatuses?: readonly SourceStatus[];
   now?: () => Date;
 }
 
@@ -166,6 +167,10 @@ export interface NasaEonetFeedAdapterOptions {
   now?: () => Date;
 }
 
+export interface GdacsFeedAdapterOptions {
+  now?: () => Date;
+}
+
 export interface UsgsEarthquakeFeedAdapterOptions {
   endpoint?: string | URL;
   fetcher?: FeedAdapterFetch;
@@ -187,12 +192,16 @@ export type FeedAdapterFetch = (
 const PUBLIC_FEED_NAMES: Record<PublicFeedId, string> = {
   "usgs-earthquakes": "USGS Earthquakes",
   "nasa-eonet": "NASA EONET",
+  gdacs: "GDACS",
 };
 
 export const NASA_EONET_EVENTS_ENDPOINT = "https://eonet.gsfc.nasa.gov/api/v3/events";
 export const NASA_EONET_DEFAULT_LIMIT = 50;
 export const USGS_EARTHQUAKE_FEED_ENDPOINT =
   "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+export const GDACS_RSS_FEED_ENDPOINT = "https://www.gdacs.org/xml/rss.xml";
+export const GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE =
+  "GDACS RSS is not fetched live because its public endpoint does not advertise browser CORS access for this Vite app runtime; USGS Earthquakes and NASA EONET remain active.";
 
 export function createIncidentId(source: PublicFeedId, rawId: string): string {
   return `${source}:${rawId.trim()}`;
@@ -432,6 +441,13 @@ export async function fetchNasaEonetIncidents(
   }
 }
 
+export async function fetchGdacsIncidents(options: GdacsFeedAdapterOptions = {}): Promise<FeedAdapterResult> {
+  const now = options.now ?? (() => new Date());
+  const attemptedAt = now().toISOString();
+
+  return createGdacsAdapterResult([], "unavailable", attemptedAt, null, GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE);
+}
+
 export async function fetchCombinedIncidentCollection(
   options: CombinedIncidentCollectionOptions = {},
 ): Promise<CombinedIncidentCollection> {
@@ -440,6 +456,7 @@ export async function fetchCombinedIncidentCollection(
   const defaultAdapterNow = () => new Date(refreshedAt);
   const usgsOptions: UsgsEarthquakeFeedAdapterOptions = { ...(options.usgsEarthquakes ?? {}) };
   const nasaOptions: NasaEonetFeedAdapterOptions = { ...(options.nasaEonet ?? {}) };
+  const gdacsOptions: GdacsFeedAdapterOptions = {};
 
   if (usgsOptions.now === undefined) {
     usgsOptions.now = defaultAdapterNow;
@@ -449,7 +466,11 @@ export async function fetchCombinedIncidentCollection(
     nasaOptions.now = defaultAdapterNow;
   }
 
-  const [usgsResult, nasaResult] = await Promise.all([
+  if (gdacsOptions.now === undefined) {
+    gdacsOptions.now = defaultAdapterNow;
+  }
+
+  const [usgsResult, nasaResult, gdacsResult] = await Promise.all([
     fetchUsgsEarthquakeFeed(usgsOptions).then(toCombinedFeedAdapterResult, (error) =>
       createUnavailableCombinedFeedAdapterResult(
         "usgs-earthquakes",
@@ -464,16 +485,51 @@ export async function fetchCombinedIncidentCollection(
         `NASA EONET adapter failed before returning Source Status: ${describeError(error)}.`,
       ),
     ),
+    fetchGdacsIncidents(gdacsOptions).then(toCombinedFeedAdapterResult, (error) =>
+      createUnavailableCombinedFeedAdapterResult(
+        "gdacs",
+        refreshedAt,
+        `GDACS adapter failed before returning Source Status: ${describeError(error)}.`,
+      ),
+    ),
   ]);
 
-  const sourceStatuses = [usgsResult.sourceStatus, nasaResult.sourceStatus];
-  const incidents = [...usgsResult.incidents, ...nasaResult.incidents].sort(compareIncidentsByFreshness);
+  const previousSourceStatuses = options.previousSourceStatuses ?? [];
+  const sourceStatuses = [usgsResult.sourceStatus, nasaResult.sourceStatus, gdacsResult.sourceStatus].map((sourceStatus) =>
+    carryForwardSourceStatusFreshness(sourceStatus, previousSourceStatuses),
+  );
+  const incidents = [...usgsResult.incidents, ...nasaResult.incidents, ...gdacsResult.incidents].sort(
+    compareIncidentsByFreshness,
+  );
 
   return {
     incidents,
     sourceStatuses,
     sourceStatusSummary: summarizeSourceStatus(sourceStatuses),
     refreshedAt,
+  };
+}
+
+function carryForwardSourceStatusFreshness(
+  sourceStatus: SourceStatus,
+  previousSourceStatuses: readonly SourceStatus[],
+): SourceStatus {
+  if (sourceStatus.lastSuccessfulAt !== null) {
+    return sourceStatus;
+  }
+
+  const previousSourceStatus = previousSourceStatuses.find(
+    (previousStatus) => previousStatus.publicFeed === sourceStatus.publicFeed,
+  );
+  const previousLastSuccessfulAt = previousSourceStatus?.lastSuccessfulAt ?? null;
+
+  if (previousLastSuccessfulAt === null || readLatestIsoTimestamp([previousLastSuccessfulAt]) === null) {
+    return sourceStatus;
+  }
+
+  return {
+    ...sourceStatus,
+    lastSuccessfulAt: previousLastSuccessfulAt,
   };
 }
 
@@ -639,6 +695,26 @@ function createNasaEonetAdapterResult(
     sourceStatus: {
       publicFeed: "nasa-eonet",
       publicFeedName: PUBLIC_FEED_NAMES["nasa-eonet"],
+      state,
+      lastAttemptedAt,
+      lastSuccessfulAt,
+      message,
+    },
+  };
+}
+
+function createGdacsAdapterResult(
+  incidents: Incident[],
+  state: SourceStatusState,
+  lastAttemptedAt: string,
+  lastSuccessfulAt: string | null,
+  message: string | null,
+): FeedAdapterResult {
+  return {
+    incidents,
+    sourceStatus: {
+      publicFeed: "gdacs",
+      publicFeedName: PUBLIC_FEED_NAMES.gdacs,
       state,
       lastAttemptedAt,
       lastSuccessfulAt,

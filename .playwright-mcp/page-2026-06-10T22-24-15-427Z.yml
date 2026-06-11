@@ -1,0 +1,23 @@
+- main "Global Crisis Observatory" [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e7]
+      - paragraph [ref=e8]: A Global Crisis Dashboard view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e9]:
+      - generic [ref=e10]: Refreshing
+      - generic [ref=e11]: Awaiting first refresh
+      - button "Refreshing…" [ref=e12] [cursor=pointer]
+    - region "Settings Control" [ref=e13]:
+      - paragraph [ref=e14]: Settings Control
+      - generic [ref=e15]: Visibility Mode
+      - combobox "Visibility Mode" [ref=e16]:
+        - option "Light" [selected]
+        - option "Dark"
+        - option "High contrast"
+      - generic [ref=e17]: Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.
+  - status [ref=e18]:
+    - paragraph [ref=e19]: Incident pipeline
+    - heading "Connecting to Public Feeds" [level=2] [ref=e20]
+    - paragraph [ref=e21]: Loading public Incidents from the adapter pipeline.
+    - button "Refresh Source Status" [ref=e22] [cursor=pointer]

@@ -1,0 +1,1701 @@
+- main "Global Crisis Observatory" [ref=e16975]:
+  - generic [ref=e16976]:
+    - generic [ref=e16977]:
+      - paragraph [ref=e16978]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e16979]
+      - paragraph [ref=e16980]: A Global Crisis Dashboard view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e16981]:
+      - generic [ref=e16982]: Degraded
+      - generic [ref=e16983]: Refreshed Jun 11, 2026, 4:26 PM UTC
+      - button "Refresh" [ref=e16984] [cursor=pointer]
+    - region "Settings Control" [ref=e16985]:
+      - paragraph [ref=e16986]: Settings Control
+      - generic [ref=e16987]: Visibility Mode
+      - combobox "Visibility Mode" [ref=e16988]:
+        - option "Light" [selected]
+        - option "Dark"
+        - option "High contrast"
+      - generic [ref=e16989]: "Current Visibility Mode: Light"
+      - generic [ref=e16990]: Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.
+  - region "summary metrics" [ref=e16991]:
+    - article [ref=e16992]:
+      - generic [ref=e16993]: Filtered Incident Set
+      - strong [ref=e16994]: "50"
+      - paragraph [ref=e16995]: 285 total Incidents from reachable Public Feeds
+    - article [ref=e16996]:
+      - generic [ref=e16997]: Public Feeds Online
+      - strong [ref=e16998]: 2/3
+      - paragraph [ref=e16999]: Some Source Status checks need attention
+    - article [ref=e17000]:
+      - generic [ref=e17001]: Source Status Attention
+      - strong [ref=e17002]: "1"
+      - paragraph [ref=e17003]: 0 degraded, 1 unavailable
+    - article [ref=e17004]:
+      - generic [ref=e17005]: Last Refresh
+      - strong [ref=e17006]: Jun 11, 2026, 4:26 PM
+      - paragraph [ref=e17007]: "Latest successful refresh: Jun 11, 2026, 4:26 PM"
+  - region "Global Crisis Dashboard layout" [ref=e17008]:
+    - region "Primary geographic Incident view" [ref=e17009]:
+      - generic [ref=e17011]:
+        - paragraph [ref=e17012]: Globe Map
+        - heading "Primary geographic Incident view" [level=2] [ref=e17013]
+        - paragraph [ref=e17014]: Incident Markers are projected by latitude and longitude with Public Feed attribution visible on the map.
+      - group "Map area with styled Incident markers" [ref=e17015]:
+        - generic [ref=e17016]:
+          - button "Select Tropical Storm Cristina from NASA EONET" [ref=e17017] [cursor=pointer]:
+            - generic [ref=e17018]: Tropical Storm Cristina
+            - generic: EONET
+          - button "Select Tropical Storm Boris from NASA EONET" [ref=e17019] [cursor=pointer]:
+            - generic [ref=e17020]: Tropical Storm Boris
+            - generic: EONET
+          - button "Select Tropical Storm Amanda from NASA EONET" [ref=e17021] [cursor=pointer]:
+            - generic [ref=e17022]: Tropical Storm Amanda
+            - generic: EONET
+          - button "Select Tower Wildfire, Millard, Utah from NASA EONET" [ref=e17023] [cursor=pointer]:
+            - generic [ref=e17024]: Tower Wildfire, Millard, Utah
+            - generic: EONET
+          - button "Select Raven Creek Wildfire, Weston, Wyoming from NASA EONET" [ref=e17025] [cursor=pointer]:
+            - generic [ref=e17026]: Raven Creek Wildfire, Weston, Wyoming
+            - generic: EONET
+          - button "Select CHESTNUT Wildfire, Chelan, Washington from NASA EONET" [ref=e17027] [cursor=pointer]:
+            - generic [ref=e17028]: CHESTNUT Wildfire, Chelan, Washington
+            - generic: EONET
+          - button "Select WALTZ Wildfire, Mariposa, California from NASA EONET" [ref=e17029] [cursor=pointer]:
+            - generic [ref=e17030]: WALTZ Wildfire, Mariposa, California
+            - generic: EONET
+          - button "Select Kopshesut Wildfire, Northwest Arctic, Alaska from NASA EONET" [ref=e17031] [cursor=pointer]:
+            - generic [ref=e17032]: Kopshesut Wildfire, Northwest Arctic, Alaska
+            - generic: EONET
+          - button "Select MOXEE ORCHARD Wildfire, Yakima, Washington from NASA EONET" [ref=e17033] [cursor=pointer]:
+            - generic [ref=e17034]: MOXEE ORCHARD Wildfire, Yakima, Washington
+            - generic: EONET
+          - button "Select HAYSTACK BUTTE Wildfire, Klickitat, Washington from NASA EONET" [ref=e17035] [cursor=pointer]:
+            - generic [ref=e17036]: HAYSTACK BUTTE Wildfire, Klickitat, Washington
+            - generic: EONET
+          - button "Select BRANTLEY 2 Wildfire, Eddy, New Mexico from NASA EONET" [ref=e17037] [cursor=pointer]:
+            - generic [ref=e17038]: BRANTLEY 2 Wildfire, Eddy, New Mexico
+            - generic: EONET
+          - button "Select Telica Volcano, Nicaragua from NASA EONET" [ref=e17039] [cursor=pointer]:
+            - generic [ref=e17040]: Telica Volcano, Nicaragua
+            - generic: EONET
+          - button "Select Ivao Group Volcano, Russia from NASA EONET" [ref=e17041] [cursor=pointer]:
+            - generic [ref=e17042]: Ivao Group Volcano, Russia
+            - generic: EONET
+          - button "Select KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan from NASA EONET" [ref=e17043] [cursor=pointer]:
+            - generic [ref=e17044]: KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan
+            - generic: EONET
+          - button "Select Titan Ridge Volcano, Papua New Guinea from NASA EONET" [ref=e17045] [cursor=pointer]:
+            - generic [ref=e17046]: Titan Ridge Volcano, Papua New Guinea
+            - generic: EONET
+          - button "Select Bradshaw Wildfire, Powder River, Montana from NASA EONET" [ref=e17047] [cursor=pointer]:
+            - generic [ref=e17048]: Bradshaw Wildfire, Powder River, Montana
+            - generic: EONET
+          - button "Select Black Ridge Wildfire, Lincoln, Idaho from NASA EONET" [ref=e17049] [cursor=pointer]:
+            - generic [ref=e17050]: Black Ridge Wildfire, Lincoln, Idaho
+            - generic: EONET
+          - button "Select 0231 ZEN Wildfire, Wasco, Oregon from NASA EONET" [ref=e17051] [cursor=pointer]:
+            - generic [ref=e17052]: 0231 ZEN Wildfire, Wasco, Oregon
+            - generic: EONET
+          - button "Select Egberts Wildfire, Elko, Nevada from NASA EONET" [ref=e17053] [cursor=pointer]:
+            - generic [ref=e17054]: Egberts Wildfire, Elko, Nevada
+            - generic: EONET
+          - button "Select Summit Creek Wildfire, Cassia, Idaho from NASA EONET" [ref=e17055] [cursor=pointer]:
+            - generic [ref=e17056]: Summit Creek Wildfire, Cassia, Idaho
+            - generic: EONET
+          - button "Select Kinyon Springs Wildfire, Owyhee, Idaho from NASA EONET" [ref=e17057] [cursor=pointer]:
+            - generic [ref=e17058]: Kinyon Springs Wildfire, Owyhee, Idaho
+            - generic: EONET
+          - button "Select MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida from NASA EONET" [ref=e17059] [cursor=pointer]:
+            - generic [ref=e17060]: MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida
+            - generic: EONET
+          - button "Select COUNTRY MEADOW Wildfire, Benton, Washington from NASA EONET" [ref=e17061] [cursor=pointer]:
+            - generic [ref=e17062]: COUNTRY MEADOW Wildfire, Benton, Washington
+            - generic: EONET
+          - button "Select 340 Wildfire, Wakulla, Florida from NASA EONET" [ref=e17063] [cursor=pointer]:
+            - generic [ref=e17064]: 340 Wildfire, Wakulla, Florida
+            - generic: EONET
+          - button "Select Mile Marker 44 Wildfire, Broward, Florida from NASA EONET" [ref=e17065] [cursor=pointer]:
+            - generic [ref=e17066]: Mile Marker 44 Wildfire, Broward, Florida
+            - generic: EONET
+          - button "Select Quartz Wildfire, Pershing, Nevada from NASA EONET" [ref=e17067] [cursor=pointer]:
+            - generic [ref=e17068]: Quartz Wildfire, Pershing, Nevada
+            - generic: EONET
+          - button "Select Thousand Wildfire, Northwest Arctic, Alaska from NASA EONET" [ref=e17069] [cursor=pointer]:
+            - generic [ref=e17070]: Thousand Wildfire, Northwest Arctic, Alaska
+            - generic: EONET
+          - button "Select WaWa 2 Wildfire, Highlands, Florida from NASA EONET" [ref=e17071] [cursor=pointer]:
+            - generic [ref=e17072]: WaWa 2 Wildfire, Highlands, Florida
+            - generic: EONET
+          - button "Select Shell Wildfire, Lake, Florida from NASA EONET" [ref=e17073] [cursor=pointer]:
+            - generic [ref=e17074]: Shell Wildfire, Lake, Florida
+            - generic: EONET
+          - button "Select Trigg Wildfire, San Miguel, New Mexico from NASA EONET" [ref=e17075] [cursor=pointer]:
+            - generic [ref=e17076]: Trigg Wildfire, San Miguel, New Mexico
+            - generic: EONET
+          - button "Select DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi from NASA EONET" [ref=e17077] [cursor=pointer]:
+            - generic [ref=e17078]: DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi
+            - generic: EONET
+          - button "Select Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi from NASA EONET" [ref=e17079] [cursor=pointer]:
+            - generic [ref=e17080]: Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi
+            - generic: EONET
+          - button "Select CADDUGGEN Wildfire, Carteret, North Carolina from NASA EONET" [ref=e17081] [cursor=pointer]:
+            - generic [ref=e17082]: CADDUGGEN Wildfire, Carteret, North Carolina
+            - generic: EONET
+          - button "Select Rifle Range Rd Wildfire, Collier, Florida from NASA EONET" [ref=e17083] [cursor=pointer]:
+            - generic [ref=e17084]: Rifle Range Rd Wildfire, Collier, Florida
+            - generic: EONET
+          - button "Select Foothill Wildfire, Santa Barbara, California from NASA EONET" [ref=e17085] [cursor=pointer]:
+            - generic [ref=e17086]: Foothill Wildfire, Santa Barbara, California
+            - generic: EONET
+          - button "Select MTZ/SDU/TUSIL Wildfire, San Diego, California from NASA EONET" [ref=e17087] [cursor=pointer]:
+            - generic [ref=e17088]: MTZ/SDU/TUSIL Wildfire, San Diego, California
+            - generic: EONET
+          - button "Select VERONA Wildfire, Riverside, California from NASA EONET" [ref=e17089] [cursor=pointer]:
+            - generic [ref=e17090]: VERONA Wildfire, Riverside, California
+            - generic: EONET
+          - button "Select BAIN Wildfire, Riverside, California from NASA EONET" [ref=e17091] [cursor=pointer]:
+            - generic [ref=e17092]: BAIN Wildfire, Riverside, California
+            - generic: EONET
+          - button "Select Sunfish Rx Prescribed Fire, Cook, Minnesota from NASA EONET" [ref=e17093] [cursor=pointer]:
+            - generic [ref=e17094]: Sunfish Rx Prescribed Fire, Cook, Minnesota
+            - generic: EONET
+          - button "Select DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi from NASA EONET" [ref=e17095] [cursor=pointer]:
+            - generic [ref=e17096]: DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi
+            - generic: EONET
+          - button "Select Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi from NASA EONET" [ref=e17097] [cursor=pointer]:
+            - generic [ref=e17098]: Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi
+            - generic: EONET
+          - button "Select RX WINN BU 24 Prescribed Fire, Winn, Louisiana from NASA EONET" [ref=e17099] [cursor=pointer]:
+            - generic [ref=e17100]: RX WINN BU 24 Prescribed Fire, Winn, Louisiana
+            - generic: EONET
+          - button "Select Kress Wildfire, Swisher, Texas from NASA EONET" [ref=e17101] [cursor=pointer]:
+            - generic [ref=e17102]: Kress Wildfire, Swisher, Texas
+            - generic: EONET
+          - button "Select SANDY Wildfire, Ventura, California from NASA EONET" [ref=e17103] [cursor=pointer]:
+            - generic [ref=e17104]: SANDY Wildfire, Ventura, California
+            - generic: EONET
+          - button "Select RIVER Wildfire, Kern, California from NASA EONET" [ref=e17105] [cursor=pointer]:
+            - generic [ref=e17106]: RIVER Wildfire, Kern, California
+            - generic: EONET
+          - button "Select Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi from NASA EONET" [ref=e17107] [cursor=pointer]:
+            - generic [ref=e17108]: Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi
+            - generic: EONET
+          - button "Select RX WINN BU 114 Prescribed Fire, Grant, Louisiana from NASA EONET" [ref=e17109] [cursor=pointer]:
+            - generic [ref=e17110]: RX WINN BU 114 Prescribed Fire, Grant, Louisiana
+            - generic: EONET
+          - button "Select Stinky Wildfire, Potter, Texas from NASA EONET" [ref=e17111] [cursor=pointer]:
+            - generic [ref=e17112]: Stinky Wildfire, Potter, Texas
+            - generic: EONET
+          - button "Select Sharpe Wildfire, Baca, Colorado from NASA EONET" [ref=e17113] [cursor=pointer]:
+            - generic [ref=e17114]: Sharpe Wildfire, Baca, Colorado
+            - generic: EONET
+          - button "Select Proffitt Lake Wildfire, Meade, Kansas from NASA EONET" [ref=e17115] [cursor=pointer]:
+            - generic [ref=e17116]: Proffitt Lake Wildfire, Meade, Kansas
+            - generic: EONET
+        - generic "Visible Public Feed attribution" [ref=e17117]:
+          - generic [ref=e17118]: Visible Public Feeds
+          - 'generic "Public Feed: NASA EONET" [ref=e17120]':
+            - generic [ref=e17121]: EONET
+            - generic [ref=e17122]: NASA EONET
+        - paragraph: Select an Incident Marker or feed row to focus the Globe Map.
+    - complementary "Refine the Filtered Incident Set" [ref=e17123]:
+      - generic [ref=e17124]:
+        - paragraph [ref=e17125]: Filters
+        - heading "Refine the Filtered Incident Set" [level=2] [ref=e17126]
+      - generic [ref=e17127]:
+        - generic [ref=e17128]:
+          - text: Text search
+          - searchbox "Text search" [ref=e17129]
+        - generic [ref=e17130]:
+          - text: Category
+          - combobox "Category" [ref=e17131]:
+            - option "All categories" [selected]
+            - option "Earthquake"
+            - option "Wildfire"
+            - option "Severe Storm"
+            - option "Volcano"
+        - generic [ref=e17132]:
+          - text: Public Feed
+          - combobox "Public Feed" [ref=e17133]:
+            - option "All Public Feeds"
+            - option "NASA EONET" [selected]
+            - option "USGS Earthquakes"
+        - generic [ref=e17134]:
+          - text: Severity Score
+          - combobox "Severity Score" [ref=e17135]:
+            - option "All severities" [selected]
+            - option "minor"
+            - option "moderate"
+            - option "strong"
+        - button "Reset filters" [ref=e17136] [cursor=pointer]
+    - region "Live public Incidents" [ref=e17137]:
+      - generic [ref=e17138]:
+        - paragraph [ref=e17139]: Incident Feed
+        - heading "Live public Incidents" [level=2] [ref=e17140]
+      - generic [ref=e17141]:
+        - article [ref=e17142]:
+          - button "Severe Storm strong · 60 NASA EONET Tropical Storm Cristina" [ref=e17144] [cursor=pointer]:
+            - generic [ref=e17145]: Severe Storm
+            - generic [ref=e17146]: strong · 60
+            - 'generic "Public Feed: NASA EONET" [ref=e17147]':
+              - generic [ref=e17148]: EONET
+              - generic [ref=e17149]: NASA EONET
+            - generic [ref=e17150]: Tropical Storm Cristina
+          - generic [ref=e17151]:
+            - generic [ref=e17152]:
+              - term [ref=e17153]: Public Feed
+              - definition [ref=e17154]: NASA EONET
+            - generic [ref=e17155]:
+              - term [ref=e17156]: Severity Score
+              - definition [ref=e17157]: strong · 60
+            - generic [ref=e17158]:
+              - term [ref=e17159]: Started
+              - definition [ref=e17160]: Jun 8, 2026, 12:00 PM
+            - generic [ref=e17161]:
+              - term [ref=e17162]: Coordinates
+              - definition [ref=e17163]: 12.80, -89.10
+          - generic [ref=e17164]:
+            - generic [ref=e17165]:
+              - generic [ref=e17166]: Not saved
+              - button "Save Tropical Storm Cristina from feed as a Saved Event" [ref=e17167] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17168] [cursor=pointer]:
+              - /url: https://www.metoc.navy.mil/jtwc/products/ep0326.tcw
+        - article [ref=e17169]:
+          - button "Severe Storm strong · 60 NASA EONET Tropical Storm Boris" [ref=e17171] [cursor=pointer]:
+            - generic [ref=e17172]: Severe Storm
+            - generic [ref=e17173]: strong · 60
+            - 'generic "Public Feed: NASA EONET" [ref=e17174]':
+              - generic [ref=e17175]: EONET
+              - generic [ref=e17176]: NASA EONET
+            - generic [ref=e17177]: Tropical Storm Boris
+          - generic [ref=e17178]:
+            - generic [ref=e17179]:
+              - term [ref=e17180]: Public Feed
+              - definition [ref=e17181]: NASA EONET
+            - generic [ref=e17182]:
+              - term [ref=e17183]: Severity Score
+              - definition [ref=e17184]: strong · 60
+            - generic [ref=e17185]:
+              - term [ref=e17186]: Started
+              - definition [ref=e17187]: Jun 8, 2026, 6:00 AM
+            - generic [ref=e17188]:
+              - term [ref=e17189]: Coordinates
+              - definition [ref=e17190]: 16.70, -98.60
+          - generic [ref=e17191]:
+            - generic [ref=e17192]:
+              - generic [ref=e17193]: Not saved
+              - button "Save Tropical Storm Boris from feed as a Saved Event" [ref=e17194] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17195] [cursor=pointer]:
+              - /url: https://www.metoc.navy.mil/jtwc/products/ep0226.tcw
+        - article [ref=e17196]:
+          - button "Severe Storm strong · 60 NASA EONET Tropical Storm Amanda" [ref=e17198] [cursor=pointer]:
+            - generic [ref=e17199]: Severe Storm
+            - generic [ref=e17200]: strong · 60
+            - 'generic "Public Feed: NASA EONET" [ref=e17201]':
+              - generic [ref=e17202]: EONET
+              - generic [ref=e17203]: NASA EONET
+            - generic [ref=e17204]: Tropical Storm Amanda
+          - generic [ref=e17205]:
+            - generic [ref=e17206]:
+              - term [ref=e17207]: Public Feed
+              - definition [ref=e17208]: NASA EONET
+            - generic [ref=e17209]:
+              - term [ref=e17210]: Severity Score
+              - definition [ref=e17211]: strong · 60
+            - generic [ref=e17212]:
+              - term [ref=e17213]: Started
+              - definition [ref=e17214]: Jun 3, 2026, 12:00 PM
+            - generic [ref=e17215]:
+              - term [ref=e17216]: Coordinates
+              - definition [ref=e17217]: 11.30, -136.00
+          - generic [ref=e17218]:
+            - generic [ref=e17219]:
+              - generic [ref=e17220]: Not saved
+              - button "Save Tropical Storm Amanda from feed as a Saved Event" [ref=e17221] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17222] [cursor=pointer]:
+              - /url: https://www.metoc.navy.mil/jtwc/products/ep0126.tcw
+        - article [ref=e17223]:
+          - button "Wildfire strong · 65 NASA EONET Tower Wildfire, Millard, Utah" [ref=e17225] [cursor=pointer]:
+            - generic [ref=e17226]: Wildfire
+            - generic [ref=e17227]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17228]':
+              - generic [ref=e17229]: EONET
+              - generic [ref=e17230]: NASA EONET
+            - generic [ref=e17231]: Tower Wildfire, Millard, Utah
+          - generic [ref=e17232]:
+            - generic [ref=e17233]:
+              - term [ref=e17234]: Public Feed
+              - definition [ref=e17235]: NASA EONET
+            - generic [ref=e17236]:
+              - term [ref=e17237]: Severity Score
+              - definition [ref=e17238]: strong · 65
+            - generic [ref=e17239]:
+              - term [ref=e17240]: Started
+              - definition [ref=e17241]: Jun 7, 2026, 3:24 PM
+            - generic [ref=e17242]:
+              - term [ref=e17243]: Coordinates
+              - definition [ref=e17244]: 39.21, -112.16
+          - generic [ref=e17245]:
+            - generic [ref=e17246]:
+              - generic [ref=e17247]: Not saved
+              - button "Save Tower Wildfire, Millard, Utah from feed as a Saved Event" [ref=e17248] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17249] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/6f3a4603-8a05-428a-b65c-16b6e2d33ab3
+        - article [ref=e17250]:
+          - button "Wildfire strong · 65 NASA EONET Raven Creek Wildfire, Weston, Wyoming" [ref=e17252] [cursor=pointer]:
+            - generic [ref=e17253]: Wildfire
+            - generic [ref=e17254]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17255]':
+              - generic [ref=e17256]: EONET
+              - generic [ref=e17257]: NASA EONET
+            - generic [ref=e17258]: Raven Creek Wildfire, Weston, Wyoming
+          - generic [ref=e17259]:
+            - generic [ref=e17260]:
+              - term [ref=e17261]: Public Feed
+              - definition [ref=e17262]: NASA EONET
+            - generic [ref=e17263]:
+              - term [ref=e17264]: Severity Score
+              - definition [ref=e17265]: strong · 65
+            - generic [ref=e17266]:
+              - term [ref=e17267]: Started
+              - definition [ref=e17268]: Jun 6, 2026, 8:44 PM
+            - generic [ref=e17269]:
+              - term [ref=e17270]: Coordinates
+              - definition [ref=e17271]: 44.08, -105.05
+          - generic [ref=e17272]:
+            - generic [ref=e17273]:
+              - generic [ref=e17274]: Not saved
+              - button "Save Raven Creek Wildfire, Weston, Wyoming from feed as a Saved Event" [ref=e17275] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17276] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/7c1335d1-37d1-436f-9f42-05f089f964b5
+        - article [ref=e17277]:
+          - button "Wildfire strong · 65 NASA EONET CHESTNUT Wildfire, Chelan, Washington" [ref=e17279] [cursor=pointer]:
+            - generic [ref=e17280]: Wildfire
+            - generic [ref=e17281]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17282]':
+              - generic [ref=e17283]: EONET
+              - generic [ref=e17284]: NASA EONET
+            - generic [ref=e17285]: CHESTNUT Wildfire, Chelan, Washington
+          - generic [ref=e17286]:
+            - generic [ref=e17287]:
+              - term [ref=e17288]: Public Feed
+              - definition [ref=e17289]: NASA EONET
+            - generic [ref=e17290]:
+              - term [ref=e17291]: Severity Score
+              - definition [ref=e17292]: strong · 65
+            - generic [ref=e17293]:
+              - term [ref=e17294]: Started
+              - definition [ref=e17295]: Jun 6, 2026, 2:14 PM
+            - generic [ref=e17296]:
+              - term [ref=e17297]: Coordinates
+              - definition [ref=e17298]: 47.79, -120.02
+          - generic [ref=e17299]:
+            - generic [ref=e17300]:
+              - generic [ref=e17301]: Not saved
+              - button "Save CHESTNUT Wildfire, Chelan, Washington from feed as a Saved Event" [ref=e17302] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17303] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/61b0da7b-ab05-43d3-a817-7087246a7765
+        - article [ref=e17304]:
+          - button "Wildfire strong · 65 NASA EONET WALTZ Wildfire, Mariposa, California" [ref=e17306] [cursor=pointer]:
+            - generic [ref=e17307]: Wildfire
+            - generic [ref=e17308]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17309]':
+              - generic [ref=e17310]: EONET
+              - generic [ref=e17311]: NASA EONET
+            - generic [ref=e17312]: WALTZ Wildfire, Mariposa, California
+          - generic [ref=e17313]:
+            - generic [ref=e17314]:
+              - term [ref=e17315]: Public Feed
+              - definition [ref=e17316]: NASA EONET
+            - generic [ref=e17317]:
+              - term [ref=e17318]: Severity Score
+              - definition [ref=e17319]: strong · 65
+            - generic [ref=e17320]:
+              - term [ref=e17321]: Started
+              - definition [ref=e17322]: Jun 5, 2026, 3:51 PM
+            - generic [ref=e17323]:
+              - term [ref=e17324]: Coordinates
+              - definition [ref=e17325]: 37.38, -120.25
+          - generic [ref=e17326]:
+            - generic [ref=e17327]:
+              - generic [ref=e17328]: Not saved
+              - button "Save WALTZ Wildfire, Mariposa, California from feed as a Saved Event" [ref=e17329] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17330] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/b8f6d725-b08f-43a6-a286-4fa1e4686926
+        - article [ref=e17331]:
+          - button "Wildfire strong · 65 NASA EONET Kopshesut Wildfire, Northwest Arctic, Alaska" [ref=e17333] [cursor=pointer]:
+            - generic [ref=e17334]: Wildfire
+            - generic [ref=e17335]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17336]':
+              - generic [ref=e17337]: EONET
+              - generic [ref=e17338]: NASA EONET
+            - generic [ref=e17339]: Kopshesut Wildfire, Northwest Arctic, Alaska
+          - generic [ref=e17340]:
+            - generic [ref=e17341]:
+              - term [ref=e17342]: Public Feed
+              - definition [ref=e17343]: NASA EONET
+            - generic [ref=e17344]:
+              - term [ref=e17345]: Severity Score
+              - definition [ref=e17346]: strong · 65
+            - generic [ref=e17347]:
+              - term [ref=e17348]: Started
+              - definition [ref=e17349]: Jun 4, 2026, 6:04 PM
+            - generic [ref=e17350]:
+              - term [ref=e17351]: Coordinates
+              - definition [ref=e17352]: 67.09, -157.93
+          - generic [ref=e17353]:
+            - generic [ref=e17354]:
+              - generic [ref=e17355]: Not saved
+              - button "Save Kopshesut Wildfire, Northwest Arctic, Alaska from feed as a Saved Event" [ref=e17356] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17357] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/c798dd94-3c60-41ad-912b-157b8e4f5d90
+        - article [ref=e17358]:
+          - button "Wildfire strong · 65 NASA EONET MOXEE ORCHARD Wildfire, Yakima, Washington" [ref=e17360] [cursor=pointer]:
+            - generic [ref=e17361]: Wildfire
+            - generic [ref=e17362]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17363]':
+              - generic [ref=e17364]: EONET
+              - generic [ref=e17365]: NASA EONET
+            - generic [ref=e17366]: MOXEE ORCHARD Wildfire, Yakima, Washington
+          - generic [ref=e17367]:
+            - generic [ref=e17368]:
+              - term [ref=e17369]: Public Feed
+              - definition [ref=e17370]: NASA EONET
+            - generic [ref=e17371]:
+              - term [ref=e17372]: Severity Score
+              - definition [ref=e17373]: strong · 65
+            - generic [ref=e17374]:
+              - term [ref=e17375]: Started
+              - definition [ref=e17376]: Jun 4, 2026, 5:25 PM
+            - generic [ref=e17377]:
+              - term [ref=e17378]: Coordinates
+              - definition [ref=e17379]: 46.52, -120.08
+          - generic [ref=e17380]:
+            - generic [ref=e17381]:
+              - generic [ref=e17382]: Not saved
+              - button "Save MOXEE ORCHARD Wildfire, Yakima, Washington from feed as a Saved Event" [ref=e17383] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17384] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/48e1a724-9dc5-44cf-918c-cf541b1cd180
+        - article [ref=e17385]:
+          - button "Wildfire strong · 65 NASA EONET HAYSTACK BUTTE Wildfire, Klickitat, Washington" [ref=e17387] [cursor=pointer]:
+            - generic [ref=e17388]: Wildfire
+            - generic [ref=e17389]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17390]':
+              - generic [ref=e17391]: EONET
+              - generic [ref=e17392]: NASA EONET
+            - generic [ref=e17393]: HAYSTACK BUTTE Wildfire, Klickitat, Washington
+          - generic [ref=e17394]:
+            - generic [ref=e17395]:
+              - term [ref=e17396]: Public Feed
+              - definition [ref=e17397]: NASA EONET
+            - generic [ref=e17398]:
+              - term [ref=e17399]: Severity Score
+              - definition [ref=e17400]: strong · 65
+            - generic [ref=e17401]:
+              - term [ref=e17402]: Started
+              - definition [ref=e17403]: May 30, 2026, 8:21 PM
+            - generic [ref=e17404]:
+              - term [ref=e17405]: Coordinates
+              - definition [ref=e17406]: 45.67, -120.93
+          - generic [ref=e17407]:
+            - generic [ref=e17408]:
+              - generic [ref=e17409]: Not saved
+              - button "Save HAYSTACK BUTTE Wildfire, Klickitat, Washington from feed as a Saved Event" [ref=e17410] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17411] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/24e697c7-e671-47f2-9ec9-4c76a15af8be
+        - article [ref=e17412]:
+          - button "Wildfire strong · 65 NASA EONET BRANTLEY 2 Wildfire, Eddy, New Mexico" [ref=e17414] [cursor=pointer]:
+            - generic [ref=e17415]: Wildfire
+            - generic [ref=e17416]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17417]':
+              - generic [ref=e17418]: EONET
+              - generic [ref=e17419]: NASA EONET
+            - generic [ref=e17420]: BRANTLEY 2 Wildfire, Eddy, New Mexico
+          - generic [ref=e17421]:
+            - generic [ref=e17422]:
+              - term [ref=e17423]: Public Feed
+              - definition [ref=e17424]: NASA EONET
+            - generic [ref=e17425]:
+              - term [ref=e17426]: Severity Score
+              - definition [ref=e17427]: strong · 65
+            - generic [ref=e17428]:
+              - term [ref=e17429]: Started
+              - definition [ref=e17430]: May 30, 2026, 12:20 PM
+            - generic [ref=e17431]:
+              - term [ref=e17432]: Coordinates
+              - definition [ref=e17433]: 32.61, -104.36
+          - generic [ref=e17434]:
+            - generic [ref=e17435]:
+              - generic [ref=e17436]: Not saved
+              - button "Save BRANTLEY 2 Wildfire, Eddy, New Mexico from feed as a Saved Event" [ref=e17437] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17438] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/d11f3073-cd5d-4c79-bd04-94b39d094049
+        - article [ref=e17439]:
+          - button "Volcano strong · 60 NASA EONET Telica Volcano, Nicaragua" [ref=e17441] [cursor=pointer]:
+            - generic [ref=e17442]: Volcano
+            - generic [ref=e17443]: strong · 60
+            - 'generic "Public Feed: NASA EONET" [ref=e17444]':
+              - generic [ref=e17445]: EONET
+              - generic [ref=e17446]: NASA EONET
+            - generic [ref=e17447]: Telica Volcano, Nicaragua
+          - generic [ref=e17448]:
+            - generic [ref=e17449]:
+              - term [ref=e17450]: Public Feed
+              - definition [ref=e17451]: NASA EONET
+            - generic [ref=e17452]:
+              - term [ref=e17453]: Severity Score
+              - definition [ref=e17454]: strong · 60
+            - generic [ref=e17455]:
+              - term [ref=e17456]: Started
+              - definition [ref=e17457]: May 30, 2026, 12:00 AM
+            - generic [ref=e17458]:
+              - term [ref=e17459]: Coordinates
+              - definition [ref=e17460]: 12.61, -86.84
+          - generic [ref=e17461]:
+            - generic [ref=e17462]:
+              - generic [ref=e17463]: Not saved
+              - button "Save Telica Volcano, Nicaragua from feed as a Saved Event" [ref=e17464] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17465] [cursor=pointer]:
+              - /url: https://volcano.si.edu/volcano.cfm?vn=344040
+        - article [ref=e17466]:
+          - button "Volcano strong · 60 NASA EONET Ivao Group Volcano, Russia" [ref=e17468] [cursor=pointer]:
+            - generic [ref=e17469]: Volcano
+            - generic [ref=e17470]: strong · 60
+            - 'generic "Public Feed: NASA EONET" [ref=e17471]':
+              - generic [ref=e17472]: EONET
+              - generic [ref=e17473]: NASA EONET
+            - generic [ref=e17474]: Ivao Group Volcano, Russia
+          - generic [ref=e17475]:
+            - generic [ref=e17476]:
+              - term [ref=e17477]: Public Feed
+              - definition [ref=e17478]: NASA EONET
+            - generic [ref=e17479]:
+              - term [ref=e17480]: Severity Score
+              - definition [ref=e17481]: strong · 60
+            - generic [ref=e17482]:
+              - term [ref=e17483]: Started
+              - definition [ref=e17484]: May 29, 2026, 12:00 AM
+            - generic [ref=e17485]:
+              - term [ref=e17486]: Coordinates
+              - definition [ref=e17487]: 45.76, 149.68
+          - generic [ref=e17488]:
+            - generic [ref=e17489]:
+              - generic [ref=e17490]: Not saved
+              - button "Save Ivao Group Volcano, Russia from feed as a Saved Event" [ref=e17491] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17492] [cursor=pointer]:
+              - /url: https://volcano.si.edu/volcano.cfm?vn=290111
+        - article [ref=e17493]:
+          - button "Wildfire strong · 65 NASA EONET KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan" [ref=e17495] [cursor=pointer]:
+            - generic [ref=e17496]: Wildfire
+            - generic [ref=e17497]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17498]':
+              - generic [ref=e17499]: EONET
+              - generic [ref=e17500]: NASA EONET
+            - generic [ref=e17501]: KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan
+          - generic [ref=e17502]:
+            - generic [ref=e17503]:
+              - term [ref=e17504]: Public Feed
+              - definition [ref=e17505]: NASA EONET
+            - generic [ref=e17506]:
+              - term [ref=e17507]: Severity Score
+              - definition [ref=e17508]: strong · 65
+            - generic [ref=e17509]:
+              - term [ref=e17510]: Started
+              - definition [ref=e17511]: May 28, 2026, 3:33 PM
+            - generic [ref=e17512]:
+              - term [ref=e17513]: Coordinates
+              - definition [ref=e17514]: 44.52, -84.92
+          - generic [ref=e17515]:
+            - generic [ref=e17516]:
+              - generic [ref=e17517]: Not saved
+              - button "Save KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan from feed as a Saved Event" [ref=e17518] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17519] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/2a7c3979-fc28-4d09-b15f-1cdc98be57e1
+        - article [ref=e17520]:
+          - button "Volcano strong · 60 NASA EONET Titan Ridge Volcano, Papua New Guinea" [ref=e17522] [cursor=pointer]:
+            - generic [ref=e17523]: Volcano
+            - generic [ref=e17524]: strong · 60
+            - 'generic "Public Feed: NASA EONET" [ref=e17525]':
+              - generic [ref=e17526]: EONET
+              - generic [ref=e17527]: NASA EONET
+            - generic [ref=e17528]: Titan Ridge Volcano, Papua New Guinea
+          - generic [ref=e17529]:
+            - generic [ref=e17530]:
+              - term [ref=e17531]: Public Feed
+              - definition [ref=e17532]: NASA EONET
+            - generic [ref=e17533]:
+              - term [ref=e17534]: Severity Score
+              - definition [ref=e17535]: strong · 60
+            - generic [ref=e17536]:
+              - term [ref=e17537]: Started
+              - definition [ref=e17538]: May 28, 2026, 12:00 AM
+            - generic [ref=e17539]:
+              - term [ref=e17540]: Coordinates
+              - definition [ref=e17541]: "-3.03, 147.78"
+          - generic [ref=e17542]:
+            - generic [ref=e17543]:
+              - generic [ref=e17544]: Not saved
+              - button "Save Titan Ridge Volcano, Papua New Guinea from feed as a Saved Event" [ref=e17545] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17546] [cursor=pointer]:
+              - /url: https://science.nasa.gov/earth/earth-observatory/new-eruption-in-the-bismarck-sea/
+        - article [ref=e17547]:
+          - button "Wildfire strong · 65 NASA EONET Bradshaw Wildfire, Powder River, Montana" [ref=e17549] [cursor=pointer]:
+            - generic [ref=e17550]: Wildfire
+            - generic [ref=e17551]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17552]':
+              - generic [ref=e17553]: EONET
+              - generic [ref=e17554]: NASA EONET
+            - generic [ref=e17555]: Bradshaw Wildfire, Powder River, Montana
+          - generic [ref=e17556]:
+            - generic [ref=e17557]:
+              - term [ref=e17558]: Public Feed
+              - definition [ref=e17559]: NASA EONET
+            - generic [ref=e17560]:
+              - term [ref=e17561]: Severity Score
+              - definition [ref=e17562]: strong · 65
+            - generic [ref=e17563]:
+              - term [ref=e17564]: Started
+              - definition [ref=e17565]: May 26, 2026, 11:30 PM
+            - generic [ref=e17566]:
+              - term [ref=e17567]: Coordinates
+              - definition [ref=e17568]: 45.06, -105.96
+          - generic [ref=e17569]:
+            - generic [ref=e17570]:
+              - generic [ref=e17571]: Not saved
+              - button "Save Bradshaw Wildfire, Powder River, Montana from feed as a Saved Event" [ref=e17572] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17573] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/083f5cbb-4d42-4371-acfc-c39bc4e2a545
+        - article [ref=e17574]:
+          - button "Wildfire strong · 65 NASA EONET Black Ridge Wildfire, Lincoln, Idaho" [ref=e17576] [cursor=pointer]:
+            - generic [ref=e17577]: Wildfire
+            - generic [ref=e17578]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17579]':
+              - generic [ref=e17580]: EONET
+              - generic [ref=e17581]: NASA EONET
+            - generic [ref=e17582]: Black Ridge Wildfire, Lincoln, Idaho
+          - generic [ref=e17583]:
+            - generic [ref=e17584]:
+              - term [ref=e17585]: Public Feed
+              - definition [ref=e17586]: NASA EONET
+            - generic [ref=e17587]:
+              - term [ref=e17588]: Severity Score
+              - definition [ref=e17589]: strong · 65
+            - generic [ref=e17590]:
+              - term [ref=e17591]: Started
+              - definition [ref=e17592]: May 25, 2026, 8:50 PM
+            - generic [ref=e17593]:
+              - term [ref=e17594]: Coordinates
+              - definition [ref=e17595]: 43.05, -113.94
+          - generic [ref=e17596]:
+            - generic [ref=e17597]:
+              - generic [ref=e17598]: Not saved
+              - button "Save Black Ridge Wildfire, Lincoln, Idaho from feed as a Saved Event" [ref=e17599] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17600] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/ed35c822-3212-4d00-af01-d65afe675168
+        - article [ref=e17601]:
+          - button "Wildfire strong · 65 NASA EONET 0231 ZEN Wildfire, Wasco, Oregon" [ref=e17603] [cursor=pointer]:
+            - generic [ref=e17604]: Wildfire
+            - generic [ref=e17605]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17606]':
+              - generic [ref=e17607]: EONET
+              - generic [ref=e17608]: NASA EONET
+            - generic [ref=e17609]: 0231 ZEN Wildfire, Wasco, Oregon
+          - generic [ref=e17610]:
+            - generic [ref=e17611]:
+              - term [ref=e17612]: Public Feed
+              - definition [ref=e17613]: NASA EONET
+            - generic [ref=e17614]:
+              - term [ref=e17615]: Severity Score
+              - definition [ref=e17616]: strong · 65
+            - generic [ref=e17617]:
+              - term [ref=e17618]: Started
+              - definition [ref=e17619]: May 25, 2026, 7:11 PM
+            - generic [ref=e17620]:
+              - term [ref=e17621]: Coordinates
+              - definition [ref=e17622]: 44.86, -120.44
+          - generic [ref=e17623]:
+            - generic [ref=e17624]:
+              - generic [ref=e17625]: Not saved
+              - button "Save 0231 ZEN Wildfire, Wasco, Oregon from feed as a Saved Event" [ref=e17626] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17627] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/fda49146-327e-4651-835c-75b7f568a941
+        - article [ref=e17628]:
+          - button "Wildfire strong · 65 NASA EONET Egberts Wildfire, Elko, Nevada" [ref=e17630] [cursor=pointer]:
+            - generic [ref=e17631]: Wildfire
+            - generic [ref=e17632]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17633]':
+              - generic [ref=e17634]: EONET
+              - generic [ref=e17635]: NASA EONET
+            - generic [ref=e17636]: Egberts Wildfire, Elko, Nevada
+          - generic [ref=e17637]:
+            - generic [ref=e17638]:
+              - term [ref=e17639]: Public Feed
+              - definition [ref=e17640]: NASA EONET
+            - generic [ref=e17641]:
+              - term [ref=e17642]: Severity Score
+              - definition [ref=e17643]: strong · 65
+            - generic [ref=e17644]:
+              - term [ref=e17645]: Started
+              - definition [ref=e17646]: May 25, 2026, 5:55 PM
+            - generic [ref=e17647]:
+              - term [ref=e17648]: Coordinates
+              - definition [ref=e17649]: 40.97, -115.06
+          - generic [ref=e17650]:
+            - generic [ref=e17651]:
+              - generic [ref=e17652]: Not saved
+              - button "Save Egberts Wildfire, Elko, Nevada from feed as a Saved Event" [ref=e17653] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17654] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/00055252-6610-421f-aa91-24bda42481bc
+        - article [ref=e17655]:
+          - button "Wildfire strong · 65 NASA EONET Summit Creek Wildfire, Cassia, Idaho" [ref=e17657] [cursor=pointer]:
+            - generic [ref=e17658]: Wildfire
+            - generic [ref=e17659]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17660]':
+              - generic [ref=e17661]: EONET
+              - generic [ref=e17662]: NASA EONET
+            - generic [ref=e17663]: Summit Creek Wildfire, Cassia, Idaho
+          - generic [ref=e17664]:
+            - generic [ref=e17665]:
+              - term [ref=e17666]: Public Feed
+              - definition [ref=e17667]: NASA EONET
+            - generic [ref=e17668]:
+              - term [ref=e17669]: Severity Score
+              - definition [ref=e17670]: strong · 65
+            - generic [ref=e17671]:
+              - term [ref=e17672]: Started
+              - definition [ref=e17673]: May 25, 2026, 4:59 PM
+            - generic [ref=e17674]:
+              - term [ref=e17675]: Coordinates
+              - definition [ref=e17676]: 42.18, -113.73
+          - generic [ref=e17677]:
+            - generic [ref=e17678]:
+              - generic [ref=e17679]: Not saved
+              - button "Save Summit Creek Wildfire, Cassia, Idaho from feed as a Saved Event" [ref=e17680] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17681] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/6b1c6eb1-30f7-4613-9c58-4801dc8fd822
+        - article [ref=e17682]:
+          - button "Wildfire strong · 65 NASA EONET Kinyon Springs Wildfire, Owyhee, Idaho" [ref=e17684] [cursor=pointer]:
+            - generic [ref=e17685]: Wildfire
+            - generic [ref=e17686]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17687]':
+              - generic [ref=e17688]: EONET
+              - generic [ref=e17689]: NASA EONET
+            - generic [ref=e17690]: Kinyon Springs Wildfire, Owyhee, Idaho
+          - generic [ref=e17691]:
+            - generic [ref=e17692]:
+              - term [ref=e17693]: Public Feed
+              - definition [ref=e17694]: NASA EONET
+            - generic [ref=e17695]:
+              - term [ref=e17696]: Severity Score
+              - definition [ref=e17697]: strong · 65
+            - generic [ref=e17698]:
+              - term [ref=e17699]: Started
+              - definition [ref=e17700]: May 25, 2026, 4:44 PM
+            - generic [ref=e17701]:
+              - term [ref=e17702]: Coordinates
+              - definition [ref=e17703]: 42.73, -115.24
+          - generic [ref=e17704]:
+            - generic [ref=e17705]:
+              - generic [ref=e17706]: Not saved
+              - button "Save Kinyon Springs Wildfire, Owyhee, Idaho from feed as a Saved Event" [ref=e17707] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17708] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/80bc9926-a857-4a29-beaa-1fac54720463
+        - article [ref=e17709]:
+          - button "Wildfire strong · 65 NASA EONET MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida" [ref=e17711] [cursor=pointer]:
+            - generic [ref=e17712]: Wildfire
+            - generic [ref=e17713]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17714]':
+              - generic [ref=e17715]: EONET
+              - generic [ref=e17716]: NASA EONET
+            - generic [ref=e17717]: MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida
+          - generic [ref=e17718]:
+            - generic [ref=e17719]:
+              - term [ref=e17720]: Public Feed
+              - definition [ref=e17721]: NASA EONET
+            - generic [ref=e17722]:
+              - term [ref=e17723]: Severity Score
+              - definition [ref=e17724]: strong · 65
+            - generic [ref=e17725]:
+              - term [ref=e17726]: Started
+              - definition [ref=e17727]: May 23, 2026, 9:26 PM
+            - generic [ref=e17728]:
+              - term [ref=e17729]: Coordinates
+              - definition [ref=e17730]: 26.10, -80.78
+          - generic [ref=e17731]:
+            - generic [ref=e17732]:
+              - generic [ref=e17733]: Not saved
+              - button "Save MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida from feed as a Saved Event" [ref=e17734] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17735] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/29b8daf8-f1fc-462d-9b1f-dfe897a65f69
+        - article [ref=e17736]:
+          - button "Wildfire strong · 65 NASA EONET COUNTRY MEADOW Wildfire, Benton, Washington" [ref=e17738] [cursor=pointer]:
+            - generic [ref=e17739]: Wildfire
+            - generic [ref=e17740]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17741]':
+              - generic [ref=e17742]: EONET
+              - generic [ref=e17743]: NASA EONET
+            - generic [ref=e17744]: COUNTRY MEADOW Wildfire, Benton, Washington
+          - generic [ref=e17745]:
+            - generic [ref=e17746]:
+              - term [ref=e17747]: Public Feed
+              - definition [ref=e17748]: NASA EONET
+            - generic [ref=e17749]:
+              - term [ref=e17750]: Severity Score
+              - definition [ref=e17751]: strong · 65
+            - generic [ref=e17752]:
+              - term [ref=e17753]: Started
+              - definition [ref=e17754]: May 23, 2026, 5:39 PM
+            - generic [ref=e17755]:
+              - term [ref=e17756]: Coordinates
+              - definition [ref=e17757]: 46.17, -119.34
+          - generic [ref=e17758]:
+            - generic [ref=e17759]:
+              - generic [ref=e17760]: Not saved
+              - button "Save COUNTRY MEADOW Wildfire, Benton, Washington from feed as a Saved Event" [ref=e17761] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17762] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/63870bd1-8655-43b9-b5e7-9566f1fbec82
+        - article [ref=e17763]:
+          - button "Wildfire strong · 65 NASA EONET 340 Wildfire, Wakulla, Florida" [ref=e17765] [cursor=pointer]:
+            - generic [ref=e17766]: Wildfire
+            - generic [ref=e17767]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17768]':
+              - generic [ref=e17769]: EONET
+              - generic [ref=e17770]: NASA EONET
+            - generic [ref=e17771]: 340 Wildfire, Wakulla, Florida
+          - generic [ref=e17772]:
+            - generic [ref=e17773]:
+              - term [ref=e17774]: Public Feed
+              - definition [ref=e17775]: NASA EONET
+            - generic [ref=e17776]:
+              - term [ref=e17777]: Severity Score
+              - definition [ref=e17778]: strong · 65
+            - generic [ref=e17779]:
+              - term [ref=e17780]: Started
+              - definition [ref=e17781]: May 23, 2026, 4:29 PM
+            - generic [ref=e17782]:
+              - term [ref=e17783]: Coordinates
+              - definition [ref=e17784]: 30.05, -84.57
+          - generic [ref=e17785]:
+            - generic [ref=e17786]:
+              - generic [ref=e17787]: Not saved
+              - button "Save 340 Wildfire, Wakulla, Florida from feed as a Saved Event" [ref=e17788] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17789] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/886edffc-e672-45db-aee1-631d4326f3e5
+        - article [ref=e17790]:
+          - button "Wildfire strong · 65 NASA EONET Mile Marker 44 Wildfire, Broward, Florida" [ref=e17792] [cursor=pointer]:
+            - generic [ref=e17793]: Wildfire
+            - generic [ref=e17794]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17795]':
+              - generic [ref=e17796]: EONET
+              - generic [ref=e17797]: NASA EONET
+            - generic [ref=e17798]: Mile Marker 44 Wildfire, Broward, Florida
+          - generic [ref=e17799]:
+            - generic [ref=e17800]:
+              - term [ref=e17801]: Public Feed
+              - definition [ref=e17802]: NASA EONET
+            - generic [ref=e17803]:
+              - term [ref=e17804]: Severity Score
+              - definition [ref=e17805]: strong · 65
+            - generic [ref=e17806]:
+              - term [ref=e17807]: Started
+              - definition [ref=e17808]: May 23, 2026, 3:44 PM
+            - generic [ref=e17809]:
+              - term [ref=e17810]: Coordinates
+              - definition [ref=e17811]: 26.15, -80.77
+          - generic [ref=e17812]:
+            - generic [ref=e17813]:
+              - generic [ref=e17814]: Not saved
+              - button "Save Mile Marker 44 Wildfire, Broward, Florida from feed as a Saved Event" [ref=e17815] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17816] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/09e8c44f-679e-4e3a-9c34-334266a0595c
+        - article [ref=e17817]:
+          - button "Wildfire strong · 65 NASA EONET Quartz Wildfire, Pershing, Nevada" [ref=e17819] [cursor=pointer]:
+            - generic [ref=e17820]: Wildfire
+            - generic [ref=e17821]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17822]':
+              - generic [ref=e17823]: EONET
+              - generic [ref=e17824]: NASA EONET
+            - generic [ref=e17825]: Quartz Wildfire, Pershing, Nevada
+          - generic [ref=e17826]:
+            - generic [ref=e17827]:
+              - term [ref=e17828]: Public Feed
+              - definition [ref=e17829]: NASA EONET
+            - generic [ref=e17830]:
+              - term [ref=e17831]: Severity Score
+              - definition [ref=e17832]: strong · 65
+            - generic [ref=e17833]:
+              - term [ref=e17834]: Started
+              - definition [ref=e17835]: May 23, 2026, 3:06 PM
+            - generic [ref=e17836]:
+              - term [ref=e17837]: Coordinates
+              - definition [ref=e17838]: 40.71, -118.01
+          - generic [ref=e17839]:
+            - generic [ref=e17840]:
+              - generic [ref=e17841]: Not saved
+              - button "Save Quartz Wildfire, Pershing, Nevada from feed as a Saved Event" [ref=e17842] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17843] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/79662f7e-8c61-42ed-83ef-137d631e54c9
+        - article [ref=e17844]:
+          - button "Wildfire strong · 65 NASA EONET Thousand Wildfire, Northwest Arctic, Alaska" [ref=e17846] [cursor=pointer]:
+            - generic [ref=e17847]: Wildfire
+            - generic [ref=e17848]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17849]':
+              - generic [ref=e17850]: EONET
+              - generic [ref=e17851]: NASA EONET
+            - generic [ref=e17852]: Thousand Wildfire, Northwest Arctic, Alaska
+          - generic [ref=e17853]:
+            - generic [ref=e17854]:
+              - term [ref=e17855]: Public Feed
+              - definition [ref=e17856]: NASA EONET
+            - generic [ref=e17857]:
+              - term [ref=e17858]: Severity Score
+              - definition [ref=e17859]: strong · 65
+            - generic [ref=e17860]:
+              - term [ref=e17861]: Started
+              - definition [ref=e17862]: May 23, 2026, 11:59 AM
+            - generic [ref=e17863]:
+              - term [ref=e17864]: Coordinates
+              - definition [ref=e17865]: 66.44, -159.29
+          - generic [ref=e17866]:
+            - generic [ref=e17867]:
+              - generic [ref=e17868]: Not saved
+              - button "Save Thousand Wildfire, Northwest Arctic, Alaska from feed as a Saved Event" [ref=e17869] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17870] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/5dea170e-b7ea-40a2-a21f-4c4ebe0e28b6
+        - article [ref=e17871]:
+          - button "Wildfire strong · 65 NASA EONET WaWa 2 Wildfire, Highlands, Florida" [ref=e17873] [cursor=pointer]:
+            - generic [ref=e17874]: Wildfire
+            - generic [ref=e17875]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17876]':
+              - generic [ref=e17877]: EONET
+              - generic [ref=e17878]: NASA EONET
+            - generic [ref=e17879]: WaWa 2 Wildfire, Highlands, Florida
+          - generic [ref=e17880]:
+            - generic [ref=e17881]:
+              - term [ref=e17882]: Public Feed
+              - definition [ref=e17883]: NASA EONET
+            - generic [ref=e17884]:
+              - term [ref=e17885]: Severity Score
+              - definition [ref=e17886]: strong · 65
+            - generic [ref=e17887]:
+              - term [ref=e17888]: Started
+              - definition [ref=e17889]: May 23, 2026, 9:28 AM
+            - generic [ref=e17890]:
+              - term [ref=e17891]: Coordinates
+              - definition [ref=e17892]: 27.64, -81.26
+          - generic [ref=e17893]:
+            - generic [ref=e17894]:
+              - generic [ref=e17895]: Not saved
+              - button "Save WaWa 2 Wildfire, Highlands, Florida from feed as a Saved Event" [ref=e17896] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17897] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/626355b6-3088-4310-aa72-ec6546672e34
+        - article [ref=e17898]:
+          - button "Wildfire strong · 65 NASA EONET Shell Wildfire, Lake, Florida" [ref=e17900] [cursor=pointer]:
+            - generic [ref=e17901]: Wildfire
+            - generic [ref=e17902]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17903]':
+              - generic [ref=e17904]: EONET
+              - generic [ref=e17905]: NASA EONET
+            - generic [ref=e17906]: Shell Wildfire, Lake, Florida
+          - generic [ref=e17907]:
+            - generic [ref=e17908]:
+              - term [ref=e17909]: Public Feed
+              - definition [ref=e17910]: NASA EONET
+            - generic [ref=e17911]:
+              - term [ref=e17912]: Severity Score
+              - definition [ref=e17913]: strong · 65
+            - generic [ref=e17914]:
+              - term [ref=e17915]: Started
+              - definition [ref=e17916]: May 22, 2026, 10:24 AM
+            - generic [ref=e17917]:
+              - term [ref=e17918]: Coordinates
+              - definition [ref=e17919]: 29.07, -81.51
+          - generic [ref=e17920]:
+            - generic [ref=e17921]:
+              - generic [ref=e17922]: Not saved
+              - button "Save Shell Wildfire, Lake, Florida from feed as a Saved Event" [ref=e17923] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17924] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/660f8e64-f1eb-41ab-aa04-7e11f89fdc6c
+        - article [ref=e17925]:
+          - button "Wildfire strong · 65 NASA EONET Trigg Wildfire, San Miguel, New Mexico" [ref=e17927] [cursor=pointer]:
+            - generic [ref=e17928]: Wildfire
+            - generic [ref=e17929]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17930]':
+              - generic [ref=e17931]: EONET
+              - generic [ref=e17932]: NASA EONET
+            - generic [ref=e17933]: Trigg Wildfire, San Miguel, New Mexico
+          - generic [ref=e17934]:
+            - generic [ref=e17935]:
+              - term [ref=e17936]: Public Feed
+              - definition [ref=e17937]: NASA EONET
+            - generic [ref=e17938]:
+              - term [ref=e17939]: Severity Score
+              - definition [ref=e17940]: strong · 65
+            - generic [ref=e17941]:
+              - term [ref=e17942]: Started
+              - definition [ref=e17943]: May 21, 2026, 11:07 PM
+            - generic [ref=e17944]:
+              - term [ref=e17945]: Coordinates
+              - definition [ref=e17946]: 35.53, -103.95
+          - generic [ref=e17947]:
+            - generic [ref=e17948]:
+              - generic [ref=e17949]: Not saved
+              - button "Save Trigg Wildfire, San Miguel, New Mexico from feed as a Saved Event" [ref=e17950] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17951] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/e7cb92a2-60e4-4c15-bffd-9ae0a5523b56
+        - article [ref=e17952]:
+          - button "Wildfire strong · 65 NASA EONET DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi" [ref=e17954] [cursor=pointer]:
+            - generic [ref=e17955]: Wildfire
+            - generic [ref=e17956]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17957]':
+              - generic [ref=e17958]: EONET
+              - generic [ref=e17959]: NASA EONET
+            - generic [ref=e17960]: DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi
+          - generic [ref=e17961]:
+            - generic [ref=e17962]:
+              - term [ref=e17963]: Public Feed
+              - definition [ref=e17964]: NASA EONET
+            - generic [ref=e17965]:
+              - term [ref=e17966]: Severity Score
+              - definition [ref=e17967]: strong · 65
+            - generic [ref=e17968]:
+              - term [ref=e17969]: Started
+              - definition [ref=e17970]: May 20, 2026, 11:12 AM
+            - generic [ref=e17971]:
+              - term [ref=e17972]: Coordinates
+              - definition [ref=e17973]: 30.67, -89.04
+          - generic [ref=e17974]:
+            - generic [ref=e17975]:
+              - generic [ref=e17976]: Not saved
+              - button "Save DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi from feed as a Saved Event" [ref=e17977] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e17978] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/0aa79001-67d5-4ffb-aa44-82feeb972f29
+        - article [ref=e17979]:
+          - button "Wildfire strong · 65 NASA EONET Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi" [ref=e17981] [cursor=pointer]:
+            - generic [ref=e17982]: Wildfire
+            - generic [ref=e17983]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e17984]':
+              - generic [ref=e17985]: EONET
+              - generic [ref=e17986]: NASA EONET
+            - generic [ref=e17987]: Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi
+          - generic [ref=e17988]:
+            - generic [ref=e17989]:
+              - term [ref=e17990]: Public Feed
+              - definition [ref=e17991]: NASA EONET
+            - generic [ref=e17992]:
+              - term [ref=e17993]: Severity Score
+              - definition [ref=e17994]: strong · 65
+            - generic [ref=e17995]:
+              - term [ref=e17996]: Started
+              - definition [ref=e17997]: May 20, 2026, 9:22 AM
+            - generic [ref=e17998]:
+              - term [ref=e17999]: Coordinates
+              - definition [ref=e18000]: 31.42, -88.66
+          - generic [ref=e18001]:
+            - generic [ref=e18002]:
+              - generic [ref=e18003]: Not saved
+              - button "Save Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi from feed as a Saved Event" [ref=e18004] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18005] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/29128400-a817-4d78-a1a7-3a5bb5b597fd
+        - article [ref=e18006]:
+          - button "Wildfire strong · 65 NASA EONET CADDUGGEN Wildfire, Carteret, North Carolina" [ref=e18008] [cursor=pointer]:
+            - generic [ref=e18009]: Wildfire
+            - generic [ref=e18010]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18011]':
+              - generic [ref=e18012]: EONET
+              - generic [ref=e18013]: NASA EONET
+            - generic [ref=e18014]: CADDUGGEN Wildfire, Carteret, North Carolina
+          - generic [ref=e18015]:
+            - generic [ref=e18016]:
+              - term [ref=e18017]: Public Feed
+              - definition [ref=e18018]: NASA EONET
+            - generic [ref=e18019]:
+              - term [ref=e18020]: Severity Score
+              - definition [ref=e18021]: strong · 65
+            - generic [ref=e18022]:
+              - term [ref=e18023]: Started
+              - definition [ref=e18024]: May 20, 2026, 7:59 AM
+            - generic [ref=e18025]:
+              - term [ref=e18026]: Coordinates
+              - definition [ref=e18027]: 34.93, -76.39
+          - generic [ref=e18028]:
+            - generic [ref=e18029]:
+              - generic [ref=e18030]: Not saved
+              - button "Save CADDUGGEN Wildfire, Carteret, North Carolina from feed as a Saved Event" [ref=e18031] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18032] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/7dafe704-220a-4c5e-a9e6-d883cb9a7c35
+        - article [ref=e18033]:
+          - button "Wildfire strong · 65 NASA EONET Rifle Range Rd Wildfire, Collier, Florida" [ref=e18035] [cursor=pointer]:
+            - generic [ref=e18036]: Wildfire
+            - generic [ref=e18037]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18038]':
+              - generic [ref=e18039]: EONET
+              - generic [ref=e18040]: NASA EONET
+            - generic [ref=e18041]: Rifle Range Rd Wildfire, Collier, Florida
+          - generic [ref=e18042]:
+            - generic [ref=e18043]:
+              - term [ref=e18044]: Public Feed
+              - definition [ref=e18045]: NASA EONET
+            - generic [ref=e18046]:
+              - term [ref=e18047]: Severity Score
+              - definition [ref=e18048]: strong · 65
+            - generic [ref=e18049]:
+              - term [ref=e18050]: Started
+              - definition [ref=e18051]: May 19, 2026, 10:10 PM
+            - generic [ref=e18052]:
+              - term [ref=e18053]: Coordinates
+              - definition [ref=e18054]: 26.12, -81.64
+          - generic [ref=e18055]:
+            - generic [ref=e18056]:
+              - generic [ref=e18057]: Not saved
+              - button "Save Rifle Range Rd Wildfire, Collier, Florida from feed as a Saved Event" [ref=e18058] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18059] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/66bfa6ae-29e9-4cde-b0e0-27aa4ec8cee0
+        - article [ref=e18060]:
+          - button "Wildfire strong · 65 NASA EONET Foothill Wildfire, Santa Barbara, California" [ref=e18062] [cursor=pointer]:
+            - generic [ref=e18063]: Wildfire
+            - generic [ref=e18064]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18065]':
+              - generic [ref=e18066]: EONET
+              - generic [ref=e18067]: NASA EONET
+            - generic [ref=e18068]: Foothill Wildfire, Santa Barbara, California
+          - generic [ref=e18069]:
+            - generic [ref=e18070]:
+              - term [ref=e18071]: Public Feed
+              - definition [ref=e18072]: NASA EONET
+            - generic [ref=e18073]:
+              - term [ref=e18074]: Severity Score
+              - definition [ref=e18075]: strong · 65
+            - generic [ref=e18076]:
+              - term [ref=e18077]: Started
+              - definition [ref=e18078]: May 19, 2026, 7:16 PM
+            - generic [ref=e18079]:
+              - term [ref=e18080]: Coordinates
+              - definition [ref=e18081]: 34.83, -119.60
+          - generic [ref=e18082]:
+            - generic [ref=e18083]:
+              - generic [ref=e18084]: Not saved
+              - button "Save Foothill Wildfire, Santa Barbara, California from feed as a Saved Event" [ref=e18085] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18086] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/fe13eac3-abc4-49be-87bf-1cc7b095ec74
+        - article [ref=e18087]:
+          - button "Wildfire strong · 65 NASA EONET MTZ/SDU/TUSIL Wildfire, San Diego, California" [ref=e18089] [cursor=pointer]:
+            - generic [ref=e18090]: Wildfire
+            - generic [ref=e18091]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18092]':
+              - generic [ref=e18093]: EONET
+              - generic [ref=e18094]: NASA EONET
+            - generic [ref=e18095]: MTZ/SDU/TUSIL Wildfire, San Diego, California
+          - generic [ref=e18096]:
+            - generic [ref=e18097]:
+              - term [ref=e18098]: Public Feed
+              - definition [ref=e18099]: NASA EONET
+            - generic [ref=e18100]:
+              - term [ref=e18101]: Severity Score
+              - definition [ref=e18102]: strong · 65
+            - generic [ref=e18103]:
+              - term [ref=e18104]: Started
+              - definition [ref=e18105]: May 19, 2026, 4:17 PM
+            - generic [ref=e18106]:
+              - term [ref=e18107]: Coordinates
+              - definition [ref=e18108]: 32.73, -116.36
+          - generic [ref=e18109]:
+            - generic [ref=e18110]:
+              - generic [ref=e18111]: Not saved
+              - button "Save MTZ/SDU/TUSIL Wildfire, San Diego, California from feed as a Saved Event" [ref=e18112] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18113] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/86678603-6464-406f-bd21-065bbb15a368
+        - article [ref=e18114]:
+          - button "Wildfire strong · 65 NASA EONET VERONA Wildfire, Riverside, California" [ref=e18116] [cursor=pointer]:
+            - generic [ref=e18117]: Wildfire
+            - generic [ref=e18118]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18119]':
+              - generic [ref=e18120]: EONET
+              - generic [ref=e18121]: NASA EONET
+            - generic [ref=e18122]: VERONA Wildfire, Riverside, California
+          - generic [ref=e18123]:
+            - generic [ref=e18124]:
+              - term [ref=e18125]: Public Feed
+              - definition [ref=e18126]: NASA EONET
+            - generic [ref=e18127]:
+              - term [ref=e18128]: Severity Score
+              - definition [ref=e18129]: strong · 65
+            - generic [ref=e18130]:
+              - term [ref=e18131]: Started
+              - definition [ref=e18132]: May 19, 2026, 3:21 PM
+            - generic [ref=e18133]:
+              - term [ref=e18134]: Coordinates
+              - definition [ref=e18135]: 33.76, -117.08
+          - generic [ref=e18136]:
+            - generic [ref=e18137]:
+              - generic [ref=e18138]: Not saved
+              - button "Save VERONA Wildfire, Riverside, California from feed as a Saved Event" [ref=e18139] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18140] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/5fa51a06-a7d8-4926-84cb-c4a1f2bbb6a8
+        - article [ref=e18141]:
+          - button "Wildfire strong · 65 NASA EONET BAIN Wildfire, Riverside, California" [ref=e18143] [cursor=pointer]:
+            - generic [ref=e18144]: Wildfire
+            - generic [ref=e18145]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18146]':
+              - generic [ref=e18147]: EONET
+              - generic [ref=e18148]: NASA EONET
+            - generic [ref=e18149]: BAIN Wildfire, Riverside, California
+          - generic [ref=e18150]:
+            - generic [ref=e18151]:
+              - term [ref=e18152]: Public Feed
+              - definition [ref=e18153]: NASA EONET
+            - generic [ref=e18154]:
+              - term [ref=e18155]: Severity Score
+              - definition [ref=e18156]: strong · 65
+            - generic [ref=e18157]:
+              - term [ref=e18158]: Started
+              - definition [ref=e18159]: May 19, 2026, 3:16 PM
+            - generic [ref=e18160]:
+              - term [ref=e18161]: Coordinates
+              - definition [ref=e18162]: 33.98, -117.51
+          - generic [ref=e18163]:
+            - generic [ref=e18164]:
+              - generic [ref=e18165]: Not saved
+              - button "Save BAIN Wildfire, Riverside, California from feed as a Saved Event" [ref=e18166] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18167] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/a7c6f956-f17f-4a90-9fe7-011addde290c
+        - article [ref=e18168]:
+          - button "Wildfire strong · 65 NASA EONET Sunfish Rx Prescribed Fire, Cook, Minnesota" [ref=e18170] [cursor=pointer]:
+            - generic [ref=e18171]: Wildfire
+            - generic [ref=e18172]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18173]':
+              - generic [ref=e18174]: EONET
+              - generic [ref=e18175]: NASA EONET
+            - generic [ref=e18176]: Sunfish Rx Prescribed Fire, Cook, Minnesota
+          - generic [ref=e18177]:
+            - generic [ref=e18178]:
+              - term [ref=e18179]: Public Feed
+              - definition [ref=e18180]: NASA EONET
+            - generic [ref=e18181]:
+              - term [ref=e18182]: Severity Score
+              - definition [ref=e18183]: strong · 65
+            - generic [ref=e18184]:
+              - term [ref=e18185]: Started
+              - definition [ref=e18186]: May 19, 2026, 12:05 PM
+            - generic [ref=e18187]:
+              - term [ref=e18188]: Coordinates
+              - definition [ref=e18189]: 47.99, -90.15
+          - generic [ref=e18190]:
+            - generic [ref=e18191]:
+              - generic [ref=e18192]: Not saved
+              - button "Save Sunfish Rx Prescribed Fire, Cook, Minnesota from feed as a Saved Event" [ref=e18193] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18194] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/3c911c5e-4cb7-4ca1-9905-6acf4b529813
+        - article [ref=e18195]:
+          - button "Wildfire strong · 65 NASA EONET DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi" [ref=e18197] [cursor=pointer]:
+            - generic [ref=e18198]: Wildfire
+            - generic [ref=e18199]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18200]':
+              - generic [ref=e18201]: EONET
+              - generic [ref=e18202]: NASA EONET
+            - generic [ref=e18203]: DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi
+          - generic [ref=e18204]:
+            - generic [ref=e18205]:
+              - term [ref=e18206]: Public Feed
+              - definition [ref=e18207]: NASA EONET
+            - generic [ref=e18208]:
+              - term [ref=e18209]: Severity Score
+              - definition [ref=e18210]: strong · 65
+            - generic [ref=e18211]:
+              - term [ref=e18212]: Started
+              - definition [ref=e18213]: May 19, 2026, 10:02 AM
+            - generic [ref=e18214]:
+              - term [ref=e18215]: Coordinates
+              - definition [ref=e18216]: 31.02, -88.86
+          - generic [ref=e18217]:
+            - generic [ref=e18218]:
+              - generic [ref=e18219]: Not saved
+              - button "Save DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi from feed as a Saved Event" [ref=e18220] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18221] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/5eb5f2f6-8d24-41e3-a185-60f921e3fad4
+        - article [ref=e18222]:
+          - button "Wildfire strong · 65 NASA EONET Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi" [ref=e18224] [cursor=pointer]:
+            - generic [ref=e18225]: Wildfire
+            - generic [ref=e18226]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18227]':
+              - generic [ref=e18228]: EONET
+              - generic [ref=e18229]: NASA EONET
+            - generic [ref=e18230]: Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi
+          - generic [ref=e18231]:
+            - generic [ref=e18232]:
+              - term [ref=e18233]: Public Feed
+              - definition [ref=e18234]: NASA EONET
+            - generic [ref=e18235]:
+              - term [ref=e18236]: Severity Score
+              - definition [ref=e18237]: strong · 65
+            - generic [ref=e18238]:
+              - term [ref=e18239]: Started
+              - definition [ref=e18240]: May 19, 2026, 9:35 AM
+            - generic [ref=e18241]:
+              - term [ref=e18242]: Coordinates
+              - definition [ref=e18243]: 31.46, -88.93
+          - generic [ref=e18244]:
+            - generic [ref=e18245]:
+              - generic [ref=e18246]: Not saved
+              - button "Save Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi from feed as a Saved Event" [ref=e18247] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18248] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/44e802a8-6362-4483-911b-0e60f6a2824c
+        - article [ref=e18249]:
+          - button "Wildfire strong · 65 NASA EONET RX WINN BU 24 Prescribed Fire, Winn, Louisiana" [ref=e18251] [cursor=pointer]:
+            - generic [ref=e18252]: Wildfire
+            - generic [ref=e18253]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18254]':
+              - generic [ref=e18255]: EONET
+              - generic [ref=e18256]: NASA EONET
+            - generic [ref=e18257]: RX WINN BU 24 Prescribed Fire, Winn, Louisiana
+          - generic [ref=e18258]:
+            - generic [ref=e18259]:
+              - term [ref=e18260]: Public Feed
+              - definition [ref=e18261]: NASA EONET
+            - generic [ref=e18262]:
+              - term [ref=e18263]: Severity Score
+              - definition [ref=e18264]: strong · 65
+            - generic [ref=e18265]:
+              - term [ref=e18266]: Started
+              - definition [ref=e18267]: May 19, 2026, 8:51 AM
+            - generic [ref=e18268]:
+              - term [ref=e18269]: Coordinates
+              - definition [ref=e18270]: 32.06, -92.84
+          - generic [ref=e18271]:
+            - generic [ref=e18272]:
+              - generic [ref=e18273]: Not saved
+              - button "Save RX WINN BU 24 Prescribed Fire, Winn, Louisiana from feed as a Saved Event" [ref=e18274] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18275] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/fa5d7760-1c86-47cc-a58b-469caf22ed53
+        - article [ref=e18276]:
+          - button "Wildfire strong · 65 NASA EONET Kress Wildfire, Swisher, Texas" [ref=e18278] [cursor=pointer]:
+            - generic [ref=e18279]: Wildfire
+            - generic [ref=e18280]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18281]':
+              - generic [ref=e18282]: EONET
+              - generic [ref=e18283]: NASA EONET
+            - generic [ref=e18284]: Kress Wildfire, Swisher, Texas
+          - generic [ref=e18285]:
+            - generic [ref=e18286]:
+              - term [ref=e18287]: Public Feed
+              - definition [ref=e18288]: NASA EONET
+            - generic [ref=e18289]:
+              - term [ref=e18290]: Severity Score
+              - definition [ref=e18291]: strong · 65
+            - generic [ref=e18292]:
+              - term [ref=e18293]: Started
+              - definition [ref=e18294]: May 18, 2026, 7:06 PM
+            - generic [ref=e18295]:
+              - term [ref=e18296]: Coordinates
+              - definition [ref=e18297]: 34.39, -101.78
+          - generic [ref=e18298]:
+            - generic [ref=e18299]:
+              - generic [ref=e18300]: Not saved
+              - button "Save Kress Wildfire, Swisher, Texas from feed as a Saved Event" [ref=e18301] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18302] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/9b17d10e-20c4-4177-9b18-236dfae9d57d
+        - article [ref=e18303]:
+          - button "Wildfire strong · 65 NASA EONET SANDY Wildfire, Ventura, California" [ref=e18305] [cursor=pointer]:
+            - generic [ref=e18306]: Wildfire
+            - generic [ref=e18307]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18308]':
+              - generic [ref=e18309]: EONET
+              - generic [ref=e18310]: NASA EONET
+            - generic [ref=e18311]: SANDY Wildfire, Ventura, California
+          - generic [ref=e18312]:
+            - generic [ref=e18313]:
+              - term [ref=e18314]: Public Feed
+              - definition [ref=e18315]: NASA EONET
+            - generic [ref=e18316]:
+              - term [ref=e18317]: Severity Score
+              - definition [ref=e18318]: strong · 65
+            - generic [ref=e18319]:
+              - term [ref=e18320]: Started
+              - definition [ref=e18321]: May 18, 2026, 1:21 PM
+            - generic [ref=e18322]:
+              - term [ref=e18323]: Coordinates
+              - definition [ref=e18324]: 34.25, -118.74
+          - generic [ref=e18325]:
+            - generic [ref=e18326]:
+              - generic [ref=e18327]: Not saved
+              - button "Save SANDY Wildfire, Ventura, California from feed as a Saved Event" [ref=e18328] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18329] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/a4eb258a-f5d1-46c3-9560-8fbc8042d9c3
+        - article [ref=e18330]:
+          - button "Wildfire strong · 65 NASA EONET RIVER Wildfire, Kern, California" [ref=e18332] [cursor=pointer]:
+            - generic [ref=e18333]: Wildfire
+            - generic [ref=e18334]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18335]':
+              - generic [ref=e18336]: EONET
+              - generic [ref=e18337]: NASA EONET
+            - generic [ref=e18338]: RIVER Wildfire, Kern, California
+          - generic [ref=e18339]:
+            - generic [ref=e18340]:
+              - term [ref=e18341]: Public Feed
+              - definition [ref=e18342]: NASA EONET
+            - generic [ref=e18343]:
+              - term [ref=e18344]: Severity Score
+              - definition [ref=e18345]: strong · 65
+            - generic [ref=e18346]:
+              - term [ref=e18347]: Started
+              - definition [ref=e18348]: May 18, 2026, 12:05 PM
+            - generic [ref=e18349]:
+              - term [ref=e18350]: Coordinates
+              - definition [ref=e18351]: 35.45, -118.79
+          - generic [ref=e18352]:
+            - generic [ref=e18353]:
+              - generic [ref=e18354]: Not saved
+              - button "Save RIVER Wildfire, Kern, California from feed as a Saved Event" [ref=e18355] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18356] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/91c7775a-98f7-45b3-a8c1-3433796360ca
+        - article [ref=e18357]:
+          - button "Wildfire strong · 65 NASA EONET Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi" [ref=e18359] [cursor=pointer]:
+            - generic [ref=e18360]: Wildfire
+            - generic [ref=e18361]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18362]':
+              - generic [ref=e18363]: EONET
+              - generic [ref=e18364]: NASA EONET
+            - generic [ref=e18365]: Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi
+          - generic [ref=e18366]:
+            - generic [ref=e18367]:
+              - term [ref=e18368]: Public Feed
+              - definition [ref=e18369]: NASA EONET
+            - generic [ref=e18370]:
+              - term [ref=e18371]: Severity Score
+              - definition [ref=e18372]: strong · 65
+            - generic [ref=e18373]:
+              - term [ref=e18374]: Started
+              - definition [ref=e18375]: May 18, 2026, 9:55 AM
+            - generic [ref=e18376]:
+              - term [ref=e18377]: Coordinates
+              - definition [ref=e18378]: 31.52, -88.80
+          - generic [ref=e18379]:
+            - generic [ref=e18380]:
+              - generic [ref=e18381]: Not saved
+              - button "Save Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi from feed as a Saved Event" [ref=e18382] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18383] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/d271309e-154d-4b76-83e4-71e83869b4b6
+        - article [ref=e18384]:
+          - button "Wildfire strong · 65 NASA EONET RX WINN BU 114 Prescribed Fire, Grant, Louisiana" [ref=e18386] [cursor=pointer]:
+            - generic [ref=e18387]: Wildfire
+            - generic [ref=e18388]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18389]':
+              - generic [ref=e18390]: EONET
+              - generic [ref=e18391]: NASA EONET
+            - generic [ref=e18392]: RX WINN BU 114 Prescribed Fire, Grant, Louisiana
+          - generic [ref=e18393]:
+            - generic [ref=e18394]:
+              - term [ref=e18395]: Public Feed
+              - definition [ref=e18396]: NASA EONET
+            - generic [ref=e18397]:
+              - term [ref=e18398]: Severity Score
+              - definition [ref=e18399]: strong · 65
+            - generic [ref=e18400]:
+              - term [ref=e18401]: Started
+              - definition [ref=e18402]: May 18, 2026, 8:58 AM
+            - generic [ref=e18403]:
+              - term [ref=e18404]: Coordinates
+              - definition [ref=e18405]: 31.75, -92.48
+          - generic [ref=e18406]:
+            - generic [ref=e18407]:
+              - generic [ref=e18408]: Not saved
+              - button "Save RX WINN BU 114 Prescribed Fire, Grant, Louisiana from feed as a Saved Event" [ref=e18409] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18410] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/971f49d7-75c2-43c7-9db0-05c7d006565c
+        - article [ref=e18411]:
+          - button "Wildfire strong · 65 NASA EONET Stinky Wildfire, Potter, Texas" [ref=e18413] [cursor=pointer]:
+            - generic [ref=e18414]: Wildfire
+            - generic [ref=e18415]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18416]':
+              - generic [ref=e18417]: EONET
+              - generic [ref=e18418]: NASA EONET
+            - generic [ref=e18419]: Stinky Wildfire, Potter, Texas
+          - generic [ref=e18420]:
+            - generic [ref=e18421]:
+              - term [ref=e18422]: Public Feed
+              - definition [ref=e18423]: NASA EONET
+            - generic [ref=e18424]:
+              - term [ref=e18425]: Severity Score
+              - definition [ref=e18426]: strong · 65
+            - generic [ref=e18427]:
+              - term [ref=e18428]: Started
+              - definition [ref=e18429]: May 17, 2026, 6:24 PM
+            - generic [ref=e18430]:
+              - term [ref=e18431]: Coordinates
+              - definition [ref=e18432]: 35.23, -102.02
+          - generic [ref=e18433]:
+            - generic [ref=e18434]:
+              - generic [ref=e18435]: Not saved
+              - button "Save Stinky Wildfire, Potter, Texas from feed as a Saved Event" [ref=e18436] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18437] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/fcccb1cd-f00f-484f-beeb-43874cb5fd86
+        - article [ref=e18438]:
+          - button "Wildfire strong · 65 NASA EONET Sharpe Wildfire, Baca, Colorado" [ref=e18440] [cursor=pointer]:
+            - generic [ref=e18441]: Wildfire
+            - generic [ref=e18442]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18443]':
+              - generic [ref=e18444]: EONET
+              - generic [ref=e18445]: NASA EONET
+            - generic [ref=e18446]: Sharpe Wildfire, Baca, Colorado
+          - generic [ref=e18447]:
+            - generic [ref=e18448]:
+              - term [ref=e18449]: Public Feed
+              - definition [ref=e18450]: NASA EONET
+            - generic [ref=e18451]:
+              - term [ref=e18452]: Severity Score
+              - definition [ref=e18453]: strong · 65
+            - generic [ref=e18454]:
+              - term [ref=e18455]: Started
+              - definition [ref=e18456]: May 17, 2026, 3:37 PM
+            - generic [ref=e18457]:
+              - term [ref=e18458]: Coordinates
+              - definition [ref=e18459]: 37.00, -102.62
+          - generic [ref=e18460]:
+            - generic [ref=e18461]:
+              - generic [ref=e18462]: Not saved
+              - button "Save Sharpe Wildfire, Baca, Colorado from feed as a Saved Event" [ref=e18463] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18464] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/59686f08-125a-4dc7-91e9-af37f0968ccd
+        - article [ref=e18465]:
+          - button "Wildfire strong · 65 NASA EONET Proffitt Lake Wildfire, Meade, Kansas" [ref=e18467] [cursor=pointer]:
+            - generic [ref=e18468]: Wildfire
+            - generic [ref=e18469]: strong · 65
+            - 'generic "Public Feed: NASA EONET" [ref=e18470]':
+              - generic [ref=e18471]: EONET
+              - generic [ref=e18472]: NASA EONET
+            - generic [ref=e18473]: Proffitt Lake Wildfire, Meade, Kansas
+          - generic [ref=e18474]:
+            - generic [ref=e18475]:
+              - term [ref=e18476]: Public Feed
+              - definition [ref=e18477]: NASA EONET
+            - generic [ref=e18478]:
+              - term [ref=e18479]: Severity Score
+              - definition [ref=e18480]: strong · 65
+            - generic [ref=e18481]:
+              - term [ref=e18482]: Started
+              - definition [ref=e18483]: May 17, 2026, 3:00 PM
+            - generic [ref=e18484]:
+              - term [ref=e18485]: Coordinates
+              - definition [ref=e18486]: 37.22, -100.11
+          - generic [ref=e18487]:
+            - generic [ref=e18488]:
+              - generic [ref=e18489]: Not saved
+              - button "Save Proffitt Lake Wildfire, Meade, Kansas from feed as a Saved Event" [ref=e18490] [cursor=pointer]: Save Incident
+            - link "Open source attribution" [ref=e18491] [cursor=pointer]:
+              - /url: https://irwin.doi.gov/observer/incidents/474cb867-2af9-4bab-828f-a1ec34db0425
+    - generic [ref=e18492]:
+      - complementary "No selected Incident" [ref=e18493]:
+        - generic [ref=e18494]:
+          - paragraph [ref=e18495]: Incident Detail
+          - heading "No selected Incident" [level=2] [ref=e18496]
+        - generic [ref=e18497]:
+          - strong [ref=e18498]: Select an Incident
+          - paragraph [ref=e18499]: Choose an Incident from the feed or map to inspect source-attributed details.
+      - region "Public-data AI Briefing" [ref=e18500]:
+        - generic [ref=e18502]:
+          - paragraph [ref=e18503]: AI Briefing
+          - heading "Public-data AI Briefing" [level=2] [ref=e18504]
+        - generic "AI Briefing request controls" [ref=e18505]:
+          - button "Brief selected Incident" [disabled] [ref=e18506]
+          - button "Brief Filtered Incident Set" [ref=e18507] [cursor=pointer]
+        - paragraph [ref=e18508]: Sends only public Incident fields from the dashboard. Do not enter PII, confidential context, or private operational data.
+        - generic "AI Briefing source attribution" [ref=e18509]:
+          - generic [ref=e18510]: AI Briefing source context
+          - 'generic "Public Feed: NASA EONET" [ref=e18512]':
+            - generic [ref=e18513]: EONET
+            - generic [ref=e18514]: NASA EONET
+          - generic [ref=e18515]: Filtered Incident Set includes 50 public Incidents from 1 Public Feeds.
+        - status [ref=e18516]:
+          - paragraph [ref=e18517]: Choose a selected Incident or the current Filtered Incident Set to generate an AI Briefing.
+      - complementary "Public Feed freshness" [ref=e18518]:
+        - generic [ref=e18519]:
+          - paragraph [ref=e18520]: Source Status
+          - heading "Public Feed freshness" [level=2] [ref=e18521]
+        - generic [ref=e18522]:
+          - article [ref=e18523]:
+            - generic [ref=e18524]:
+              - strong [ref=e18525]: USGS Earthquakes
+              - generic [ref=e18526]: Success
+            - paragraph [ref=e18527]: Public Feed refreshed successfully.
+            - generic [ref=e18528]:
+              - generic [ref=e18529]: "Last attempted refresh: Jun 11, 2026, 4:26 PM UTC"
+              - generic [ref=e18530]: "Latest successful refresh: Jun 11, 2026, 4:26 PM UTC"
+          - article [ref=e18531]:
+            - generic [ref=e18532]:
+              - strong [ref=e18533]: NASA EONET
+              - generic [ref=e18534]: Success
+            - paragraph [ref=e18535]: Public Feed refreshed successfully.
+            - generic [ref=e18536]:
+              - generic [ref=e18537]: "Last attempted refresh: Jun 11, 2026, 4:26 PM UTC"
+              - generic [ref=e18538]: "Latest successful refresh: Jun 11, 2026, 4:26 PM UTC"
+          - article [ref=e18539]:
+            - generic [ref=e18540]:
+              - strong [ref=e18541]: GDACS
+              - generic [ref=e18542]: Unavailable
+            - paragraph [ref=e18543]: GDACS RSS is not fetched live because its public endpoint does not advertise browser CORS access for this Vite app runtime; USGS Earthquakes and NASA EONET remain active.
+            - generic [ref=e18544]:
+              - generic [ref=e18545]: "Last attempted refresh: Jun 11, 2026, 4:26 PM UTC"
+              - generic [ref=e18546]: "Latest successful refresh: Not yet available"
+    - region "Saved Events View" [ref=e18547]:
+      - generic [ref=e18548]:
+        - generic [ref=e18549]:
+          - paragraph [ref=e18550]: Saved Events
+          - heading "Saved Events View" [level=2] [ref=e18551]
+        - generic [ref=e18552]: "2"
+      - generic [ref=e18553]:
+        - article [ref=e18554]:
+          - generic [ref=e18555]:
+            - generic [ref=e18556]: Earthquake
+            - generic [ref=e18557]: minor · 13
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e18558]':
+              - generic [ref=e18559]: USGS
+              - generic [ref=e18560]: USGS Earthquakes
+            - generic [ref=e18561]: Live in the current Public Feed refresh.
+          - heading "M 1.3 - 18 km WSW of Rotan, Texas" [level=3] [ref=e18562]
+          - generic [ref=e18563]:
+            - generic [ref=e18564]:
+              - term [ref=e18565]: Public Feed
+              - definition [ref=e18566]: USGS Earthquakes
+            - generic [ref=e18567]:
+              - term [ref=e18568]: Started
+              - definition [ref=e18569]: Jun 11, 2026, 9:30 AM
+            - generic [ref=e18570]:
+              - term [ref=e18571]: Updated
+              - definition [ref=e18572]: Jun 11, 2026, 4:23 PM
+            - generic [ref=e18573]:
+              - term [ref=e18574]: Coordinates
+              - definition [ref=e18575]: 32.76, -100.63
+          - paragraph [ref=e18576]: "Original source id: tx2026lkgvjg · Source retrieved: Jun 11, 2026, 4:24 PM · Saved: Jun 11, 2026, 4:25 PM"
+          - generic [ref=e18577]:
+            - button "Revisit live Incident" [ref=e18578] [cursor=pointer]
+            - button "Remove Saved Event" [ref=e18579] [cursor=pointer]
+            - link "Open saved source attribution" [ref=e18580] [cursor=pointer]:
+              - /url: https://earthquake.usgs.gov/earthquakes/eventpage/tx2026lkgvjg
+        - article [ref=e18581]:
+          - generic [ref=e18582]:
+            - generic [ref=e18583]: Earthquake
+            - generic [ref=e18584]: minor · 21.6
+            - 'generic "Public Feed: USGS Earthquakes" [ref=e18585]':
+              - generic [ref=e18586]: USGS
+              - generic [ref=e18587]: USGS Earthquakes
+            - generic [ref=e18588]: Live in the current Public Feed refresh.
+          - heading "M 2.2 - 3 km SSE of Tallaboa, Puerto Rico" [level=3] [ref=e18589]
+          - generic [ref=e18590]:
+            - generic [ref=e18591]:
+              - term [ref=e18592]: Public Feed
+              - definition [ref=e18593]: USGS Earthquakes
+            - generic [ref=e18594]:
+              - term [ref=e18595]: Started
+              - definition [ref=e18596]: Jun 11, 2026, 2:57 PM
+            - generic [ref=e18597]:
+              - term [ref=e18598]: Updated
+              - definition [ref=e18599]: Jun 11, 2026, 4:23 PM
+            - generic [ref=e18600]:
+              - term [ref=e18601]: Coordinates
+              - definition [ref=e18602]: 17.96, -66.71
+          - paragraph [ref=e18603]: "Original source id: pr71519548 · Source retrieved: Jun 11, 2026, 4:24 PM · Saved: Jun 11, 2026, 4:24 PM"
+          - generic [ref=e18604]:
+            - button "Revisit live Incident" [ref=e18605] [cursor=pointer]
+            - button "Remove Saved Event" [ref=e18606] [cursor=pointer]
+            - link "Open saved source attribution" [ref=e18607] [cursor=pointer]:
+              - /url: https://earthquake.usgs.gov/earthquakes/eventpage/pr71519548
