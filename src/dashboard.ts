@@ -150,6 +150,8 @@ const MARKER_GLOBE_RADIUS_PERCENT = 41;
 const MARKER_AGGREGATION_MIN_COUNT = 3;
 const MARKER_AGGREGATION_MAX_RADIUS_PERCENT = 3.2;
 const MARKER_AGGREGATION_MIN_RADIUS_PERCENT = 1.1;
+const AGGREGATE_MARKER_DRILL_DOWN_ZOOM_STEP = 0.34;
+const SINGLE_MARKER_FOCUS_ZOOM_STEP = 0.18;
 const MARKER_RESERVED_OVERLAY_AREAS: MarkerReservedOverlayArea[] = [
   { minLeftPercent: 8, maxLeftPercent: 72, minTopPercent: 8, maxTopPercent: 24 },
   { minLeftPercent: 52, maxLeftPercent: 92, minTopPercent: 8, maxTopPercent: 27 },
@@ -309,6 +311,38 @@ export function findSelectedDashboardMapMarker(
   }
 
   return markers.find((marker) => marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId)) ?? null;
+}
+
+export function resolveDashboardMapMarkerIncidentIds(
+  marker: DashboardMapMarker | null,
+  filteredIncidentSet: Incident[],
+): string[] {
+  if (marker === null) {
+    return [];
+  }
+
+  const markerIncidentIds = Array.from(new Set(marker.incidentIds));
+  if (marker.incidentCount <= 1) {
+    return markerIncidentIds;
+  }
+
+  const filteredIncidentIds = new Set(filteredIncidentSet.map((incident) => incident.id));
+  return markerIncidentIds.filter((incidentId) => filteredIncidentIds.has(incidentId));
+}
+
+export function focusGlobeViewOnDashboardMapMarker(
+  marker: DashboardMapMarker,
+  currentGlobeView: DashboardGlobeView,
+): DashboardGlobeView {
+  const normalizedGlobeView = normalizeDashboardGlobeView(currentGlobeView);
+  const zoomStep = marker.incidentCount > 1 ? AGGREGATE_MARKER_DRILL_DOWN_ZOOM_STEP : SINGLE_MARKER_FOCUS_ZOOM_STEP;
+
+  return normalizeDashboardGlobeView({
+    ...normalizedGlobeView,
+    rotationLatitude: marker.latitude,
+    rotationLongitude: marker.longitude,
+    zoom: normalizedGlobeView.zoom + zoomStep,
+  });
 }
 
 export function formatDashboardTimestamp(timestamp: string | null): string {
@@ -688,7 +722,7 @@ function toAggregateDashboardMapMarker(markers: DashboardMapMarker[]): Dashboard
   const topPercent = markers.reduce((sum, marker) => sum + marker.topPercent, 0) / markers.length;
   const depth = markers.reduce((sum, marker) => sum + marker.depth, 0) / markers.length;
   const latitude = markers.reduce((sum, marker) => sum + marker.latitude, 0) / markers.length;
-  const longitude = markers.reduce((sum, marker) => sum + marker.longitude, 0) / markers.length;
+  const longitude = calculateCircularMeanLongitude(markers.map((marker) => marker.longitude));
 
   return {
     ...primaryMarker,
@@ -718,6 +752,25 @@ function compareDashboardMapMarkerPriority(left: DashboardMapMarker, right: Dash
   }
 
   return left.id.localeCompare(right.id);
+}
+
+function calculateCircularMeanLongitude(longitudes: number[]): number {
+  const longitudeVector = longitudes.reduce(
+    (sum, longitude) => {
+      const longitudeRadians = toRadians(normalizeLongitude(longitude));
+      return {
+        x: sum.x + Math.cos(longitudeRadians),
+        y: sum.y + Math.sin(longitudeRadians),
+      };
+    },
+    { x: 0, y: 0 },
+  );
+
+  if (Math.abs(longitudeVector.x) < 1e-12 && Math.abs(longitudeVector.y) < 1e-12) {
+    return normalizeLongitude(longitudes.reduce((sum, longitude) => sum + longitude, 0) / longitudes.length);
+  }
+
+  return normalizeLongitude((Math.atan2(longitudeVector.y, longitudeVector.x) * 180) / Math.PI);
 }
 
 function projectCoordinatesToGlobe(

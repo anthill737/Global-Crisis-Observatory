@@ -7,10 +7,12 @@ import {
   buildGlobalCrisisDashboardViewModel,
   createIdleAreaSearchResolution,
   findSelectedDashboardMapMarker,
+  focusGlobeViewOnDashboardMapMarker,
   focusGlobeViewOnAreaSearchArea,
   formatCategoryLabel,
   formatDashboardTimestamp,
   normalizeDashboardGlobeView,
+  resolveDashboardMapMarkerIncidentIds,
   resolveAreaSearchQuery,
   resolveSelectedIncidentId,
 } from "../src/dashboard";
@@ -111,6 +113,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.resetModules();
   vi.doUnmock("../src/lib/ai-briefing");
+  vi.doUnmock("../src/lib/incidents");
   vi.unstubAllGlobals();
   document.body.innerHTML = "";
   window.localStorage.clear();
@@ -132,6 +135,68 @@ function createCollection(overrides: Partial<CombinedIncidentCollection> = {}): 
     refreshedAt,
     ...overrides,
   };
+}
+
+function buildClusteredDrillDownIncidents(count = 12): Incident[] {
+  return Array.from({ length: count }, (_, index): Incident => {
+    const source = index % 2 === 0 ? "usgs-earthquakes" : "nasa-eonet";
+    return {
+      ...incidents[index % incidents.length]!,
+      id: `${source}:ui-drill-down-${index}`,
+      title: `UI drill-down Incident ${index}`,
+      source,
+      sourceName: source === "usgs-earthquakes" ? "USGS Earthquakes" : "NASA EONET",
+      category: index % 3 === 0 ? "earthquake" : index % 3 === 1 ? "wildfire" : "flood",
+      coordinates: {
+        latitude: 34.2 + (index % 3) * 0.01,
+        longitude: -118.4 + (index % 4) * 0.01,
+      },
+      severityLabel: index % 2 === 0 ? "strong" : "major",
+      severityScore: index % 2 === 0 ? 54 : 82,
+    };
+  });
+}
+
+function buildRepeatedDrillDownIncidents(): Incident[] {
+  const localizedCoordinates = [
+    { latitude: 34, longitude: -118 },
+    { latitude: 34.05, longitude: -117.95 },
+    { latitude: 34.1, longitude: -117.9 },
+    { latitude: 36.8, longitude: -115.2 },
+    { latitude: 36.85, longitude: -115.15 },
+    { latitude: 36.9, longitude: -115.1 },
+    { latitude: 36.95, longitude: -115.05 },
+  ];
+
+  return localizedCoordinates.map((coordinates, index): Incident => {
+    const source = index % 2 === 0 ? "usgs-earthquakes" : "nasa-eonet";
+    return {
+      ...incidents[index % incidents.length]!,
+      id: `${source}:repeated-drill-down-${index}`,
+      title: `Repeated drill-down Incident ${index}`,
+      source,
+      sourceName: source === "usgs-earthquakes" ? "USGS Earthquakes" : "NASA EONET",
+      category: index % 3 === 0 ? "earthquake" : index % 3 === 1 ? "wildfire" : "flood",
+      coordinates,
+      severityLabel: index % 2 === 0 ? "strong" : "major",
+      severityScore: index % 2 === 0 ? 54 : 82,
+    };
+  });
+}
+
+function readMapMarkerIncidentIds(marker: HTMLElement): string[] {
+  return marker.dataset.mapMarkerIncidentIds?.split(" ").filter(Boolean) ?? [];
+}
+
+function dispatchPointerMouseEvent(
+  target: EventTarget,
+  type: string,
+  init: MouseEventInit & { pointerId?: number } = {},
+): MouseEvent {
+  const event = new MouseEvent(type, { bubbles: true, cancelable: true, ...init });
+  Object.defineProperty(event, "pointerId", { configurable: true, value: init.pointerId ?? 1 });
+  target.dispatchEvent(event);
+  return event;
 }
 
 function loadUsgsFixtureIncident(): Incident {
@@ -479,6 +544,33 @@ async function renderDashboardAppWithUnsafeSelectedIncidentAiBriefingMock(
   document.body.innerHTML = '<div id="app"></div>';
   window.localStorage.setItem(AI_BRIEFING_CHOICE_STORAGE_KEY, "openai");
   stubPublicFeedFetchWithUnsafeSelectedIncident();
+
+  await import("../src/main");
+  await flushDashboardRefresh();
+
+  const app = document.querySelector<HTMLElement>("#app");
+  if (app === null) {
+    throw new Error("Dashboard app root was not rendered.");
+  }
+  return app;
+}
+
+async function renderDashboardAppWithIncidentCollections(collections: CombinedIncidentCollection[]): Promise<HTMLElement> {
+  vi.resetModules();
+  vi.doMock("../src/lib/incidents", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("../src/lib/incidents")>();
+    let nextCollectionIndex = 0;
+
+    return {
+      ...actual,
+      fetchCombinedIncidentCollection: vi.fn(async () => {
+        const collection = collections[Math.min(nextCollectionIndex, collections.length - 1)];
+        nextCollectionIndex += 1;
+        return collection;
+      }),
+    };
+  });
+  document.body.innerHTML = '<div id="app"></div>';
 
   await import("../src/main");
   await flushDashboardRefresh();
@@ -864,6 +956,22 @@ describe("Global Crisis Dashboard shell view model", () => {
     expect(focusedGlobeView.rotationLatitude).toBeCloseTo(53.7267, 4);
     expect(focusedGlobeView.rotationLongitude).toBeCloseTo(-127.6476, 4);
     expect(focusedGlobeView.zoom).toBe(1.28);
+
+    const normalizedAreaFocus = focusGlobeViewOnAreaSearchArea(
+      {
+        id: "custom-area",
+        label: "Custom area",
+        center: { latitude: 88, longitude: 540 },
+        radiusKm: 120,
+        matchedTerms: ["custom"],
+      },
+      { rotationLatitude: 0, rotationLongitude: 0, zoom: 1 },
+    );
+    expect(normalizedAreaFocus).toEqual({
+      rotationLatitude: 68,
+      rotationLongitude: 180,
+      zoom: 1.58,
+    });
   });
 
   it("returns explicit Area Search no-result, ambiguous-result, and lookup-failure states", () => {
@@ -1718,6 +1826,184 @@ describe("Global Crisis Dashboard shell view model", () => {
         expect(leftGap >= 1.3 || topGap >= 1.3).toBe(true);
       }
     }
+  });
+
+  it("resolves aggregate Incident Marker drill-down ids while preserving single Incident Markers", () => {
+    const clusteredIncidents = Array.from({ length: 12 }, (_, index): Incident => {
+      const source = index % 2 === 0 ? "usgs-earthquakes" : "nasa-eonet";
+      return {
+        ...incidents[index % incidents.length]!,
+        id: `${source}:drill-down-${index}`,
+        title: `Drill-down Incident ${index}`,
+        source,
+        sourceName: source === "usgs-earthquakes" ? "USGS Earthquakes" : "NASA EONET",
+        coordinates: {
+          latitude: 34.2 + (index % 3) * 0.01,
+          longitude: -118.4 + (index % 4) * 0.01,
+        },
+      };
+    });
+    const viewModel = buildGlobalCrisisDashboardViewModel(createCollection({ incidents: clusteredIncidents }));
+    const aggregateMarker = expectDefined(viewModel.mapMarkers.find((marker) => marker.incidentCount > 1));
+    const staleIncidentId = aggregateMarker.incidentIds[0]!;
+    const refreshedFilteredIncidentSet = viewModel.filteredIncidentSet.filter((incident) => incident.id !== staleIncidentId);
+    const singleMarker = expectDefined(buildGlobalCrisisDashboardViewModel(createCollection()).mapMarkers[0]);
+
+    expect(resolveDashboardMapMarkerIncidentIds(aggregateMarker, viewModel.filteredIncidentSet)).toEqual(
+      aggregateMarker.incidentIds,
+    );
+    expect(resolveDashboardMapMarkerIncidentIds(aggregateMarker, refreshedFilteredIncidentSet)).toEqual(
+      aggregateMarker.incidentIds.filter((incidentId) => incidentId !== staleIncidentId),
+    );
+    expect(resolveDashboardMapMarkerIncidentIds(singleMarker, [])).toEqual(singleMarker.incidentIds);
+    expect(resolveDashboardMapMarkerIncidentIds(null, viewModel.filteredIncidentSet)).toEqual([]);
+  });
+
+  it("drills into an aggregated Incident Marker from the Globe Map while preserving filters and emphasizing its localized Incidents", async () => {
+    const clusteredIncidents = buildClusteredDrillDownIncidents();
+    const app = await renderDashboardAppWithIncidentCollections([createCollection({ incidents: clusteredIncidents })]);
+    const sourceFilter = getDefinedElement(app.querySelector<HTMLSelectElement>('[name="source"]'));
+    sourceFilter.value = "usgs-earthquakes";
+    sourceFilter.dispatchEvent(new Event("input", { bubbles: true }));
+    const aggregateMarker = getDefinedElement(app.querySelector<HTMLButtonElement>(".map-marker--aggregate"));
+    const dragSurface = getDefinedElement(app.querySelector<HTMLElement>("[data-globe-drag-surface]"));
+    const setPointerCapture = vi.fn();
+    Object.defineProperty(dragSurface, "setPointerCapture", { configurable: true, value: setPointerCapture });
+    const aggregateIncidentIds = aggregateMarker.dataset.mapMarkerIncidentIds?.split(" ") ?? [];
+    const initialGeography = getDefinedElement(app.querySelector<SVGSVGElement>(".map-geography"));
+    const initialLatitude = Number(initialGeography.dataset.globeCenterLatitude);
+    const initialLongitude = Number(initialGeography.dataset.globeCenterLongitude);
+    const initialZoom = Number(initialGeography.dataset.globeZoom);
+
+    dispatchPointerMouseEvent(aggregateMarker, "pointerdown", { button: 0, clientX: 120, clientY: 140, pointerId: 7 });
+    dispatchPointerMouseEvent(document, "pointerup", { clientX: 120, clientY: 140, pointerId: 7 });
+    aggregateMarker.click();
+
+    const focusedGeography = getDefinedElement(app.querySelector<SVGSVGElement>(".map-geography"));
+    const emphasizedIncidentCards = Array.from(app.querySelectorAll<HTMLElement>('[data-aggregate-drill-down-selected="true"]')).filter(
+      (element) => element.classList.contains("incident-card"),
+    );
+    const selectedIncidentId = app.querySelector("[data-selected-incident-id]")?.getAttribute("data-selected-incident-id");
+    expect(Number(focusedGeography.dataset.globeCenterLatitude)).not.toBe(initialLatitude);
+    expect(Number(focusedGeography.dataset.globeCenterLongitude)).not.toBe(initialLongitude);
+    expect(Number(focusedGeography.dataset.globeZoom)).toBeGreaterThan(initialZoom);
+    expect(setPointerCapture).not.toHaveBeenCalled();
+    expect(getDefinedElement(app.querySelector<HTMLSelectElement>('[name="source"]')).value).toBe("usgs-earthquakes");
+    expect(emphasizedIncidentCards).toHaveLength(aggregateIncidentIds.length);
+    expect(emphasizedIncidentCards.every((card) => aggregateIncidentIds.includes(card.dataset.incidentId ?? ""))).toBe(true);
+    expect(selectedIncidentId === null || selectedIncidentId === undefined ? false : aggregateIncidentIds.includes(selectedIncidentId)).toBe(true);
+    expect(app.querySelector("[data-aggregate-drill-down-state]")?.textContent).toContain("Globe Map focused on localized Incidents");
+    expect(app.querySelector("[data-selected-incident-id]")?.textContent).toContain("USGS Earthquakes");
+  });
+
+  it("explains when an aggregated Incident Marker drill-down no longer has underlying Incidents in the current data", async () => {
+    const clusteredIncidents = buildClusteredDrillDownIncidents();
+    const unrelatedIncident: Incident = {
+      ...incidents[0]!,
+      id: "usgs-earthquakes:unrelated-refresh",
+      title: "Unrelated refreshed earthquake Incident",
+      coordinates: { latitude: 12.2, longitude: -80.1 },
+    };
+    const app = await renderDashboardAppWithIncidentCollections([
+      createCollection({ incidents: clusteredIncidents }),
+      createCollection({ incidents: [unrelatedIncident] }),
+    ]);
+
+    getDefinedElement(app.querySelector<HTMLButtonElement>(".map-marker--aggregate")).click();
+    getDefinedElement(app.querySelector<HTMLButtonElement>("[data-refresh]")).click();
+    await flushDashboardRefresh();
+
+    const changedMessage = getDefinedElement(app.querySelector<HTMLElement>('[data-aggregate-drill-down-state="changed"]'));
+    expect(changedMessage.textContent).toContain("localized Incident set changed");
+    expect(changedMessage.textContent).toContain("none of the Incidents");
+    expect(app.querySelector("[data-selected-incident-id]")).toBeNull();
+    expect(app.textContent).toContain("Unrelated refreshed earthquake Incident");
+  });
+
+  it("recomputes and selects a second real aggregate Incident Marker during repeated Globe Map drill-down", async () => {
+    const repeatedDrillDownIncidents = buildRepeatedDrillDownIncidents();
+    const collection = createCollection({ incidents: repeatedDrillDownIncidents });
+    const app = await renderDashboardAppWithIncidentCollections([collection]);
+    const globalGlobeView = { rotationLatitude: 18, rotationLongitude: -105, zoom: 1 };
+    const initialViewModel = buildGlobalCrisisDashboardViewModel(collection, {}, globalGlobeView);
+    const firstAggregateButton = getDefinedElement(app.querySelector<HTMLButtonElement>(".map-marker--aggregate"));
+    const firstAggregateIncidentIds = readMapMarkerIncidentIds(firstAggregateButton);
+    const firstAggregateMarker = expectDefined(
+      initialViewModel.mapMarkers.find((marker) => marker.incidentIds.join(" ") === firstAggregateIncidentIds.join(" ")),
+    );
+    const expectedFirstGlobeView = focusGlobeViewOnDashboardMapMarker(firstAggregateMarker, globalGlobeView);
+
+    expect(firstAggregateIncidentIds).toEqual(repeatedDrillDownIncidents.map((incident) => incident.id).sort());
+
+    firstAggregateButton.click();
+
+    const afterFirstGeography = getDefinedElement(app.querySelector<SVGSVGElement>(".map-geography"));
+    const regionalViewModel = buildGlobalCrisisDashboardViewModel(collection, {}, expectedFirstGlobeView);
+    const secondAggregateButton = expectDefined(
+      Array.from(app.querySelectorAll<HTMLButtonElement>(".map-marker--aggregate")).find((button) => {
+        const incidentIds = readMapMarkerIncidentIds(button);
+        return incidentIds.length >= 3 && incidentIds.length < firstAggregateIncidentIds.length;
+      }),
+    );
+    const secondAggregateIncidentIds = readMapMarkerIncidentIds(secondAggregateButton);
+    const secondAggregateMarker = expectDefined(
+      regionalViewModel.mapMarkers.find((marker) => marker.incidentIds.join(" ") === secondAggregateIncidentIds.join(" ")),
+    );
+    const expectedSecondGlobeView = focusGlobeViewOnDashboardMapMarker(secondAggregateMarker, expectedFirstGlobeView);
+
+    expect(Number(afterFirstGeography.dataset.globeCenterLatitude)).toBe(Number(expectedFirstGlobeView.rotationLatitude.toFixed(2)));
+    expect(Number(afterFirstGeography.dataset.globeCenterLongitude)).toBe(Number(expectedFirstGlobeView.rotationLongitude.toFixed(2)));
+    expect(Number(afterFirstGeography.dataset.globeZoom)).toBe(Number(expectedFirstGlobeView.zoom.toFixed(2)));
+    expect(secondAggregateIncidentIds.every((incidentId) => firstAggregateIncidentIds.includes(incidentId))).toBe(true);
+    expect(regionalViewModel.mapMarkers.filter((marker) => marker.incidentCount > 1)).toHaveLength(2);
+
+    secondAggregateButton.click();
+
+    const afterSecondGeography = getDefinedElement(app.querySelector<SVGSVGElement>(".map-geography"));
+    const emphasizedIncidentCards = Array.from(
+      app.querySelectorAll<HTMLElement>('[data-aggregate-drill-down-selected="true"]'),
+    ).filter((element) => element.classList.contains("incident-card"));
+    const selectedIncidentId = app.querySelector("[data-selected-incident-id]")?.getAttribute("data-selected-incident-id");
+
+    expect(Number(afterSecondGeography.dataset.globeCenterLatitude)).toBe(Number(expectedSecondGlobeView.rotationLatitude.toFixed(2)));
+    expect(Number(afterSecondGeography.dataset.globeCenterLongitude)).toBe(Number(expectedSecondGlobeView.rotationLongitude.toFixed(2)));
+    expect(Number(afterSecondGeography.dataset.globeZoom)).toBe(Number(expectedSecondGlobeView.zoom.toFixed(2)));
+    expect(expectedSecondGlobeView.zoom).toBeGreaterThan(expectedFirstGlobeView.zoom);
+    expect(selectedIncidentId === null || selectedIncidentId === undefined ? false : secondAggregateIncidentIds.includes(selectedIncidentId)).toBe(true);
+    expect(emphasizedIncidentCards.map((card) => card.dataset.incidentId).sort()).toEqual(secondAggregateIncidentIds);
+    expect(app.querySelector("[data-aggregate-drill-down-state]")?.textContent).toContain("Globe Map focused on localized Incidents");
+  });
+
+  it("keeps aggregate Incident Marker drill-down focused on antimeridian clusters", () => {
+    const antimeridianGlobeView = { rotationLatitude: 0, rotationLongitude: 180, zoom: 1.2 };
+    const antimeridianIncidents = [179.2, -179.6, 180].map((longitude, index): Incident => {
+      const source = index % 2 === 0 ? "usgs-earthquakes" : "nasa-eonet";
+      return {
+        ...incidents[index % incidents.length]!,
+        id: `${source}:antimeridian-${index}`,
+        title: `Antimeridian Incident ${index}`,
+        source,
+        sourceName: source === "usgs-earthquakes" ? "USGS Earthquakes" : "NASA EONET",
+        coordinates: {
+          latitude: 0.2 + index * 0.05,
+          longitude,
+        },
+      };
+    });
+    const aggregateMarker = expectDefined(
+      buildGlobalCrisisDashboardViewModel(createCollection({ incidents: antimeridianIncidents }), {}, antimeridianGlobeView)
+        .mapMarkers.find((marker) => marker.incidentCount > 1),
+    );
+    const nextGlobeView = focusGlobeViewOnDashboardMapMarker(aggregateMarker, {
+      rotationLatitude: 18,
+      rotationLongitude: -105,
+      zoom: 1,
+    });
+
+    expect(aggregateMarker.incidentIds).toEqual(antimeridianIncidents.map((incident) => incident.id).sort());
+    expect(aggregateMarker.longitude).toBeGreaterThan(179);
+    expect(nextGlobeView.rotationLongitude).toBeCloseTo(aggregateMarker.longitude, 5);
+    expect(nextGlobeView.zoom).toBeGreaterThan(1);
   });
 
   it("keeps remediation state synchronized across Settings Control, Area Search, Globe Map selection, and the AI Briefing dock", async () => {

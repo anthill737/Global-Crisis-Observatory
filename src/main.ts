@@ -3,6 +3,7 @@ import {
   buildIncidentDetailDisplay,
   buildGlobalCrisisDashboardViewModel,
   createIdleAreaSearchResolution,
+  focusGlobeViewOnDashboardMapMarker,
   focusGlobeViewOnAreaSearchArea,
   normalizeDashboardGlobeView,
   findSelectedDashboardMapMarker,
@@ -10,10 +11,12 @@ import {
   formatDashboardTimestamp,
   formatIncidentSeverityText,
   formatSourceStatusState,
+  resolveDashboardMapMarkerIncidentIds,
   resolveAreaSearchQuery,
   resolveSelectedIncidentId,
   type AreaSearchResolution,
   type DashboardGlobeView,
+  type DashboardMapMarker,
 } from "./dashboard";
 import {
   AiBriefingError,
@@ -71,6 +74,7 @@ interface DashboardState {
   collection: CombinedIncidentCollection | null;
   filters: IncidentFilters;
   selectedIncidentId: string | null;
+  aggregateMarkerDrillDown: AggregateMarkerDrillDownSelection | null;
   savedEvents: SavedEvent[];
   visibilityMode: VisibilityMode;
   aiBriefingChoice: AiBriefingChoice | null;
@@ -89,6 +93,17 @@ interface AiBriefingPanelState {
   errorMessage: string | null;
   publicSocialContext: PublicSocialContext | null;
   publicSocialContextLimitation: string | null;
+}
+
+interface AggregateMarkerDrillDownSelection {
+  title: string;
+  incidentIds: string[];
+}
+
+interface AggregateMarkerDrillDownResolution {
+  selection: AggregateMarkerDrillDownSelection | null;
+  activeIncidentIds: string[];
+  missingIncidentIds: string[];
 }
 
 type SavedEventToggleSurface = "feed" | "map" | "detail";
@@ -134,6 +149,7 @@ const state: DashboardState = {
   collection: null,
   filters: {},
   selectedIncidentId: null,
+  aggregateMarkerDrillDown: null,
   savedEvents: loadSavedEvents(),
   visibilityMode: loadVisibilityMode(),
   aiBriefingChoice: loadAiBriefingChoice(),
@@ -203,7 +219,15 @@ function render(): void {
   }
 
   const viewModel = buildGlobalCrisisDashboardViewModel(state.collection, state.filters, state.globeView);
-  const selectedIncidentId = resolveSelectedIncidentId(viewModel.filteredIncidentSet, state.selectedIncidentId);
+  const aggregateMarkerDrillDown = resolveAggregateMarkerDrillDownSelection(
+    state.aggregateMarkerDrillDown,
+    viewModel.filteredIncidentSet,
+  );
+  const selectedIncidentId = resolveSelectedIncidentAfterAggregateDrillDown(
+    viewModel.filteredIncidentSet,
+    state.selectedIncidentId,
+    aggregateMarkerDrillDown,
+  );
   state.selectedIncidentId = selectedIncidentId;
   resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
   const selectedIncident =
@@ -222,7 +246,15 @@ function render(): void {
               <p class="panel-subtitle">Incident Markers are projected onto a spherical Globe Map with rotation, zoom, and Public Feed attribution visible on the surface.</p>
             </div>
           </div>
-          ${renderMap(viewModel.mapMarkers, viewModel.hasFilteredIncidentSet, selectedIncident, state.savedEvents, state.globeView, state.areaSearch)}
+          ${renderMap(
+            viewModel.mapMarkers,
+            viewModel.hasFilteredIncidentSet,
+            selectedIncident,
+            state.savedEvents,
+            state.globeView,
+            state.areaSearch,
+            aggregateMarkerDrillDown,
+          )}
           ${renderAreaSearch(state.areaSearch)}
         </section>
         <aside class="filters-panel" aria-labelledby="filters-title">
@@ -244,7 +276,14 @@ function render(): void {
             <p class="eyebrow">Incident Feed</p>
             <h2 id="feed-title">Live public Incidents</h2>
           </div>
-          ${renderIncidentFeed(viewModel.filteredIncidentSet, viewModel.hasIncidents, selectedIncidentId, state.savedEvents, state.areaSearch)}
+          ${renderIncidentFeed(
+            viewModel.filteredIncidentSet,
+            viewModel.hasIncidents,
+            selectedIncidentId,
+            state.savedEvents,
+            state.areaSearch,
+            aggregateMarkerDrillDown,
+          )}
         </section>
         <section class="incident-analysis-dock operations-panel" aria-label="Selected Incident analysis">
           <aside class="detail-panel" aria-labelledby="incident-detail-title">
@@ -285,6 +324,42 @@ function renderInitialGlobalCrisisDashboard(dashboardState: DashboardState): str
       </section>
     </main>
   `;
+}
+
+function resolveAggregateMarkerDrillDownSelection(
+  selection: AggregateMarkerDrillDownSelection | null,
+  filteredIncidentSet: Incident[],
+): AggregateMarkerDrillDownResolution {
+  if (selection === null) {
+    return { selection: null, activeIncidentIds: [], missingIncidentIds: [] };
+  }
+
+  const filteredIncidentIds = new Set(filteredIncidentSet.map((incident) => incident.id));
+  const activeIncidentIds = selection.incidentIds.filter((incidentId) => filteredIncidentIds.has(incidentId));
+
+  return {
+    selection,
+    activeIncidentIds,
+    missingIncidentIds: selection.incidentIds.filter((incidentId) => !filteredIncidentIds.has(incidentId)),
+  };
+}
+
+function resolveSelectedIncidentAfterAggregateDrillDown(
+  filteredIncidentSet: Incident[],
+  selectedIncidentId: string | null,
+  aggregateMarkerDrillDown: AggregateMarkerDrillDownResolution,
+): string | null {
+  const resolvedSelectedIncidentId = resolveSelectedIncidentId(filteredIncidentSet, selectedIncidentId);
+  if (aggregateMarkerDrillDown.selection === null || aggregateMarkerDrillDown.activeIncidentIds.length === 0) {
+    return resolvedSelectedIncidentId;
+  }
+
+  if (resolvedSelectedIncidentId !== null && aggregateMarkerDrillDown.activeIncidentIds.includes(resolvedSelectedIncidentId)) {
+    return resolvedSelectedIncidentId;
+  }
+
+  const activeIncidentIds = new Set(aggregateMarkerDrillDown.activeIncidentIds);
+  return filteredIncidentSet.find((incident) => activeIncidentIds.has(incident.id))?.id ?? null;
 }
 
 function renderHeader(
@@ -455,6 +530,7 @@ function renderMap(
   savedEvents: SavedEvent[],
   globeView: DashboardGlobeView,
   areaSearch: AreaSearchResolution,
+  aggregateMarkerDrillDown: AggregateMarkerDrillDownResolution,
 ): string {
   if (!hasFilteredIncidentSet) {
     return `
@@ -480,8 +556,30 @@ function renderMap(
   );
   const areaSearchNearbyIncidentIds =
     areaSearch.status === "success" ? new Set(areaSearch.nearbyIncidents.map((nearbyIncident) => nearbyIncident.incident.id)) : new Set<string>();
+  const aggregateDrillDownSelection = aggregateMarkerDrillDown.selection;
+  const aggregateDrillDownIncidentIds = new Set(aggregateMarkerDrillDown.activeIncidentIds);
+  const hasAggregateDrillDown = aggregateDrillDownSelection !== null;
+  const hasStaleAggregateDrillDown =
+    aggregateDrillDownSelection !== null && aggregateMarkerDrillDown.activeIncidentIds.length === 0;
+  const hasChangedAggregateDrillDown =
+    aggregateDrillDownSelection !== null &&
+    aggregateMarkerDrillDown.activeIncidentIds.length > 0 &&
+    aggregateMarkerDrillDown.missingIncidentIds.length > 0;
+  const aggregateDrillDownTitle = aggregateDrillDownSelection?.title ?? "the selected aggregated Incident Marker";
   const mapNote =
-    selectedIncident !== null && selectedIncident.coordinates === null
+    hasStaleAggregateDrillDown
+      ? `<p class="map-note map-note--changed" data-aggregate-drill-down-state="changed">The localized Incident set changed; none of the Incidents from ${escapeHtml(
+          aggregateDrillDownTitle,
+        )} remain in the current Filtered Incident Set.</p>`
+      : hasChangedAggregateDrillDown
+        ? `<p class="map-note" data-aggregate-drill-down-state="partial">Localized Incident set updated for ${escapeHtml(
+            aggregateDrillDownTitle,
+          )}; ${aggregateMarkerDrillDown.activeIncidentIds.length} Incidents still match the current filters.</p>`
+        : hasAggregateDrillDown
+          ? `<p class="map-note" data-aggregate-drill-down-state="active">Globe Map focused on localized Incidents from ${escapeHtml(
+              aggregateDrillDownTitle,
+            )}.</p>`
+          : selectedIncident !== null && selectedIncident.coordinates === null
       ? `<p class="map-note">Selected Incident ${escapeHtml(selectedIncident.title)} has no coordinates to focus on.</p>`
       : selectedMarker !== null
         ? `<p class="map-note">Globe Map focused on ${escapeHtml(selectedMarker.title)}.</p>`
@@ -511,7 +609,11 @@ function renderMap(
         ${renderedMarkers
           .map((marker) => {
             const isAggregated = marker.incidentCount > 1;
-            const isSelected = selectedIncidentId !== null && (marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId));
+            const isAggregateDrillDownSelected =
+              aggregateDrillDownIncidentIds.size > 0 && marker.incidentIds.some((incidentId) => aggregateDrillDownIncidentIds.has(incidentId));
+            const isSelected =
+              (selectedIncidentId !== null && (marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId))) ||
+              isAggregateDrillDownSelected;
             const isAreaSearchNearby = marker.incidentIds.some((incidentId) => areaSearchNearbyIncidentIds.has(incidentId));
             const severity = marker.severityLabel ?? "unscored";
             const markerLabel = isAggregated
@@ -520,7 +622,7 @@ function renderMap(
 
             return `
               <button
-                class="map-marker map-marker--${escapeHtml(marker.category)} map-marker--severity-${escapeHtml(severity)}${isAggregated ? " map-marker--aggregate" : ""}${isSelected ? " map-marker--selected" : ""}${isAreaSearchNearby ? " map-marker--area-search-nearby" : ""}"
+                class="map-marker map-marker--${escapeHtml(marker.category)} map-marker--severity-${escapeHtml(severity)}${isAggregated ? " map-marker--aggregate" : ""}${isSelected ? " map-marker--selected" : ""}${isAreaSearchNearby ? " map-marker--area-search-nearby" : ""}${isAggregateDrillDownSelected ? " map-marker--aggregate-drill-down-selected" : ""}"
                 type="button"
                 style="left: ${marker.leftPercent.toFixed(2)}%; top: ${marker.topPercent.toFixed(2)}%; --marker-depth: ${marker.depth.toFixed(2)};"
                 title="${escapeHtml(markerLabel)}"
@@ -528,6 +630,8 @@ function renderMap(
                 aria-pressed="${isSelected ? "true" : "false"}"
                 data-select-incident="${escapeHtml(marker.id)}"
                 data-selection-surface="map"
+                data-map-marker-incident-ids="${escapeHtml(marker.incidentIds.join(" "))}"
+                data-aggregate-drill-down-selected="${isAggregateDrillDownSelected ? "true" : "false"}"
                 data-source="${escapeHtml(marker.source)}"
                 data-incident-count="${marker.incidentCount}"
                 data-area-search-nearby="${isAreaSearchNearby ? "true" : "false"}"
@@ -751,6 +855,7 @@ function renderIncidentFeed(
   selectedIncidentId: string | null,
   savedEvents: SavedEvent[],
   areaSearch: AreaSearchResolution,
+  aggregateMarkerDrillDown: AggregateMarkerDrillDownResolution,
 ): string {
   if (!hasIncidents) {
     return `<div class="empty-state"><strong>No Incidents available.</strong><p>Reachable Public Feeds returned no normalized Incidents.</p></div>`;
@@ -759,6 +864,8 @@ function renderIncidentFeed(
   if (incidents.length === 0) {
     return `<div class="empty-state"><strong>No matching Incidents.</strong><p>Adjust filters to expand the Filtered Incident Set.</p></div>`;
   }
+
+  const aggregateDrillDownIncidentIds = new Set(aggregateMarkerDrillDown.activeIncidentIds);
 
   return `
     <div class="incident-list">
@@ -769,6 +876,7 @@ function renderIncidentFeed(
             incident.id === selectedIncidentId,
             isIncidentSaved(savedEvents, incident.id),
             isIncidentAreaSearchNearby(incident.id, areaSearch),
+            aggregateDrillDownIncidentIds.has(incident.id),
           ),
         )
         .join("")}
@@ -776,20 +884,30 @@ function renderIncidentFeed(
   `;
 }
 
-function renderIncidentCard(incident: Incident, isSelected: boolean, isSaved: boolean, isAreaSearchNearby = false): string {
+function renderIncidentCard(
+  incident: Incident,
+  isSelected: boolean,
+  isSaved: boolean,
+  isAreaSearchNearby = false,
+  isAggregateDrillDownSelected = false,
+): string {
   const severity = incident.severityLabel ?? "unscored";
   const coordinateText =
     incident.coordinates === null
       ? "Coordinates unavailable"
       : `${incident.coordinates.latitude.toFixed(2)}, ${incident.coordinates.longitude.toFixed(2)}`;
   const areaSearchBadge = isAreaSearchNearby ? `<span class="area-search-badge">Area Search nearby</span>` : "";
+  const aggregateDrillDownBadge = isAggregateDrillDownSelected
+    ? `<span class="area-search-badge">Selected aggregate Incident Marker</span>`
+    : "";
 
   return `
     <article
       id="incident-${escapeHtml(incident.id)}"
-      class="incident-card incident-card--${escapeHtml(incident.category)} incident-card--severity-${escapeHtml(severity)}${isSelected ? " incident-card--selected" : ""}${isAreaSearchNearby ? " incident-card--area-search-nearby" : ""}"
+      class="incident-card incident-card--${escapeHtml(incident.category)} incident-card--severity-${escapeHtml(severity)}${isSelected ? " incident-card--selected" : ""}${isAreaSearchNearby ? " incident-card--area-search-nearby" : ""}${isAggregateDrillDownSelected ? " incident-card--aggregate-drill-down" : ""}"
       data-incident-id="${escapeHtml(incident.id)}"
       data-area-search-nearby="${isAreaSearchNearby ? "true" : "false"}"
+      data-aggregate-drill-down-selected="${isAggregateDrillDownSelected ? "true" : "false"}"
       aria-current="${isSelected ? "true" : "false"}"
     >
       <div>
@@ -798,6 +916,7 @@ function renderIncidentCard(incident: Incident, isSelected: boolean, isSaved: bo
           <span class="severity-pill severity-pill--${escapeHtml(severity)}">${escapeHtml(severity)}${incident.severityScore === null ? "" : ` · ${incident.severityScore}`}</span>
           ${renderSourceAttributionBadge(incident.source, incident.sourceName)}
           ${areaSearchBadge}
+          ${aggregateDrillDownBadge}
           <span class="incident-select-title">${escapeHtml(incident.title)}</span>
         </button>
       </div>
@@ -1373,17 +1492,16 @@ function bindGlobalCrisisDashboardActions(): void {
         return;
       }
 
+      if (button.dataset.selectionSurface === "map") {
+        selectGlobeMapMarker(selectedIncidentId);
+        return;
+      }
+
+      state.aggregateMarkerDrillDown = null;
       state.selectedIncidentId = selectedIncidentId;
       resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
-      if (button.dataset.selectionSurface !== "map") {
-        focusGlobeOnIncident(selectedIncidentId);
-      }
-      const shouldScrollFeed = button.dataset.selectionSurface === "map";
+      focusGlobeOnIncident(selectedIncidentId);
       render();
-
-      if (shouldScrollFeed) {
-        scrollSelectedIncidentIntoView(selectedIncidentId);
-      }
     });
   });
 
@@ -1395,6 +1513,7 @@ function bindGlobalCrisisDashboardActions(): void {
       }
 
       state.filters = {};
+      state.aggregateMarkerDrillDown = null;
       state.selectedIncidentId = selectedIncidentId;
       resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
       focusGlobeOnIncident(selectedIncidentId);
@@ -1473,6 +1592,10 @@ function startGlobeDrag(event: PointerEvent): void {
     return;
   }
 
+  if (isGlobeDragInteractiveTarget(event.target)) {
+    return;
+  }
+
   cancelGlobeInertia();
   globeDragState.isDragging = true;
   globeDragState.hasMoved = false;
@@ -1491,6 +1614,10 @@ function startGlobeDrag(event: PointerEvent): void {
   document.addEventListener("pointermove", continueGlobeDrag);
   document.addEventListener("pointerup", stopGlobeDrag);
   document.addEventListener("pointercancel", cancelActiveGlobeDrag);
+}
+
+function isGlobeDragInteractiveTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest("button, a, input, select, textarea") !== null;
 }
 
 function continueGlobeDrag(event: PointerEvent): void {
@@ -1660,6 +1787,46 @@ function applyAreaSearch(query: string): void {
     state.globeView = focusGlobeViewOnAreaSearchArea(state.areaSearch.area, state.globeView);
   }
   render();
+}
+
+function selectGlobeMapMarker(markerId: string): void {
+  if (state.collection === null) {
+    return;
+  }
+
+  const viewModel = buildGlobalCrisisDashboardViewModel(state.collection, state.filters, state.globeView);
+  const marker = resolveCurrentDashboardMapMarker(viewModel.mapMarkers, markerId);
+  if (marker === null) {
+    return;
+  }
+
+  cancelGlobeInertia();
+
+  if (marker.incidentCount > 1) {
+    const localizedIncidentIds = resolveDashboardMapMarkerIncidentIds(marker, viewModel.filteredIncidentSet);
+    state.aggregateMarkerDrillDown = {
+      title: marker.title,
+      incidentIds: Array.from(new Set(marker.incidentIds)),
+    };
+    state.selectedIncidentId = localizedIncidentIds[0] ?? null;
+    state.globeView = focusGlobeViewOnDashboardMapMarker(marker, state.globeView);
+    resetSingleIncidentAiBriefingIfStale(state.selectedIncidentId);
+    render();
+    if (state.selectedIncidentId !== null) {
+      scrollSelectedIncidentIntoView(state.selectedIncidentId);
+    }
+    return;
+  }
+
+  state.aggregateMarkerDrillDown = null;
+  state.selectedIncidentId = marker.id;
+  resetSingleIncidentAiBriefingIfStale(marker.id);
+  render();
+  scrollSelectedIncidentIntoView(marker.id);
+}
+
+function resolveCurrentDashboardMapMarker(markers: DashboardMapMarker[], markerId: string): DashboardMapMarker | null {
+  return markers.find((marker) => marker.id === markerId || marker.incidentIds.includes(markerId)) ?? null;
 }
 
 function focusGlobeOnIncident(incidentId: string): void {
