@@ -1,0 +1,33 @@
+- main "Global Crisis Observatory" [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - paragraph [ref=e6]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e7]
+      - paragraph [ref=e8]: A Global Crisis Dashboard view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e9]:
+      - generic [ref=e10]: Refreshing
+      - generic [ref=e11]: Awaiting first refresh
+      - button "Refreshing…" [ref=e12] [cursor=pointer]
+    - region "Settings Control" [ref=e13]:
+      - paragraph [ref=e14]: Settings Control
+      - generic [ref=e15]:
+        - generic [ref=e16]: Visibility Mode
+        - combobox "Visibility Mode" [ref=e17]:
+          - option "Light" [selected]
+          - option "Dark"
+          - option "High contrast"
+        - generic [ref=e18]: "Current Visibility Mode: Light"
+      - generic [ref=e19]:
+        - generic [ref=e20]: AI Briefing Choice
+        - combobox "AI Briefing Choice" [ref=e21]:
+          - option "Choose an AI Briefing Provider" [disabled] [selected]
+          - option "OpenAI"
+          - option "Anthropic"
+          - option "Gemini"
+          - option "Disabled"
+        - generic [ref=e22]: Choose an AI Briefing Provider to enable AI Briefings, or select Disabled to keep them off.
+  - status [ref=e23]:
+    - paragraph [ref=e24]: Incident pipeline
+    - heading "Connecting to Public Feeds" [level=2] [ref=e25]
+    - paragraph [ref=e26]: Loading public Incidents from the adapter pipeline.
+    - button "Refresh Source Status" [ref=e27] [cursor=pointer]

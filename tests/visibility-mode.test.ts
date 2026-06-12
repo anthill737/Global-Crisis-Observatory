@@ -57,6 +57,14 @@ async function waitForRenderedDashboard(): Promise<void> {
   throw new Error(`Dashboard did not finish rendering live Incident surfaces. Last output: ${document.body.innerHTML}`);
 }
 
+function openSettingsControl(): void {
+  const toggle = document.querySelector<HTMLButtonElement>("[data-settings-control-toggle]");
+  expect(toggle).not.toBeNull();
+  expect(toggle?.getAttribute("aria-expanded")).toBe("false");
+  toggle?.click();
+  expect(document.querySelector<HTMLElement>("[data-settings-control]")?.dataset.settingsControlOpen).toBe("true");
+}
+
 afterEach(() => {
   vi.resetModules();
   vi.unstubAllGlobals();
@@ -119,6 +127,8 @@ describe("Visibility Mode persistence", () => {
     await import("../src/main");
     await waitForRenderedDashboard();
 
+    expect(document.querySelectorAll("[data-visibility-mode-control]")).toHaveLength(0);
+    openSettingsControl();
     const highContrastControl = document.querySelector<HTMLSelectElement>("[data-visibility-mode-control]");
     const visibilityModeControls = document.querySelectorAll("[data-visibility-mode-control]");
     expect(visibilityModeControls).toHaveLength(1);
@@ -160,6 +170,8 @@ describe("Visibility Mode persistence", () => {
 
     await import("../src/main");
 
+    expect(document.querySelectorAll<HTMLSelectElement>("[data-visibility-mode-control]")).toHaveLength(0);
+    openSettingsControl();
     const loadingControls = document.querySelectorAll<HTMLSelectElement>("[data-visibility-mode-control]");
     expect(loadingControls).toHaveLength(1);
     expect(loadingControls[0]?.closest("[data-settings-control]")).not.toBeNull();

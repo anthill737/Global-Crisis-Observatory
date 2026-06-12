@@ -90,9 +90,10 @@ echo   Vite receives --open and asks Windows to open your default browser when t
 echo.
 echo Browser fallback:
 echo   If no browser window opens, Windows asks which app to use, or Vite reports that browser opening failed,
-echo   manually open this exact local URL:
+echo   copy and paste this fallback URL into your browser:
 echo   %LOCAL_APP_URL%
 echo   If Vite prints a different local URL below because port 5173 is busy, open that exact URL instead.
+echo   The Global Crisis Dashboard only works through the Vite local server; do not open index.html directly.
 echo.
 echo Keep this window open while using the Global Crisis Dashboard.
 echo Press Ctrl+C to stop the local server.
@@ -102,7 +103,7 @@ set "LAUNCH_EXIT=%ERRORLEVEL%"
 echo.
 if not "%LAUNCH_EXIT%"=="0" (
     echo The local server stopped or failed with exit code %LAUNCH_EXIT%.
-    echo If browser auto-open failed but the server reached a ready state, manually open this exact local URL:
+    echo If browser auto-open failed but the server reached a ready state, copy and paste this fallback URL into your browser:
     echo   %LOCAL_APP_URL%
     echo If Vite printed a different local URL above, open that exact URL instead.
 ) else (
