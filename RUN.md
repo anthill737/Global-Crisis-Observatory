@@ -85,7 +85,7 @@ npm run dev -- --open
 
 The `--open` flag makes Vite ask Windows to open the Global Crisis Dashboard in your default browser when the local server is ready. Keep the launcher window open while using the app.
 
-The launcher prints the fallback URL before Vite starts. If no browser window opens, Windows asks which app to use, or Vite reports that browser opening failed, manually open this URL:
+The launcher prints the fallback URL before Vite starts. If no browser window opens, Windows asks which app to use, or Vite reports that browser opening failed, copy and paste this fallback URL into your browser:
 
 ```text
 http://127.0.0.1:5173/
@@ -93,10 +93,9 @@ http://127.0.0.1:5173/
 
 If the launcher window shows a different local URL because port `5173` is busy, open the exact URL shown there instead.
 
-To stop the local server, click the launcher window, press `Ctrl+C`, then press any key if the launcher asks.
+The fallback URL is a Vite local-server URL, not a standalone file path. Do not open `index.html` directly; the Vite local server is required for the GDACS Public Feed proxy, the NOAA/NWS Active Alerts Public Feed proxy, and AI Briefing request middleware.
 
-Do not open `index.html` directly; the Vite local server is required for the GDACS Public Feed proxy and AI Briefing request middleware.
-The same Vite local server also provides the NOAA/NWS Active Alerts Public Feed proxy, so using the launcher or manual Vite command is required for the full Public Feed set.
+To stop the local server, click the launcher window, press `Ctrl+C`, then press any key if the launcher asks.
 
 ## 6. Manual PowerShell launch
 

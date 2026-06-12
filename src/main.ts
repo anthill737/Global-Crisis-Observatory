@@ -47,6 +47,12 @@ import {
   type SeverityLabel,
 } from "./lib/incidents";
 import {
+  buildSourceReportedMeasurementFields,
+  formatIncidentSeverityScoreCompactText,
+  formatSeverityLabel,
+  type SourceReportedMeasurementField,
+} from "./lib/incident-labels";
+import {
   buildSavedEventViewItems,
   isIncidentSaved,
   loadSavedEvents,
@@ -58,6 +64,7 @@ import {
 import {
   OPEN_EARTH_GEOGRAPHY_FEATURES,
   OPEN_EARTH_GEOGRAPHY_SOURCE,
+  type GlobeCoordinate,
   type GlobeGeographyFeature,
 } from "./lib/open-earth-geography";
 import {
@@ -78,6 +85,7 @@ interface DashboardState {
   savedEvents: SavedEvent[];
   visibilityMode: VisibilityMode;
   aiBriefingChoice: AiBriefingChoice | null;
+  settingsControlOpen: boolean;
   globeView: DashboardGlobeView;
   areaSearch: AreaSearchResolution;
   aiBriefing: AiBriefingPanelState;
@@ -127,15 +135,20 @@ interface GlobeDragState {
   velocityLongitude: number;
   velocityLatitude: number;
   inertiaFrame: number | null;
+  pendingRenderFrame: number | null;
+  inertiaRunId: number;
 }
 
 const GLOBE_GEOGRAPHY_RADIUS_PERCENT = 45.5;
 const GLOBE_GEOGRAPHY_HORIZON_DEPTH = -0.08;
-const GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL = 0.32;
-const GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL = 0.22;
-const GLOBE_DRAG_CLICK_SUPPRESSION_PIXELS = 5;
-const GLOBE_INERTIA_DECAY = 0.92;
-const GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME = 0.05;
+const GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL = 0.24;
+const GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL = 0.16;
+const GLOBE_DRAG_CLICK_SUPPRESSION_PIXELS = 6;
+const GLOBE_DRAG_MINIMUM_TIME_DELTA_MS = 8;
+const GLOBE_DRAG_MAXIMUM_VELOCITY_DEGREES_PER_FRAME = 4.8;
+const GLOBE_INERTIA_DECAY = 0.88;
+const GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME = 0.035;
+const SELECTED_INCIDENT_FOCUS_ZOOM_STEP = 0.18;
 
 const appRoot = document.querySelector<HTMLDivElement>("#app");
 
@@ -153,6 +166,7 @@ const state: DashboardState = {
   savedEvents: loadSavedEvents(),
   visibilityMode: loadVisibilityMode(),
   aiBriefingChoice: loadAiBriefingChoice(),
+  settingsControlOpen: false,
   globeView: {
     rotationLongitude: -105,
     rotationLatitude: 18,
@@ -184,6 +198,8 @@ const globeDragState: GlobeDragState = {
   velocityLongitude: 0,
   velocityLatitude: 0,
   inertiaFrame: null,
+  pendingRenderFrame: null,
+  inertiaRunId: 0,
 };
 
 applyVisibilityMode(state.visibilityMode);
@@ -235,7 +251,14 @@ function render(): void {
   const savedEventItems = buildSavedEventViewItems(state.savedEvents, viewModel.incidents);
   dashboardRoot.innerHTML = `
     <main class="dashboard-shell" aria-labelledby="dashboard-title">
-      ${renderHeader(viewModel.refreshedAt, state.isLoading, viewModel.hasDegradedSourceStatus, state.visibilityMode, state.aiBriefingChoice)}
+      ${renderHeader(
+        viewModel.refreshedAt,
+        state.isLoading,
+        viewModel.hasDegradedSourceStatus,
+        state.visibilityMode,
+        state.aiBriefingChoice,
+        state.settingsControlOpen,
+      )}
       ${renderMetrics(viewModel.metrics)}
       <section class="command-grid" aria-label="Global Crisis Dashboard compact operations layout" data-dashboard-layout="compact-operations">
         <section class="map-panel" aria-labelledby="map-title">
@@ -315,7 +338,14 @@ function renderInitialGlobalCrisisDashboard(dashboardState: DashboardState): str
 
   return `
     <main class="dashboard-shell" aria-labelledby="dashboard-title">
-      ${renderHeader(null, dashboardState.isLoading, dashboardState.loadError !== null, dashboardState.visibilityMode, dashboardState.aiBriefingChoice)}
+      ${renderHeader(
+        null,
+        dashboardState.isLoading,
+        dashboardState.loadError !== null,
+        dashboardState.visibilityMode,
+        dashboardState.aiBriefingChoice,
+        dashboardState.settingsControlOpen,
+      )}
       <section class="${statusClass}" role="status">
         <p class="eyebrow">Incident pipeline</p>
         <h2>${escapeHtml(dashboardState.loadError === null ? "Connecting to Public Feeds" : "Public Feed refresh failed")}</h2>
@@ -368,8 +398,11 @@ function renderHeader(
   hasDegradedSourceStatus: boolean,
   visibilityMode: VisibilityMode,
   aiBriefingChoice: AiBriefingChoice | null,
+  settingsControlOpen: boolean,
 ): string {
   const stateText = isLoading ? "Refreshing" : hasDegradedSourceStatus ? "Degraded" : "Operational";
+  const settingsPanelId = "settings-control-panel";
+  const settingsToggleText = settingsControlOpen ? "Close Settings Control" : "Settings Control";
 
   return `
     <header class="hero">
@@ -383,36 +416,56 @@ function renderHeader(
         <small>${escapeHtml(refreshedAt === null ? "Awaiting first refresh" : `Refreshed ${formatDashboardTimestamp(refreshedAt)} UTC`)}</small>
         <button class="control-button" type="button" data-refresh>${isLoading ? "Refreshing…" : "Refresh"}</button>
       </div>
-      <section class="settings-control" aria-labelledby="settings-control-title" data-settings-control data-current-visibility-mode="${escapeHtml(visibilityMode)}" data-current-ai-briefing-choice="${escapeHtml(aiBriefingChoice ?? "unselected")}">
-        <p class="eyebrow" id="settings-control-title">Settings Control</p>
-        <div class="settings-control__field">
-          <label for="visibility-mode">Visibility Mode</label>
-          <select id="visibility-mode" name="visibility-mode" data-visibility-mode-control aria-describedby="visibility-mode-help">
-            ${VISIBILITY_MODES.map(
-              (mode) =>
-                `<option value="${escapeHtml(mode)}" ${mode === visibilityMode ? "selected" : ""}>${escapeHtml(formatVisibilityModeLabel(mode))}</option>`,
-            ).join("")}
-          </select>
-          <span class="visibility-mode-current" aria-live="polite">${escapeHtml(formatVisibilityModeStatus(visibilityMode))}</span>
-          <small id="visibility-mode-help">Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.</small>
+      <section class="settings-control" aria-labelledby="settings-control-title" data-settings-control data-settings-control-open="${settingsControlOpen ? "true" : "false"}" data-current-visibility-mode="${escapeHtml(visibilityMode)}" data-current-ai-briefing-choice="${escapeHtml(aiBriefingChoice ?? "unselected")}">
+        <div class="settings-control__summary">
+          <p class="eyebrow" id="settings-control-title">Settings Control</p>
+          <p class="settings-control__snapshot">${escapeHtml(formatVisibilityModeStatus(visibilityMode))} · ${escapeHtml(formatAiBriefingChoiceStatus(aiBriefingChoice))}</p>
+          <small>Visibility Mode and AI Briefing Choice live here so operations panels stay focused on Incidents.</small>
         </div>
-        <div class="settings-control__field settings-control__field--ai-briefing">
-          <label for="ai-briefing-choice">AI Briefing Choice</label>
-          <select id="ai-briefing-choice" name="ai-briefing-choice" data-ai-briefing-choice-control aria-describedby="ai-briefing-choice-help">
-            <option value="" ${aiBriefingChoice === null ? "selected" : ""} disabled>Choose an AI Briefing Provider</option>
-            ${AI_BRIEFING_PROVIDERS.map(
-              (choice) =>
-                `<option value="${escapeHtml(choice)}" ${choice === aiBriefingChoice ? "selected" : ""}>${escapeHtml(formatAiBriefingProviderLabel(choice))}</option>`,
-            ).join("")}
-          </select>
-          <span class="ai-briefing-choice-current" aria-live="polite">${escapeHtml(formatAiBriefingChoiceStatus(aiBriefingChoice))}</span>
-          <small id="ai-briefing-choice-help">Choose OpenAI, Anthropic, Gemini, or Disabled. The choice is saved locally on this device.</small>
-          ${
-            aiBriefingChoice === null
-              ? `<p class="ai-briefing-choice-prompt" data-ai-briefing-choice-prompt>Welcome — choose an AI Briefing Provider to use AI Briefings, or select Disabled to keep them off for this browser.</p>`
-              : ""
-          }
-        </div>
+        <button class="control-button settings-control__toggle" type="button" data-settings-control-toggle aria-expanded="${settingsControlOpen ? "true" : "false"}" aria-controls="${settingsPanelId}">
+          ${escapeHtml(settingsToggleText)}
+        </button>
+        ${
+          settingsControlOpen
+            ? `
+              <div class="settings-control__panel" id="${settingsPanelId}" role="dialog" aria-modal="false" aria-labelledby="settings-control-title">
+                <div class="settings-control__field">
+                  <label for="visibility-mode">Visibility Mode</label>
+                  <select id="visibility-mode" name="visibility-mode" data-visibility-mode-control aria-describedby="visibility-mode-help">
+                    ${VISIBILITY_MODES.map(
+                      (mode) =>
+                        `<option value="${escapeHtml(mode)}" ${mode === visibilityMode ? "selected" : ""}>${escapeHtml(formatVisibilityModeLabel(mode))}</option>`,
+                    ).join("")}
+                  </select>
+                  <span class="visibility-mode-current" aria-live="polite">${escapeHtml(formatVisibilityModeStatus(visibilityMode))}</span>
+                  <small id="visibility-mode-help">Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.</small>
+                </div>
+                <div class="settings-control__field settings-control__field--ai-briefing">
+                  <label for="ai-briefing-choice">AI Briefing Choice</label>
+                  <select id="ai-briefing-choice" name="ai-briefing-choice" data-ai-briefing-choice-control aria-describedby="ai-briefing-choice-help ai-briefing-key-guidance">
+                    <option value="" ${aiBriefingChoice === null ? "selected" : ""} disabled>Choose an AI Briefing Provider</option>
+                    ${AI_BRIEFING_PROVIDERS.map(
+                      (choice) =>
+                        `<option value="${escapeHtml(choice)}" ${choice === aiBriefingChoice ? "selected" : ""}>${escapeHtml(formatAiBriefingProviderLabel(choice))}</option>`,
+                    ).join("")}
+                  </select>
+                  <span class="ai-briefing-choice-current" aria-live="polite">${escapeHtml(formatAiBriefingChoiceStatus(aiBriefingChoice))}</span>
+                  <small id="ai-briefing-choice-help">Choose OpenAI, Anthropic, Gemini, or Disabled. The choice is saved locally on this device and can be changed later from this Settings Control.</small>
+                  ${
+                    aiBriefingChoice === null
+                      ? `<p class="ai-briefing-choice-prompt" data-ai-briefing-choice-prompt>Welcome — choose an AI Briefing Provider to use AI Briefings, or select Disabled to keep them off for this browser.</p>`
+                      : ""
+                  }
+                </div>
+                <div class="settings-control__guidance" id="ai-briefing-key-guidance" data-ai-briefing-key-guidance>
+                  <strong>Local AI Briefing Provider keys</strong>
+                  <p>Configure keys in your local environment or .env.local before starting Vite: OPENAI_API_KEY for OpenAI, ANTHROPIC_API_KEY for Anthropic, or GEMINI_API_KEY for Gemini.</p>
+                  <p>The browser sends only the selected AI Briefing Choice to the local /api/ai-briefing route; provider keys stay server-side. Select Disabled if you do not want AI Briefings.</p>
+                </div>
+              </div>
+            `
+            : ""
+        }
       </section>
     </header>
   `;
@@ -420,18 +473,27 @@ function renderHeader(
 
 function renderMetrics(metrics: Array<{ label: string; value: string; detail: string; tone: string }>): string {
   return `
-    <section class="metrics-grid" aria-label="summary metrics">
-      ${metrics
-        .map(
-          (metric) => `
-            <article class="metric-card" data-tone="${escapeHtml(metric.tone)}">
-              <span>${escapeHtml(metric.label)}</span>
-              <strong>${escapeHtml(metric.value)}</strong>
-              <p>${escapeHtml(metric.detail)}</p>
-            </article>
-          `,
-        )
-        .join("")}
+    <section class="metrics-panel" aria-labelledby="summary-metrics-title">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Summary metrics</p>
+          <h2 id="summary-metrics-title">Operational overview</h2>
+        </div>
+        <p class="panel-subtitle">Compact counts and Source Status signals for the current Global Crisis Dashboard refresh.</p>
+      </div>
+      <div class="metrics-grid">
+        ${metrics
+          .map(
+            (metric) => `
+              <article class="metric-card" data-tone="${escapeHtml(metric.tone)}">
+                <span>${escapeHtml(metric.label)}</span>
+                <strong>${escapeHtml(metric.value)}</strong>
+                <p>${escapeHtml(metric.detail)}</p>
+              </article>
+            `,
+          )
+          .join("")}
+      </div>
     </section>
   `;
 }
@@ -612,13 +674,27 @@ function renderMap(
             const isAggregateDrillDownSelected =
               aggregateDrillDownIncidentIds.size > 0 && marker.incidentIds.some((incidentId) => aggregateDrillDownIncidentIds.has(incidentId));
             const isSelected =
-              (selectedIncidentId !== null && (marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId))) ||
-              isAggregateDrillDownSelected;
+              selectedIncidentId !== null && (marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId));
+            const selectedIncidentInMarker =
+              selectedIncidentId !== null && marker.incidentIds.includes(selectedIncidentId) ? selectedIncident : null;
+            const markerSelectionIncidentId = selectedIncidentInMarker?.id ?? marker.id;
             const isAreaSearchNearby = marker.incidentIds.some((incidentId) => areaSearchNearbyIncidentIds.has(incidentId));
             const severity = marker.severityLabel ?? "unscored";
+            const markerSeverityText =
+              marker.severityScore === null
+                ? "app score unavailable"
+                : `app score ${marker.severityScore}/100 (${formatSeverityLabel(marker.severityLabel)} normalized ranking)`;
+            const markerMeasurementText =
+              marker.sourceReportedMeasurementSummary === null
+                ? `no source-reported measurements published by ${marker.sourceName}`
+                : `source-reported measurements: ${marker.sourceReportedMeasurementSummary}`;
+            const markerCategoryLabel = formatCategoryLabel(marker.category);
+            const markerCategoryPhrase = markerCategoryLabel.endsWith("Incident") ? markerCategoryLabel : `${markerCategoryLabel} Incident`;
             const markerLabel = isAggregated
-              ? `${marker.title} near ${marker.latitude.toFixed(1)}, ${marker.longitude.toFixed(1)}; select the highest Severity Score Incident in this local aggregate`
-              : `${marker.title} from ${marker.sourceName}`;
+              ? selectedIncidentInMarker === null
+                ? `${marker.title} near ${marker.latitude.toFixed(1)}, ${marker.longitude.toFixed(1)} from ${marker.sourceName}; ${markerMeasurementText}; drill into ${marker.incidentCount} Incidents and select the highest app-ranked Incident`
+                : `${marker.title} containing selected Incident ${selectedIncidentInMarker.title} near ${marker.latitude.toFixed(1)}, ${marker.longitude.toFixed(1)} from ${marker.sourceName}; ${markerMeasurementText}; drill into ${marker.incidentCount} Incidents`
+              : `${markerCategoryPhrase} from ${marker.sourceName}: ${marker.title}; ${markerMeasurementText}; ${markerSeverityText}`;
 
             return `
               <button
@@ -628,7 +704,7 @@ function renderMap(
                 title="${escapeHtml(markerLabel)}"
                 aria-label="Select ${escapeHtml(markerLabel)}"
                 aria-pressed="${isSelected ? "true" : "false"}"
-                data-select-incident="${escapeHtml(marker.id)}"
+                data-select-incident="${escapeHtml(markerSelectionIncidentId)}"
                 data-selection-surface="map"
                 data-map-marker-incident-ids="${escapeHtml(marker.incidentIds.join(" "))}"
                 data-aggregate-drill-down-selected="${isAggregateDrillDownSelected ? "true" : "false"}"
@@ -668,13 +744,20 @@ function renderMap(
   `;
 }
 
+type GlobeGeographyFeatureLayer = "surface" | "relief" | "coastline";
+
+const GLOBE_GRATICULE_LATITUDES = [-60, -30, 0, 30, 60] as const;
+const GLOBE_GRATICULE_LONGITUDES = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180] as const;
+const GLOBE_GRATICULE_STEP_DEGREES = 5;
+
 function renderGlobeGeography(globeView: DashboardGlobeView): string {
-  const landPaths = OPEN_EARTH_GEOGRAPHY_FEATURES.filter((feature) => feature.kind === "land")
-    .map((feature) => renderGlobeGeographyFeature(feature, globeView))
-    .join("");
-  const boundaryPaths = OPEN_EARTH_GEOGRAPHY_FEATURES.filter((feature) => feature.kind === "boundary")
-    .map((feature) => renderGlobeGeographyFeature(feature, globeView))
-    .join("");
+  const landFeatures = OPEN_EARTH_GEOGRAPHY_FEATURES.filter((feature) => feature.kind === "land");
+  const boundaryFeatures = OPEN_EARTH_GEOGRAPHY_FEATURES.filter((feature) => feature.kind === "boundary");
+  const landReliefPaths = landFeatures.map((feature) => renderGlobeGeographyFeature(feature, globeView, "relief")).join("");
+  const landPaths = landFeatures.map((feature) => renderGlobeGeographyFeature(feature, globeView)).join("");
+  const coastlinePaths = landFeatures.map((feature) => renderGlobeGeographyFeature(feature, globeView, "coastline")).join("");
+  const boundaryPaths = boundaryFeatures.map((feature) => renderGlobeGeographyFeature(feature, globeView)).join("");
+  const graticulePaths = renderGlobeGraticule(globeView);
 
   return `
     <svg
@@ -688,22 +771,91 @@ function renderGlobeGeography(globeView: DashboardGlobeView): string {
       data-globe-zoom="${globeView.zoom.toFixed(2)}"
     >
       <defs>
+        <radialGradient id="globe-ocean-gradient" cx="34%" cy="28%" r="72%">
+          <stop offset="0%" stop-color="#38bdf8"></stop>
+          <stop offset="30%" stop-color="#0ea5e9"></stop>
+          <stop offset="68%" stop-color="#075985"></stop>
+          <stop offset="100%" stop-color="#082f49"></stop>
+        </radialGradient>
+        <radialGradient id="globe-atmosphere-gradient" cx="35%" cy="24%" r="76%">
+          <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.26"></stop>
+          <stop offset="58%" stop-color="#7dd3fc" stop-opacity="0.04"></stop>
+          <stop offset="100%" stop-color="#020617" stop-opacity="0.74"></stop>
+        </radialGradient>
+        <linearGradient id="globe-land-gradient" x1="18%" y1="18%" x2="86%" y2="82%">
+          <stop offset="0%" stop-color="#bef264" stop-opacity="0.78"></stop>
+          <stop offset="42%" stop-color="#2dd4bf" stop-opacity="0.7"></stop>
+          <stop offset="100%" stop-color="#0f766e" stop-opacity="0.68"></stop>
+        </linearGradient>
         <clipPath id="globe-geography-horizon">
           <circle cx="50" cy="50" r="49"></circle>
         </clipPath>
       </defs>
       <circle class="map-geography__ocean" cx="50" cy="50" r="49"></circle>
+      <g class="map-geography__ocean-context" clip-path="url(#globe-geography-horizon)" aria-hidden="true">
+        <circle class="map-geography__ocean-depth map-geography__ocean-depth--outer" cx="50" cy="50" r="43"></circle>
+        <circle class="map-geography__ocean-depth map-geography__ocean-depth--mid" cx="50" cy="50" r="31"></circle>
+        <circle class="map-geography__ocean-depth map-geography__ocean-depth--inner" cx="50" cy="50" r="19"></circle>
+        <path class="map-geography__ocean-current" d="M 13 44 C 28 34 42 36 56 43 S 82 53 91 42"></path>
+        <path class="map-geography__ocean-current map-geography__ocean-current--south" d="M 16 65 C 31 58 47 59 62 66 S 81 76 91 66"></path>
+      </g>
+      <g class="map-geography__graticule-layer" clip-path="url(#globe-geography-horizon)" aria-hidden="true">
+        ${graticulePaths}
+      </g>
+      <g class="map-geography__land-relief-layer" clip-path="url(#globe-geography-horizon)" aria-hidden="true">
+        ${landReliefPaths}
+      </g>
       <g class="map-geography__land-layer" clip-path="url(#globe-geography-horizon)">
         ${landPaths}
+      </g>
+      <g class="map-geography__coastline-layer" clip-path="url(#globe-geography-horizon)" aria-hidden="true">
+        ${coastlinePaths}
       </g>
       <g class="map-geography__boundary-layer" clip-path="url(#globe-geography-horizon)">
         ${boundaryPaths}
       </g>
+      <ellipse class="map-geography__terminator" cx="64" cy="56" rx="31" ry="43" aria-hidden="true"></ellipse>
+      <circle class="map-geography__atmosphere" cx="50" cy="50" r="49" aria-hidden="true"></circle>
     </svg>
   `;
 }
 
-function renderGlobeGeographyFeature(feature: GlobeGeographyFeature, globeView: DashboardGlobeView): string {
+function renderGlobeGraticule(globeView: DashboardGlobeView): string {
+  const latitudePaths = GLOBE_GRATICULE_LATITUDES.map((latitude) =>
+    buildGlobeGraticuleLine(
+      Array.from({ length: 73 }, (_, index): GlobeCoordinate => [-180 + index * GLOBE_GRATICULE_STEP_DEGREES, latitude]),
+      globeView,
+      latitude === 0 ? "equator" : "latitude",
+    ),
+  );
+  const longitudePaths = GLOBE_GRATICULE_LONGITUDES.map((longitude) =>
+    buildGlobeGraticuleLine(
+      Array.from({ length: 37 }, (_, index): GlobeCoordinate => [longitude, -90 + index * GLOBE_GRATICULE_STEP_DEGREES]),
+      globeView,
+      "longitude",
+    ),
+  );
+
+  return [...latitudePaths, ...longitudePaths].join("");
+}
+
+function buildGlobeGraticuleLine(
+  coordinates: GlobeCoordinate[],
+  globeView: DashboardGlobeView,
+  lineKind: "equator" | "latitude" | "longitude",
+): string {
+  const pathData = buildOpenGlobeGeographyPath(
+    coordinates.map(([longitude, latitude]) => projectGlobeGeographyCoordinate(latitude, longitude, globeView)),
+  );
+
+  return pathData === "" ? "" : `<path class="map-geography__graticule map-geography__graticule--${lineKind}" d="${pathData}"></path>`;
+}
+
+function renderGlobeGeographyFeature(
+  feature: GlobeGeographyFeature,
+  globeView: DashboardGlobeView,
+  layer: GlobeGeographyFeatureLayer = "surface",
+): string {
   const projectedCoordinates = feature.coordinates.map(([longitude, latitude]) =>
     projectGlobeGeographyCoordinate(latitude, longitude, globeView),
   );
@@ -715,7 +867,8 @@ function renderGlobeGeographyFeature(feature: GlobeGeographyFeature, globeView: 
     return "";
   }
 
-  return `<path class="map-geography__feature map-geography__feature--${feature.kind}" d="${pathData}" aria-label="${escapeHtml(feature.label)}"></path>`;
+  const accessibilityAttributes = layer === "surface" ? `aria-label="${escapeHtml(feature.label)}"` : `aria-hidden="true"`;
+  return `<path class="map-geography__feature map-geography__feature--${feature.kind} map-geography__feature--${feature.kind}-${layer}" d="${pathData}" ${accessibilityAttributes}></path>`;
 }
 
 function buildClosedGlobeGeographyPath(projectedCoordinates: ProjectedGlobeCoordinate[]): string {
@@ -892,6 +1045,8 @@ function renderIncidentCard(
   isAggregateDrillDownSelected = false,
 ): string {
   const severity = incident.severityLabel ?? "unscored";
+  const severityText = formatIncidentSeverityScoreCompactText(incident);
+  const sourceReportedMeasurementFields = buildSourceReportedMeasurementFields(incident);
   const coordinateText =
     incident.coordinates === null
       ? "Coordinates unavailable"
@@ -913,7 +1068,7 @@ function renderIncidentCard(
       <div>
         <button class="incident-select-button" type="button" data-select-incident="${escapeHtml(incident.id)}" data-selection-surface="feed">
           <span class="category-pill category-pill--${escapeHtml(incident.category)}">${escapeHtml(formatCategoryLabel(incident.category))}</span>
-          <span class="severity-pill severity-pill--${escapeHtml(severity)}">${escapeHtml(severity)}${incident.severityScore === null ? "" : ` · ${incident.severityScore}`}</span>
+          <span class="severity-pill severity-pill--${escapeHtml(severity)}">${escapeHtml(severityText)}</span>
           ${renderSourceAttributionBadge(incident.source, incident.sourceName)}
           ${areaSearchBadge}
           ${aggregateDrillDownBadge}
@@ -922,10 +1077,11 @@ function renderIncidentCard(
       </div>
       <dl>
         <div><dt>Public Feed</dt><dd>${escapeHtml(incident.sourceName)}</dd></div>
-        <div><dt>Severity Score</dt><dd>${escapeHtml(severity)}${incident.severityScore === null ? "" : ` · ${incident.severityScore}`}</dd></div>
+        <div><dt>App Severity Score</dt><dd>${escapeHtml(formatIncidentSeverityText(incident))}</dd></div>
         <div><dt>Started</dt><dd>${escapeHtml(formatDashboardTimestamp(incident.startedAt))}</dd></div>
         <div><dt>Coordinates</dt><dd>${escapeHtml(coordinateText)}</dd></div>
       </dl>
+      ${renderIncidentCardSourceReportedMeasurements(sourceReportedMeasurementFields)}
       <div class="incident-card-actions">
         ${renderSavedEventToggleControl(incident, isSaved, "feed")}
         ${incident.sourceUrl === null ? "" : `<a href="${escapeHtml(incident.sourceUrl)}" target="_blank" rel="noreferrer">Open source attribution</a>`}
@@ -948,7 +1104,7 @@ export function renderIncidentDetail(incident: Incident | null, savedEvents: Sav
         <p class="eyebrow">Incident Detail</p>
         <h2 id="incident-detail-title">No selected Incident</h2>
       </div>
-      <div class="empty-state">
+      <div class="empty-state empty-state--compact">
         <strong>Select an Incident</strong>
         <p>Choose an Incident from the feed or map to inspect source-attributed details.</p>
       </div>
@@ -978,19 +1134,30 @@ export function renderIncidentDetail(incident: Incident | null, savedEvents: Sav
         ${renderSourceAttributionBadge(incident.source, incident.sourceName)}
         <span class="saved-event-status">${formatSavedEventStateLabel(isSaved)}</span>
       </div>
-      <h3>${escapeHtml(detailDisplay.title)}</h3>
-      <dl class="incident-detail-grid">
-        <div><dt>Public Feed</dt><dd>${escapeHtml(incident.sourceName)}</dd></div>
-        <div><dt>Category</dt><dd>${escapeHtml(detailDisplay.categoryLabel)}</dd></div>
-        <div><dt>Severity Score</dt><dd>${escapeHtml(detailDisplay.severityText)}</dd></div>
-        <div><dt>Location</dt><dd>${escapeHtml(detailDisplay.locationText)}</dd></div>
-        <div><dt>Started</dt><dd>${escapeHtml(detailDisplay.startedText)}</dd></div>
-        <div><dt>Updated</dt><dd>${escapeHtml(detailDisplay.updatedText)}</dd></div>
-        <div><dt>Source link</dt><dd>${sourceLink}</dd></div>
-        <div><dt>Source record</dt><dd>${escapeHtml(detailDisplay.sourceRecordText)}</dd></div>
-      </dl>
-      <section class="incident-detail-metrics" aria-label="Event-specific metrics">
-        <h4>Event-specific metrics</h4>
+      <div class="incident-detail-card__title">
+        <span>Selected Incident facts</span>
+        <h3>${escapeHtml(detailDisplay.title)}</h3>
+      </div>
+      <section class="incident-detail-section incident-detail-section--facts" aria-labelledby="incident-detail-facts-heading">
+        <h4 id="incident-detail-facts-heading">Selected Incident facts</h4>
+        <dl class="incident-detail-grid">
+          <div><dt>Category</dt><dd>${escapeHtml(detailDisplay.categoryLabel)}</dd></div>
+          <div><dt>App Severity Score</dt><dd>${escapeHtml(detailDisplay.severityText)}</dd></div>
+          <div><dt>Location</dt><dd>${escapeHtml(detailDisplay.locationText)}</dd></div>
+          <div><dt>Started</dt><dd>${escapeHtml(detailDisplay.startedText)}</dd></div>
+          <div><dt>Updated</dt><dd>${escapeHtml(detailDisplay.updatedText)}</dd></div>
+        </dl>
+      </section>
+      <section class="incident-detail-section incident-detail-section--source" aria-labelledby="incident-detail-source-heading">
+        <h4 id="incident-detail-source-heading">Source attribution</h4>
+        <dl class="incident-detail-grid incident-detail-grid--source">
+          <div><dt>Public Feed</dt><dd>${escapeHtml(incident.sourceName)}</dd></div>
+          <div><dt>Source link</dt><dd>${sourceLink}</dd></div>
+          <div><dt>Source record</dt><dd>${escapeHtml(detailDisplay.sourceRecordText)}</dd></div>
+        </dl>
+      </section>
+      <section class="incident-detail-section incident-detail-metrics" aria-label="Source-reported measurements">
+        <h4>Source-reported measurements</h4>
         ${
           metricFields.length === 0
             ? `<p class="fallback-text">${escapeHtml(detailDisplay.metricFallbackText ?? "")}</p>`
@@ -1060,20 +1227,33 @@ function renderAiBriefingPanel(
         <h2 id="ai-briefing-title">Public-data AI Briefing</h2>
       </div>
     </div>
-    <div class="ai-briefing-controls" aria-label="AI Briefing request controls">
-      <button class="control-button" type="button" data-request-ai-briefing="single-incident" ${singleIncidentDisabled ? "disabled" : ""}>
-        Brief selected Incident
-      </button>
-      <button class="control-button control-button--secondary" type="button" data-request-ai-briefing="filtered-incident-set" ${filteredIncidentSetDisabled ? "disabled" : ""}>
-        Brief Filtered Incident Set
-      </button>
-    </div>
-    <p class="ai-briefing-privacy-note">
-      Sends only public Incident fields from the dashboard. Public Social Context, when included, is localized summary only and omits usernames, direct quotes, private or auth-walled content, PII, and confidential data.
-    </p>
-    <p class="ai-briefing-choice-note" data-ai-briefing-choice-note>
-      ${escapeHtml(formatAiBriefingPanelChoiceNote(aiBriefingChoice))}
-    </p>
+    <section class="ai-briefing-request-panel" aria-labelledby="ai-briefing-request-heading">
+      <div class="section-heading">
+        <span>Request controls</span>
+        <h3 id="ai-briefing-request-heading">Choose briefing scope</h3>
+      </div>
+      <div class="ai-briefing-controls" aria-label="AI Briefing request controls">
+        <button class="control-button" type="button" data-request-ai-briefing="single-incident" ${singleIncidentDisabled ? "disabled" : ""}>
+          Brief selected Incident
+        </button>
+        <button class="control-button control-button--secondary" type="button" data-request-ai-briefing="filtered-incident-set" ${filteredIncidentSetDisabled ? "disabled" : ""}>
+          Brief Filtered Incident Set
+        </button>
+      </div>
+      <p class="ai-briefing-privacy-note">
+        Sends only public Incident fields from the dashboard. Public Social Context, when included, is localized summary only and omits usernames, direct quotes, private or auth-walled content, PII, and confidential data.
+      </p>
+    </section>
+    <section class="ai-briefing-provider-panel" aria-labelledby="ai-briefing-provider-heading">
+      <div class="section-heading">
+        <span>Provider guidance</span>
+        <h3 id="ai-briefing-provider-heading">Selected AI Briefing Provider</h3>
+      </div>
+      <p class="ai-briefing-choice-note" data-ai-briefing-choice-note>
+        ${escapeHtml(formatAiBriefingPanelChoiceNote(aiBriefingChoice))}
+      </p>
+      <p class="ai-briefing-provider-note">Uses the AI Briefing Choice saved in the Settings Control; choose Disabled there to keep AI Briefing requests off.</p>
+    </section>
     ${renderAiBriefingSourceContext(selectedIncident, filteredIncidentSet)}
     <div class="ai-briefing-status" role="status" aria-live="polite" data-state="${escapeHtml(isAiBriefingOff ? "disabled" : aiBriefing.status)}">
       ${isAiBriefingOff ? renderAiBriefingOffStatus(aiBriefingChoice) : renderAiBriefingStatus(aiBriefing, activeScopeText)}
@@ -1124,20 +1304,20 @@ function renderAiBriefingStatus(aiBriefing: AiBriefingPanelState, activeScopeTex
   if (aiBriefing.status === "ready" && aiBriefing.output !== null) {
     return `
       <article class="ai-briefing-output">
-        <section>
+        <section class="ai-briefing-block ai-briefing-block--situation-summary">
           <h3>Situation summary</h3>
           <p>${escapeHtml(aiBriefing.output.situationSummary)}</p>
         </section>
-        <section>
+        <section class="ai-briefing-block ai-briefing-block--impact-considerations">
           <h3>Likely impact considerations</h3>
           <p>${escapeHtml(aiBriefing.output.impactConsiderations)}</p>
         </section>
         ${renderPublicSocialContextSection(aiBriefing.publicSocialContext)}
-        <section>
+        <section class="ai-briefing-block ai-briefing-block--response-priority">
           <h3>Response Priority Recommendation</h3>
           <p>${escapeHtml(aiBriefing.output.responsePriorityRecommendation)}</p>
         </section>
-        <section>
+        <section class="ai-briefing-block ai-briefing-block--uncertainty-note">
           <h3>Uncertainty Note</h3>
           <ul>
             ${aiBriefing.output.uncertaintyNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
@@ -1157,7 +1337,7 @@ function renderPublicSocialContextSection(publicSocialContext: PublicSocialConte
   }
 
   return `
-    <section class="ai-briefing-public-social-context">
+    <section class="ai-briefing-block ai-briefing-block--public-social-context ai-briefing-public-social-context">
       <h3>Public Social Context</h3>
       <p>${escapeHtml(publicSocialContext.safetyNotice)} Locality: ${escapeHtml(publicSocialContext.locality)}.</p>
       <ul>
@@ -1306,6 +1486,10 @@ function renderAiBriefingSourceContext(selectedIncident: Incident | null, filter
     selectedIncident === null
       ? "Public Social Context is requested only for a selected Incident and remains separate from Filtered Incident Set public-feed facts."
       : "Public Social Context is scoped to this selected Incident's place, time, category, and source facts, and remains separate from core Public Feed facts.";
+  const severityContextText =
+    selectedIncident === null
+      ? "AI Briefings must describe Severity Score only as the app's normalized ranking and use source-reported measurements only when included by a Public Feed."
+      : `${formatIncidentSeverityText(selectedIncident)}. Source-reported measurements are listed separately when ${selectedIncident.sourceName} supplied them.`;
 
   return `
     <div class="ai-briefing-source-context" aria-label="AI Briefing source attribution">
@@ -1322,8 +1506,29 @@ function renderAiBriefingSourceContext(selectedIncident: Incident | null, filter
         }
       </div>
       <small>${escapeHtml(detailText)}</small>
+      <small>${escapeHtml(severityContextText)}</small>
       <small>${escapeHtml(publicSocialContextText)}</small>
     </div>
+  `;
+}
+
+function renderIncidentCardSourceReportedMeasurements(fields: SourceReportedMeasurementField[]): string {
+  if (fields.length === 0) {
+    return "";
+  }
+
+  return `
+    <section class="incident-card-measurements" aria-label="Source-reported measurements">
+      <h4>Source-reported measurements</h4>
+      <dl>
+        ${fields
+          .map(
+            (field) =>
+              `<div><dt>${escapeHtml(field.label)}</dt><dd>${escapeHtml(field.value)} <span>from ${escapeHtml(field.sourceName)}</span></dd></div>`,
+          )
+          .join("")}
+      </dl>
+    </section>
   `;
 }
 
@@ -1378,6 +1583,11 @@ function formatSourceAttributionModifier(publicFeed: string): string {
 }
 
 function bindGlobalCrisisDashboardActions(): void {
+  dashboardRoot.querySelector<HTMLButtonElement>("[data-settings-control-toggle]")?.addEventListener("click", () => {
+    state.settingsControlOpen = !state.settingsControlOpen;
+    render();
+  });
+
   dashboardRoot.querySelector<HTMLSelectElement>("[data-visibility-mode-control]")?.addEventListener("change", (event) => {
     const control = event.currentTarget;
     if (!(control instanceof HTMLSelectElement)) {
@@ -1497,6 +1707,7 @@ function bindGlobalCrisisDashboardActions(): void {
         return;
       }
 
+      cancelGlobeInertia();
       state.aggregateMarkerDrillDown = null;
       state.selectedIncidentId = selectedIncidentId;
       resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
@@ -1513,6 +1724,7 @@ function bindGlobalCrisisDashboardActions(): void {
       }
 
       state.filters = {};
+      cancelGlobeInertia();
       state.aggregateMarkerDrillDown = null;
       state.selectedIncidentId = selectedIncidentId;
       resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
@@ -1640,14 +1852,20 @@ function continueGlobeDrag(event: PointerEvent): void {
   applyGlobeDragDelta(deltaX, deltaY);
 
   if (timeDelta > 0) {
-    globeDragState.velocityLongitude = (-deltaX * GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL * 16) / timeDelta;
-    globeDragState.velocityLatitude = (deltaY * GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL * 16) / timeDelta;
+    const normalizedTimeDelta = Math.max(timeDelta, GLOBE_DRAG_MINIMUM_TIME_DELTA_MS);
+    globeDragState.velocityLongitude = clampGlobeInertiaVelocity(
+      (-deltaX * GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL * 16) / normalizedTimeDelta,
+    );
+    globeDragState.velocityLatitude = clampGlobeInertiaVelocity(
+      (deltaY * GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL * 16) / normalizedTimeDelta,
+    );
   }
+
+  scheduleGlobeRender();
 
   globeDragState.lastClientX = event.clientX;
   globeDragState.lastClientY = event.clientY;
   globeDragState.lastTimestamp = event.timeStamp;
-  render();
   event.preventDefault();
 }
 
@@ -1657,12 +1875,14 @@ function stopGlobeDrag(event: PointerEvent): void {
   }
 
   const shouldSuppressClick = globeDragState.hasMoved;
+  flushScheduledGlobeRender();
   finishGlobeDrag();
   suppressNextGlobeClick = shouldSuppressClick;
   startGlobeInertia();
 }
 
 function cancelActiveGlobeDrag(): void {
+  flushScheduledGlobeRender();
   finishGlobeDrag();
 }
 
@@ -1687,6 +1907,42 @@ function applyGlobeDragDelta(deltaX: number, deltaY: number): void {
   });
 }
 
+function clampGlobeInertiaVelocity(velocity: number): number {
+  return Math.min(
+    Math.max(velocity, -GLOBE_DRAG_MAXIMUM_VELOCITY_DEGREES_PER_FRAME),
+    GLOBE_DRAG_MAXIMUM_VELOCITY_DEGREES_PER_FRAME,
+  );
+}
+
+function scheduleGlobeRender(): void {
+  if (globeDragState.pendingRenderFrame !== null) {
+    return;
+  }
+
+  if (typeof window.requestAnimationFrame !== "function") {
+    render();
+    return;
+  }
+
+  globeDragState.pendingRenderFrame = window.requestAnimationFrame(() => {
+    globeDragState.pendingRenderFrame = null;
+    render();
+  });
+}
+
+function flushScheduledGlobeRender(): void {
+  if (globeDragState.pendingRenderFrame === null) {
+    return;
+  }
+
+  if (typeof window.cancelAnimationFrame === "function") {
+    window.cancelAnimationFrame(globeDragState.pendingRenderFrame);
+  }
+
+  globeDragState.pendingRenderFrame = null;
+  render();
+}
+
 function startGlobeInertia(): void {
   const hasInertia =
     Math.abs(globeDragState.velocityLongitude) >= GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME ||
@@ -1698,14 +1954,21 @@ function startGlobeInertia(): void {
     return;
   }
 
+  globeDragState.inertiaRunId += 1;
+  const runId = globeDragState.inertiaRunId;
+
   const step = (): void => {
+    if (runId !== globeDragState.inertiaRunId) {
+      return;
+    }
+
     state.globeView = normalizeDashboardGlobeView({
       ...state.globeView,
       rotationLongitude: state.globeView.rotationLongitude + globeDragState.velocityLongitude,
       rotationLatitude: state.globeView.rotationLatitude + globeDragState.velocityLatitude,
     });
-    globeDragState.velocityLongitude *= GLOBE_INERTIA_DECAY;
-    globeDragState.velocityLatitude *= GLOBE_INERTIA_DECAY;
+    globeDragState.velocityLongitude = clampGlobeInertiaVelocity(globeDragState.velocityLongitude * GLOBE_INERTIA_DECAY);
+    globeDragState.velocityLatitude = clampGlobeInertiaVelocity(globeDragState.velocityLatitude * GLOBE_INERTIA_DECAY);
     render();
 
     if (
@@ -1725,9 +1988,11 @@ function startGlobeInertia(): void {
 }
 
 function cancelGlobeInertia(): void {
+  globeDragState.inertiaRunId += 1;
   if (globeDragState.inertiaFrame !== null && typeof window.cancelAnimationFrame === "function") {
     window.cancelAnimationFrame(globeDragState.inertiaFrame);
   }
+  flushScheduledGlobeRender();
 
   globeDragState.inertiaFrame = null;
   globeDragState.velocityLongitude = 0;
@@ -1782,6 +2047,7 @@ function applyAreaSearch(query: string): void {
     return;
   }
 
+  cancelGlobeInertia();
   state.areaSearch = resolveAreaSearchQuery(query, state.collection.incidents);
   if (state.areaSearch.status === "success") {
     state.globeView = focusGlobeViewOnAreaSearchArea(state.areaSearch.area, state.globeView);
@@ -1808,9 +2074,15 @@ function selectGlobeMapMarker(markerId: string): void {
       title: marker.title,
       incidentIds: Array.from(new Set(marker.incidentIds)),
     };
-    state.selectedIncidentId = localizedIncidentIds[0] ?? null;
-    state.globeView = focusGlobeViewOnDashboardMapMarker(marker, state.globeView);
+    state.selectedIncidentId =
+      state.selectedIncidentId !== null && localizedIncidentIds.includes(state.selectedIncidentId)
+        ? state.selectedIncidentId
+        : localizedIncidentIds.includes(marker.id)
+          ? marker.id
+          : (localizedIncidentIds[0] ?? null);
     resetSingleIncidentAiBriefingIfStale(state.selectedIncidentId);
+    render();
+    state.globeView = focusGlobeViewOnDashboardMapMarker(marker, state.globeView);
     render();
     if (state.selectedIncidentId !== null) {
       scrollSelectedIncidentIntoView(state.selectedIncidentId);
@@ -1820,6 +2092,7 @@ function selectGlobeMapMarker(markerId: string): void {
 
   state.aggregateMarkerDrillDown = null;
   state.selectedIncidentId = marker.id;
+  state.globeView = focusGlobeViewOnDashboardMapMarker(marker, state.globeView);
   resetSingleIncidentAiBriefingIfStale(marker.id);
   render();
   scrollSelectedIncidentIntoView(marker.id);
@@ -1843,6 +2116,7 @@ function focusGlobeOnIncident(incidentId: string): void {
     ...state.globeView,
     rotationLatitude: incident.coordinates.latitude,
     rotationLongitude: incident.coordinates.longitude,
+    zoom: state.globeView.zoom + SELECTED_INCIDENT_FOCUS_ZOOM_STEP,
   });
 }
 

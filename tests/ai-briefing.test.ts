@@ -55,7 +55,8 @@ describe("AI Briefing request pipeline", () => {
         responsePriorityRecommendations: true,
         uncertaintyNotes: true,
       },
-      publicDataNotice: "Use only the public Incident fields in this payload. Do not request PII, confidential context, or private operational data.",
+      publicDataNotice:
+        "Use only the public Incident fields in this payload. Use categoryLabel, sourceName, startedAt/updatedAt, severityScoreLabel, sourceReportedMeasurements, and sourceRecord for readable wording. Treat Severity Score only as the app's normalized ranking, not as an official source measurement. Do not invent disaster magnitude scales, measurements, PII, confidential context, or private operational data.",
       scope: {
         kind: "selected_incident",
         label: "selected Incident",
@@ -63,6 +64,7 @@ describe("AI Briefing request pipeline", () => {
           id: "usgs-earthquakes:alpha",
           title: "M 5.4 - 12 km S of Example, Alaska",
           category: "earthquake",
+          categoryLabel: "Earthquake",
           source: "usgs-earthquakes",
           sourceName: "USGS Earthquakes",
           sourceUrl: "https://earthquake.usgs.gov/earthquakes/eventpage/alpha",
@@ -71,6 +73,15 @@ describe("AI Briefing request pipeline", () => {
           updatedAt: "2026-06-10T13:00:00.000Z",
           severityScore: 54,
           severityLabel: "strong",
+          severityScoreLabel:
+            "App Severity Score 54/100 (Strong normalized dashboard ranking; not a source-reported measurement)",
+          sourceReportedMeasurements: [
+            {
+              label: "USGS earthquake magnitude",
+              value: "5.4 magnitude",
+              sourceName: "USGS Earthquakes",
+            },
+          ],
           sourceRecord: {
             publicFeed: "usgs-earthquakes",
             publicFeedName: "USGS Earthquakes",
@@ -82,6 +93,52 @@ describe("AI Briefing request pipeline", () => {
     });
     expect(JSON.stringify(request)).not.toContain("privateOperationalNote");
     expect(JSON.stringify(request)).not.toContain("\"payload\"");
+  });
+
+  it("keeps Severity Score separate from source-reported measurements without inventing missing measurements", () => {
+    const nasaIncidentWithoutSourceMeasurements: Incident = {
+      ...incident,
+      id: "nasa-eonet:no-measurements",
+      title: "Wildfire activity in British Columbia, Canada",
+      category: "wildfire",
+      source: "nasa-eonet",
+      sourceName: "NASA EONET",
+      sourceUrl: "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_7777",
+      coordinates: { latitude: 53.7, longitude: -123.1 },
+      severityScore: 65,
+      severityLabel: "strong",
+      rawSource: {
+        publicFeed: "nasa-eonet",
+        publicFeedName: "NASA EONET",
+        originalId: "EONET_7777",
+        retrievedAt: "2026-06-10T15:30:00.000Z",
+        payload: { magnitude: 9.9, alertLevel: "RED", unsupportedMeasurement: "do not surface" },
+      },
+    };
+
+    const request = buildSingleIncidentBriefingRequest(nasaIncidentWithoutSourceMeasurements);
+
+    expect(request.scope).toEqual(
+      expect.objectContaining({
+        kind: "selected_incident",
+        incident: expect.objectContaining({
+          categoryLabel: "Wildfire",
+          severityScoreLabel:
+            "App Severity Score 65/100 (Strong normalized dashboard ranking; not a source-reported measurement)",
+          sourceReportedMeasurements: [],
+          sourceRecord: {
+            publicFeed: "nasa-eonet",
+            publicFeedName: "NASA EONET",
+            originalId: "EONET_7777",
+            retrievedAt: "2026-06-10T15:30:00.000Z",
+          },
+        }),
+      }),
+    );
+    expect(JSON.stringify(request.scope)).not.toContain("9.9");
+    expect(JSON.stringify(request.scope)).not.toContain("unsupportedMeasurement");
+    expect(request.publicDataNotice).toContain("Do not invent disaster magnitude scales");
+    validateAiBriefingRequestPayload(request);
   });
 
   it("builds an explicit Filtered Incident Set request with sanitized non-text filters", () => {
@@ -247,6 +304,17 @@ describe("AI Briefing request pipeline", () => {
           title: 'M 5.4 - Example resident said "my address is 10 Main Street"',
         },
         "openai",
+      ),
+    ).toBeNull();
+    expect(
+      buildSelectedIncidentPublicSocialContext(
+        {
+          ...incident,
+          title: 'M 5.4 - Example resident said "my address is 10 Main Street"',
+          coordinates: null,
+          sourceUrl: "https://social.example/@named_user/status/123",
+        },
+        "anthropic",
       ),
     ).toBeNull();
   });

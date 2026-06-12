@@ -20,7 +20,7 @@ export const DEFAULT_ANTHROPIC_AI_BRIEFING_MODEL = "claude-3-5-haiku-latest";
 export const DEFAULT_GEMINI_AI_BRIEFING_MODEL = "gemini-1.5-flash";
 export const DEFAULT_AI_BRIEFING_MODEL = DEFAULT_OPENAI_AI_BRIEFING_MODEL;
 const AI_BRIEFING_PROVIDER_INSTRUCTIONS =
-  "You create concise AI Briefings from public natural-disaster and environmental Incident data. Use only fields present in the payload. If Public Social Context is present, treat it only as aggregated localized public signals. Return JSON only.";
+  "You create concise AI Briefings from public natural-disaster and environmental Incident data. Use only fields present in the payload. Use plain-language labels from categoryLabel, sourceName, severityScoreLabel, sourceReportedMeasurements, and sourceRecord. Clearly separate Severity Score as the app's normalized ranking from source-reported measurements. Do not invent disaster magnitude scales, alert levels, or measurements. If Public Social Context is present, treat it only as aggregated localized public signals. Return JSON only.";
 
 export interface AiBriefingProviderApiKeys {
   openai?: string | null | undefined;

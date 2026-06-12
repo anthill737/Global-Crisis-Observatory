@@ -29,8 +29,9 @@ describe("Windows launcher auto-open behavior", () => {
 
     expect(launcher).toContain("Browser fallback:");
     expect(launcher).toContain("If no browser window opens, Windows asks which app to use, or Vite reports that browser opening failed,");
-    expect(launcher).toContain("manually open this exact local URL:");
-    expect(launcher).toContain("If browser auto-open failed but the server reached a ready state, manually open this exact local URL:");
+    expect(launcher).toContain("copy and paste this fallback URL into your browser:");
+    expect(launcher).toContain("If browser auto-open failed but the server reached a ready state, copy and paste this fallback URL into your browser:");
+    expect(launcher).toContain("The Global Crisis Dashboard only works through the Vite local server; do not open index.html directly.");
     expect(launcher.match(/echo   %LOCAL_APP_URL%/g)).toHaveLength(2);
     expect(launcher).toContain('if not "%LAUNCH_EXIT%"=="0" (');
   });
@@ -58,8 +59,9 @@ describe("Windows run guide launcher documentation", () => {
     expect(runGuide).toContain("then starts the local app with the exact launch command:");
     expect(runGuide).toContain("npm run dev -- --open");
     expect(runGuide).toContain("The `--open` flag makes Vite ask Windows to open the Global Crisis Dashboard in your default browser when the local server is ready.");
-    expect(runGuide).toContain("If no browser window opens, Windows asks which app to use, or Vite reports that browser opening failed, manually open this URL:");
+    expect(runGuide).toContain("If no browser window opens, Windows asks which app to use, or Vite reports that browser opening failed, copy and paste this fallback URL into your browser:");
     expect(runGuide).toContain("http://127.0.0.1:5173/");
+    expect(runGuide).toContain("The fallback URL is a Vite local-server URL, not a standalone file path.");
   });
 
   it("keeps the verification checklist aligned with current app startup behavior", () => {
@@ -68,7 +70,7 @@ describe("Windows run guide launcher documentation", () => {
     expect(runGuide).toContain("## 7. Verification checklist");
     expect(runGuide).toContain("The launcher window shows `npm run dev -- --open`, the browser auto-open note, and the fallback URL `http://127.0.0.1:5173/`.");
     expect(runGuide).toContain("The Global Crisis Dashboard opens in the default browser, or the same fallback URL opens it manually.");
-    expect(runGuide).toContain("Do not open `index.html` directly; the Vite local server is required for the GDACS Public Feed proxy and AI Briefing request middleware.");
+    expect(runGuide).toContain("Do not open `index.html` directly; the Vite local server is required for the GDACS Public Feed proxy, the NOAA/NWS Active Alerts Public Feed proxy, and AI Briefing request middleware.");
   });
 
   it("uses Windows PowerShell syntax for documented copy-paste commands", () => {

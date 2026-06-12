@@ -1,5 +1,11 @@
 import type { AiBriefingChoice } from "./ai-briefing-choice";
 import type { Coordinates, Incident, IncidentCategory, IncidentFilters, PublicFeedId, SeverityLabel } from "./incidents";
+import {
+  buildSourceReportedMeasurementFields,
+  formatIncidentCategoryLabel,
+  formatIncidentSeverityScoreText,
+  type SourceReportedMeasurementField,
+} from "./incident-labels";
 
 export const AI_BRIEFING_API_ENDPOINT = "/api/ai-briefing";
 const MAX_FILTERED_INCIDENT_SET_ITEMS = 12;
@@ -11,6 +17,7 @@ export interface PublicAiBriefingIncident {
   id: string;
   title: string;
   category: IncidentCategory;
+  categoryLabel: string;
   source: PublicFeedId;
   sourceName: string;
   sourceUrl: string | null;
@@ -19,6 +26,8 @@ export interface PublicAiBriefingIncident {
   updatedAt: string | null;
   severityScore: number | null;
   severityLabel: SeverityLabel | null;
+  severityScoreLabel: string;
+  sourceReportedMeasurements: SourceReportedMeasurementField[];
   sourceRecord: {
     publicFeed: PublicFeedId;
     publicFeedName: string;
@@ -219,7 +228,8 @@ export function buildAiBriefingRequestPayload(input: {
     responsePriorityRecommendations: true,
     uncertaintyNotes: true,
   } as const;
-  const publicDataNotice = "Use only the public Incident fields in this payload. Do not request PII, confidential context, or private operational data.";
+  const publicDataNotice =
+    "Use only the public Incident fields in this payload. Use categoryLabel, sourceName, startedAt/updatedAt, severityScoreLabel, sourceReportedMeasurements, and sourceRecord for readable wording. Treat Severity Score only as the app's normalized ranking, not as an official source measurement. Do not invent disaster magnitude scales, measurements, PII, confidential context, or private operational data.";
   const publicSocialContext = toProviderSafePublicSocialContext(input.publicSocialContext ?? null, input.aiBriefingChoice);
 
   if (input.selectedIncident !== null) {
@@ -411,6 +421,7 @@ function toPublicAiBriefingIncident(incident: Incident): PublicAiBriefingInciden
     id: incident.id,
     title: incident.title,
     category: incident.category,
+    categoryLabel: formatIncidentCategoryLabel(incident.category),
     source: incident.source,
     sourceName: incident.sourceName,
     sourceUrl: readNullablePublicUrl(incident.sourceUrl),
@@ -419,6 +430,8 @@ function toPublicAiBriefingIncident(incident: Incident): PublicAiBriefingInciden
     updatedAt: incident.updatedAt,
     severityScore: incident.severityScore,
     severityLabel: incident.severityLabel,
+    severityScoreLabel: formatIncidentSeverityScoreText(incident),
+    sourceReportedMeasurements: buildSourceReportedMeasurementFields(incident),
     sourceRecord: {
       publicFeed: incident.rawSource.publicFeed,
       publicFeedName: incident.rawSource.publicFeedName,

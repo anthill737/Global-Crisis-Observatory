@@ -9,6 +9,12 @@ import {
   type SourceStatus,
   type SourceStatusState,
 } from "./lib/incidents";
+import {
+  buildSourceReportedMeasurementFields,
+  formatIncidentCategoryLabel,
+  formatIncidentSeverityScoreText,
+  type SourceReportedMeasurementField,
+} from "./lib/incident-labels";
 
 export interface DashboardMetric {
   label: string;
@@ -29,6 +35,7 @@ export interface DashboardMapMarker {
   longitude: number;
   severityScore: number | null;
   severityLabel: SeverityLabel | null;
+  sourceReportedMeasurementSummary: string | null;
   leftPercent: number;
   topPercent: number;
   depth: number;
@@ -93,11 +100,7 @@ export interface DashboardFilterOptions {
   severityLabels: SeverityLabel[];
 }
 
-export interface IncidentDetailMetricField {
-  label: string;
-  value: string;
-  sourceName: string;
-}
+export type IncidentDetailMetricField = SourceReportedMeasurementField;
 
 export interface IncidentDetailDisplay {
   title: string;
@@ -363,10 +366,7 @@ export function formatDashboardTimestamp(timestamp: string | null): string {
 }
 
 export function formatCategoryLabel(category: IncidentCategory): string {
-  return category
-    .split("_")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+  return formatIncidentCategoryLabel(category);
 }
 
 export function formatSourceStatusState(state: SourceStatusState): string {
@@ -374,18 +374,7 @@ export function formatSourceStatusState(state: SourceStatusState): string {
 }
 
 export function buildIncidentDetailMetricFields(incident: Incident): IncidentDetailMetricField[] {
-  const metricFields: IncidentDetailMetricField[] = [];
-  const earthquakeMagnitude = readUsgsEarthquakeMagnitude(incident);
-
-  if (earthquakeMagnitude !== null) {
-    metricFields.push({
-      label: "Earthquake magnitude",
-      value: formatMetricNumber(earthquakeMagnitude),
-      sourceName: incident.sourceName,
-    });
-  }
-
-  return metricFields;
+  return buildSourceReportedMeasurementFields(incident);
 }
 
 export function buildIncidentDetailDisplay(incident: Incident): IncidentDetailDisplay {
@@ -404,14 +393,13 @@ export function buildIncidentDetailDisplay(incident: Incident): IncidentDetailDi
     metricFields,
     metricFallbackText:
       metricFields.length === 0
-        ? `No event-specific metrics were published by ${incident.sourceName} for this Incident.`
+        ? `No source-reported measurements were published by ${incident.sourceName} for this Incident.`
         : null,
   };
 }
 
 export function formatIncidentSeverityText(incident: Incident): string {
-  const severity = incident.severityLabel ?? "unscored";
-  return `${severity}${incident.severityScore === null ? "" : ` · ${incident.severityScore}`}`;
+  return formatIncidentSeverityScoreText(incident);
 }
 
 function formatIncidentLocation(incident: Incident): string {
@@ -657,6 +645,7 @@ function toDashboardMapMarker(incident: Incident, globeView: DashboardGlobeView)
       longitude: incident.coordinates.longitude,
       severityScore: incident.severityScore,
       severityLabel: incident.severityLabel,
+      sourceReportedMeasurementSummary: formatSourceReportedMeasurementSummary(incident),
       leftPercent: projection.leftPercent,
       topPercent: projection.topPercent,
       depth: projection.depth,
@@ -736,6 +725,15 @@ function toAggregateDashboardMapMarker(markers: DashboardMapMarker[]): Dashboard
     longitude: Number(longitude.toFixed(6)),
     isVisible: true,
   };
+}
+
+function formatSourceReportedMeasurementSummary(incident: Incident): string | null {
+  const fields = buildSourceReportedMeasurementFields(incident);
+  if (fields.length === 0) {
+    return null;
+  }
+
+  return fields.map((field) => `${field.label}: ${field.value} from ${field.sourceName}`).join("; ");
 }
 
 function compareDashboardMapMarkerPriority(left: DashboardMapMarker, right: DashboardMapMarker): number {
@@ -943,26 +941,4 @@ function calculateCoordinateDistanceKm(
     Math.cos(leftLatitude) * Math.cos(rightLatitude) * Math.sin(longitudeDelta / 2) ** 2;
 
   return 2 * earthRadiusKm * Math.asin(Math.min(1, Math.sqrt(haversine)));
-}
-
-function readUsgsEarthquakeMagnitude(incident: Incident): number | null {
-  if (incident.source !== "usgs-earthquakes" || !isRecord(incident.rawSource.payload)) {
-    return null;
-  }
-
-  const properties = incident.rawSource.payload.properties;
-  if (!isRecord(properties)) {
-    return null;
-  }
-
-  const magnitude = properties.mag;
-  return typeof magnitude === "number" && Number.isFinite(magnitude) ? magnitude : null;
-}
-
-function formatMetricNumber(value: number): string {
-  return Number.isInteger(value) ? value.toString() : value.toFixed(1);
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
 }
