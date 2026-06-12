@@ -44,7 +44,7 @@ const INCIDENT_CATEGORIES = new Set<IncidentCategory>([
   "dust_haze",
   "other",
 ]);
-const PUBLIC_FEEDS = new Set<PublicFeedId>(["usgs-earthquakes", "nasa-eonet", "gdacs"]);
+const PUBLIC_FEEDS = new Set<PublicFeedId>(["usgs-earthquakes", "nasa-eonet", "gdacs", "noaa-nws-alerts"]);
 const SEVERITY_LABELS = new Set<SeverityLabel>(["minor", "moderate", "strong", "major"]);
 
 export function createSavedEvent(incident: Incident, savedAt: string = new Date().toISOString()): SavedEvent {

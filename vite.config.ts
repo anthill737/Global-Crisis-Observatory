@@ -3,7 +3,14 @@ import { defineConfig, loadEnv, type Plugin } from "vite";
 import { AI_BRIEFING_API_ENDPOINT, AiBriefingConfigurationError, type AiBriefingRequestPayload } from "./src/lib/ai-briefing";
 import { isAiBriefingChoice, type AiBriefingChoice } from "./src/lib/ai-briefing-choice";
 import { generateProviderAiBriefing, type AiBriefingProviderApiKeys } from "./src/lib/ai-briefing-server";
-import { GDACS_RSS_FEED_ENDPOINT, GDACS_RSS_PROXY_ENDPOINT, GDACS_RSS_REQUEST_HEADERS } from "./src/lib/incidents";
+import {
+  GDACS_RSS_FEED_ENDPOINT,
+  GDACS_RSS_PROXY_ENDPOINT,
+  GDACS_RSS_REQUEST_HEADERS,
+  NOAA_NWS_ACTIVE_ALERTS_ENDPOINT,
+  NOAA_NWS_ALERTS_PROXY_ENDPOINT,
+  NOAA_NWS_ALERTS_REQUEST_HEADERS,
+} from "./src/lib/incidents";
 
 const MAX_AI_BRIEFING_REQUEST_BYTES = 64_000;
 
@@ -18,6 +25,7 @@ export default defineConfig(({ mode }) => {
         gemini: env.GEMINI_API_KEY ?? process.env.GEMINI_API_KEY,
       }),
       gdacsPublicFeedProxyPlugin(),
+      noaaNwsPublicFeedProxyPlugin(),
     ],
   };
 });
@@ -54,6 +62,22 @@ function gdacsPublicFeedProxyPlugin(): Plugin {
   };
 }
 
+function noaaNwsPublicFeedProxyPlugin(): Plugin {
+  return {
+    name: "global-crisis-observatory-noaa-nws-public-feed-proxy",
+    configureServer(server) {
+      server.middlewares.use(NOAA_NWS_ALERTS_PROXY_ENDPOINT, (request, response) => {
+        void handleNoaaNwsPublicFeedProxyRequest(request, response);
+      });
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(NOAA_NWS_ALERTS_PROXY_ENDPOINT, (request, response) => {
+        void handleNoaaNwsPublicFeedProxyRequest(request, response);
+      });
+    },
+  };
+}
+
 async function handleGdacsPublicFeedProxyRequest(
   request: IncomingMessage,
   response: ServerResponse<IncomingMessage>,
@@ -80,6 +104,37 @@ async function handleGdacsPublicFeedProxyRequest(
   } catch (error) {
     const message = error instanceof Error ? error.message : "unknown error";
     writeText(response, 502, `GDACS Public Feed proxy could not reach ${GDACS_RSS_FEED_ENDPOINT}: ${message}.`);
+  }
+}
+
+async function handleNoaaNwsPublicFeedProxyRequest(
+  request: IncomingMessage,
+  response: ServerResponse<IncomingMessage>,
+): Promise<void> {
+  if (request.method === "OPTIONS") {
+    writeJson(response, 204, null);
+    return;
+  }
+
+  if (request.method !== "GET") {
+    writeJson(response, 405, { error: "NOAA/NWS Active Alerts Public Feed proxy requests must use GET." });
+    return;
+  }
+
+  try {
+    const upstreamResponse = await fetch(NOAA_NWS_ACTIVE_ALERTS_ENDPOINT, {
+      headers: {
+        ...NOAA_NWS_ALERTS_REQUEST_HEADERS,
+        "User-Agent": "Global Crisis Observatory Public Feed proxy (no-secret localhost demo)",
+      },
+    });
+    const payload = await upstreamResponse.json();
+    writeJson(response, upstreamResponse.status, payload);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "unknown error";
+    writeJson(response, 502, {
+      error: `NOAA/NWS Active Alerts Public Feed proxy could not reach ${NOAA_NWS_ACTIVE_ALERTS_ENDPOINT}: ${message}.`,
+    });
   }
 }
 

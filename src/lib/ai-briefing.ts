@@ -166,6 +166,46 @@ export function buildFilteredIncidentSetBriefingRequest(
   return buildAiBriefingRequestPayload({ selectedIncident: null, filteredIncidentSet, filters, ...options });
 }
 
+export function buildSelectedIncidentPublicSocialContext(
+  incident: Incident | null,
+  aiBriefingChoice: AiBriefingChoice | null | undefined,
+): PublicSocialContext | null {
+  if (incident === null || !supportsPublicSocialContext(aiBriefingChoice)) {
+    return null;
+  }
+
+  const locality = readIncidentPublicContextLocality(incident);
+  const categoryLabel = formatIncidentCategoryForPublicContext(incident.category);
+  const sourceName = readSafePublicSocialContextText(incident.sourceName, 80) ?? "selected Public Feed";
+
+  if (locality === null) {
+    return null;
+  }
+
+  return toProviderSafePublicSocialContext(
+    {
+      locality,
+      signals: [
+        {
+          topic: categoryLabel + " public context scope",
+          localizedSummary: `Broad public signals are relevant only when they match the selected ${categoryLabel} Incident near ${locality} and its source-attributed facts.`,
+          sourceType: "public_social",
+          observedAt: incident.startedAt,
+          sourceUrl: incident.sourceUrl,
+        },
+        {
+          topic: "Source separation",
+          localizedSummary: `${sourceName} remains the core Public Feed source; treat broader public context as separate, contextual, and uncertain.`,
+          sourceType: "public_official",
+          observedAt: incident.rawSource.retrievedAt ?? incident.updatedAt ?? incident.startedAt,
+          sourceUrl: incident.sourceUrl,
+        },
+      ],
+    },
+    aiBriefingChoice,
+  );
+}
+
 export function buildAiBriefingRequestPayload(input: {
   selectedIncident: Incident | null;
   filteredIncidentSet: readonly Incident[];
@@ -480,8 +520,23 @@ function hasUnsafePublicSocialContextContent(value: string): boolean {
     /(^|[\s/])@[a-z0-9_]{2,}\b/iu.test(value) ||
     /\+?\d[\d\s().-]{7,}\d/u.test(value) ||
     /"[^"]+"|'[^']+'|“[^”]+”|‘[^’]+’/u.test(value) ||
-    /\b(?:address|confidential|contact details?|direct quote|dm|email|phone|pii|private|username|user name)\b/iu.test(value)
+    /\b(?:address|confidential|contact details?|direct quote|dm|email|phone|pii|private|rumou?r|unverified|username|user name)\b/iu.test(
+      value,
+    )
   );
+}
+
+function readIncidentPublicContextLocality(incident: Incident): string | null {
+  const titleLocality = incident.title.split(" - ").at(-1) ?? incident.title;
+  const withoutMagnitude = titleLocality.replace(/^M\s*\d+(?:\.\d+)?\s*-\s*/iu, "");
+  return readSafePublicSocialContextText(withoutMagnitude, 80) ?? readSafePublicSocialContextText(incident.title, 80);
+}
+
+function formatIncidentCategoryForPublicContext(category: IncidentCategory): string {
+  return category
+    .split("_")
+    .map((part) => part.slice(0, 1).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function readIsoTimestamp(value: unknown): string | null {
