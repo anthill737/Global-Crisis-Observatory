@@ -1,0 +1,132 @@
+- main "Global Crisis Observatory" [ref=e33252]:
+  - generic [ref=e33253]:
+    - generic [ref=e33254]:
+      - paragraph [ref=e33255]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e33256]
+      - paragraph [ref=e33257]: A Global Crisis Dashboard view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e33258]:
+      - generic [ref=e33259]: Operational
+      - generic [ref=e33260]: Refreshed Jun 11, 2026, 4:18 PM UTC
+      - button "Refresh" [ref=e33261] [cursor=pointer]
+    - region "Settings Control" [ref=e33262]:
+      - paragraph [ref=e33263]: Settings Control
+      - generic [ref=e33264]: Visibility Mode
+      - combobox "Visibility Mode" [ref=e33265]:
+        - option "Light"
+        - option "Dark" [selected]
+        - option "High contrast"
+      - generic [ref=e33266]: "Current Visibility Mode: Dark"
+      - generic [ref=e33267]: Applies to navigation, cards, controls, Incident Detail, Saved Events View, AI Briefing, and Globe Map UI.
+  - region "summary metrics" [ref=e33268]:
+    - article [ref=e33269]:
+      - generic [ref=e33270]: Filtered Incident Set
+      - strong [ref=e33271]: "0"
+      - paragraph [ref=e33272]: 282 total Incidents from reachable Public Feeds
+    - article [ref=e33273]:
+      - generic [ref=e33274]: Public Feeds Online
+      - strong [ref=e33275]: 2/2
+      - paragraph [ref=e33276]: All Source Status checks are successful
+    - article [ref=e33277]:
+      - generic [ref=e33278]: Source Status Attention
+      - strong [ref=e33279]: "0"
+      - paragraph [ref=e33280]: 0 degraded, 0 unavailable
+    - article [ref=e33281]:
+      - generic [ref=e33282]: Last Refresh
+      - strong [ref=e33283]: Jun 11, 2026, 4:18 PM
+      - paragraph [ref=e33284]: "Latest successful refresh: Jun 11, 2026, 4:18 PM"
+  - region "Global Crisis Dashboard layout" [ref=e33285]:
+    - region "Primary geographic Incident view" [ref=e33286]:
+      - generic [ref=e33288]:
+        - paragraph [ref=e33289]: Globe Map
+        - heading "Primary geographic Incident view" [level=2] [ref=e33290]
+        - paragraph [ref=e33291]: Incident Markers are projected by latitude and longitude with Public Feed attribution visible on the map.
+      - paragraph [ref=e33293]: No Incidents match the current filters.
+    - complementary "Refine the Filtered Incident Set" [ref=e33294]:
+      - generic [ref=e33295]:
+        - paragraph [ref=e33296]: Filters
+        - heading "Refine the Filtered Incident Set" [level=2] [ref=e33297]
+      - generic [ref=e33298]:
+        - generic [ref=e33299]:
+          - text: Text search
+          - searchbox "Text search" [ref=e33300]: zzzz-no-incidents-match-this-filter
+        - generic [ref=e33301]:
+          - text: Category
+          - combobox "Category" [ref=e33302]:
+            - option "All categories" [selected]
+            - option "Earthquake"
+            - option "Wildfire"
+            - option "Severe Storm"
+            - option "Volcano"
+        - generic [ref=e33303]:
+          - text: Public Feed
+          - combobox "Public Feed" [ref=e33304]:
+            - option "All Public Feeds" [selected]
+            - option "NASA EONET"
+            - option "USGS Earthquakes"
+        - generic [ref=e33305]:
+          - text: Severity Score
+          - combobox "Severity Score" [ref=e33306]:
+            - option "All severities" [selected]
+            - option "minor"
+            - option "moderate"
+            - option "strong"
+        - button "Reset filters" [ref=e33307] [cursor=pointer]
+    - region "Live public Incidents" [ref=e33308]:
+      - generic [ref=e33309]:
+        - paragraph [ref=e33310]: Incident Feed
+        - heading "Live public Incidents" [level=2] [ref=e33311]
+      - generic [ref=e33312]:
+        - strong [ref=e33313]: No matching Incidents.
+        - paragraph [ref=e33314]: Adjust filters to expand the Filtered Incident Set.
+    - generic [ref=e33315]:
+      - complementary "No selected Incident" [ref=e33316]:
+        - generic [ref=e33317]:
+          - paragraph [ref=e33318]: Incident Detail
+          - heading "No selected Incident" [level=2] [ref=e33319]
+        - generic [ref=e33320]:
+          - strong [ref=e33321]: Select an Incident
+          - paragraph [ref=e33322]: Choose an Incident from the feed or map to inspect source-attributed details.
+      - region "Public-data AI Briefing" [ref=e33323]:
+        - generic [ref=e33325]:
+          - paragraph [ref=e33326]: AI Briefing
+          - heading "Public-data AI Briefing" [level=2] [ref=e33327]
+        - generic "AI Briefing request controls" [ref=e33328]:
+          - button "Brief selected Incident" [disabled] [ref=e33329]
+          - button "Brief Filtered Incident Set" [disabled] [ref=e33330]
+        - paragraph [ref=e33331]: Sends only public Incident fields from the dashboard. Do not enter PII, confidential context, or private operational data.
+        - generic "AI Briefing source attribution" [ref=e33332]:
+          - generic [ref=e33333]: AI Briefing source context
+          - generic [ref=e33335]: No source-attributed Incidents available
+          - generic [ref=e33336]: Filtered Incident Set includes 0 public Incidents from 0 Public Feeds.
+        - status [ref=e33337]:
+          - paragraph [ref=e33338]: Choose a selected Incident or the current Filtered Incident Set to generate an AI Briefing.
+      - complementary "Public Feed freshness" [ref=e33339]:
+        - generic [ref=e33340]:
+          - paragraph [ref=e33341]: Source Status
+          - heading "Public Feed freshness" [level=2] [ref=e33342]
+        - generic [ref=e33343]:
+          - article [ref=e33344]:
+            - generic [ref=e33345]:
+              - strong [ref=e33346]: USGS Earthquakes
+              - generic [ref=e33347]: Success
+            - paragraph [ref=e33348]: Public Feed refreshed successfully.
+            - generic [ref=e33349]:
+              - generic [ref=e33350]: "Last attempted refresh: Jun 11, 2026, 4:18 PM UTC"
+              - generic [ref=e33351]: "Latest successful refresh: Jun 11, 2026, 4:18 PM UTC"
+          - article [ref=e33352]:
+            - generic [ref=e33353]:
+              - strong [ref=e33354]: NASA EONET
+              - generic [ref=e33355]: Success
+            - paragraph [ref=e33356]: Public Feed refreshed successfully.
+            - generic [ref=e33357]:
+              - generic [ref=e33358]: "Last attempted refresh: Jun 11, 2026, 4:18 PM UTC"
+              - generic [ref=e33359]: "Latest successful refresh: Jun 11, 2026, 4:18 PM UTC"
+    - region "Saved Events View" [ref=e33360]:
+      - generic [ref=e33361]:
+        - generic [ref=e33362]:
+          - paragraph [ref=e33363]: Saved Events
+          - heading "Saved Events View" [level=2] [ref=e33364]
+        - generic [ref=e33365]: "0"
+      - generic [ref=e33366]:
+        - strong [ref=e33367]: No Saved Events yet.
+        - paragraph [ref=e33368]: Saved Incidents will persist here in browser local storage across refreshes on this machine.

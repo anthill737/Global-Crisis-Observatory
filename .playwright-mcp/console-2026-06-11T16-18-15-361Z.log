@@ -1,0 +1,7 @@
+[      47ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5173/favicon.ico:0
+[  112039ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson:0
+[  112040ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0
+[  138972ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson:0
+[  138972ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0
+[  149766ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson:0
+[  149766ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0

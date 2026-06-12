@@ -1,0 +1,2 @@
+[     110ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5174/favicon.ico:0
+[  124759ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=50:0

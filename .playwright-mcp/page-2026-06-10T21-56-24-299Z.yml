@@ -1,0 +1,1055 @@
+- main "Global Crisis Observatory" [ref=e18561]:
+  - generic [ref=e18562]:
+    - generic [ref=e18563]:
+      - paragraph [ref=e18564]: Global Crisis Dashboard
+      - heading "Global Crisis Observatory" [level=1] [ref=e18565]
+      - paragraph [ref=e18566]: A command-center view of normalized public natural-disaster and environmental Incidents.
+    - generic [ref=e18567]:
+      - generic [ref=e18568]: Operational
+      - generic [ref=e18569]: Refreshed Jun 10, 2026, 9:55 PM UTC
+      - button "Refresh" [ref=e18570] [cursor=pointer]
+  - region "summary metrics" [ref=e18571]:
+    - article [ref=e18572]:
+      - generic [ref=e18573]: Filtered Incident Set
+      - strong [ref=e18574]: "44"
+      - paragraph [ref=e18575]: 278 total Incidents from reachable Public Feeds
+    - article [ref=e18576]:
+      - generic [ref=e18577]: Public Feeds Online
+      - strong [ref=e18578]: 2/2
+      - paragraph [ref=e18579]: All Source Status checks are successful
+    - article [ref=e18580]:
+      - generic [ref=e18581]: Source Status Attention
+      - strong [ref=e18582]: "0"
+      - paragraph [ref=e18583]: 0 degraded, 0 unavailable
+    - article [ref=e18584]:
+      - generic [ref=e18585]: Last Refresh
+      - strong [ref=e18586]: Jun 10, 2026, 9:55 PM
+      - paragraph [ref=e18587]: "Latest successful refresh: Jun 10, 2026, 9:55 PM"
+  - region "Global Crisis Dashboard command-center layout" [ref=e18588]:
+    - region "Incident map" [ref=e18589]:
+      - generic [ref=e18590]:
+        - paragraph [ref=e18591]: Global Map
+        - heading "Incident map" [level=2] [ref=e18592]
+      - group "Map area with styled Incident markers" [ref=e18593]:
+        - generic [ref=e18594]:
+          - button "Select Tower Wildfire, Millard, Utah" [pressed] [ref=e18595] [cursor=pointer]:
+            - generic [ref=e18596]: Tower Wildfire, Millard, Utah
+          - button "Select Raven Creek Wildfire, Weston, Wyoming" [ref=e18597] [cursor=pointer]:
+            - generic [ref=e18598]: Raven Creek Wildfire, Weston, Wyoming
+          - button "Select CHESTNUT Wildfire, Chelan, Washington" [ref=e18599] [cursor=pointer]:
+            - generic [ref=e18600]: CHESTNUT Wildfire, Chelan, Washington
+          - button "Select WALTZ Wildfire, Mariposa, California" [ref=e18601] [cursor=pointer]:
+            - generic [ref=e18602]: WALTZ Wildfire, Mariposa, California
+          - button "Select Kopshesut Wildfire, Northwest Arctic, Alaska" [ref=e18603] [cursor=pointer]:
+            - generic [ref=e18604]: Kopshesut Wildfire, Northwest Arctic, Alaska
+          - button "Select MOXEE ORCHARD Wildfire, Yakima, Washington" [ref=e18605] [cursor=pointer]:
+            - generic [ref=e18606]: MOXEE ORCHARD Wildfire, Yakima, Washington
+          - button "Select HAYSTACK BUTTE Wildfire, Klickitat, Washington" [ref=e18607] [cursor=pointer]:
+            - generic [ref=e18608]: HAYSTACK BUTTE Wildfire, Klickitat, Washington
+          - button "Select BRANTLEY 2 Wildfire, Eddy, New Mexico" [ref=e18609] [cursor=pointer]:
+            - generic [ref=e18610]: BRANTLEY 2 Wildfire, Eddy, New Mexico
+          - button "Select KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan" [ref=e18611] [cursor=pointer]:
+            - generic [ref=e18612]: KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan
+          - button "Select Bradshaw Wildfire, Powder River, Montana" [ref=e18613] [cursor=pointer]:
+            - generic [ref=e18614]: Bradshaw Wildfire, Powder River, Montana
+          - button "Select Black Ridge Wildfire, Lincoln, Idaho" [ref=e18615] [cursor=pointer]:
+            - generic [ref=e18616]: Black Ridge Wildfire, Lincoln, Idaho
+          - button "Select 0231 ZEN Wildfire, Wasco, Oregon" [ref=e18617] [cursor=pointer]:
+            - generic [ref=e18618]: 0231 ZEN Wildfire, Wasco, Oregon
+          - button "Select Egberts Wildfire, Elko, Nevada" [ref=e18619] [cursor=pointer]:
+            - generic [ref=e18620]: Egberts Wildfire, Elko, Nevada
+          - button "Select Summit Creek Wildfire, Cassia, Idaho" [ref=e18621] [cursor=pointer]:
+            - generic [ref=e18622]: Summit Creek Wildfire, Cassia, Idaho
+          - button "Select Kinyon Springs Wildfire, Owyhee, Idaho" [ref=e18623] [cursor=pointer]:
+            - generic [ref=e18624]: Kinyon Springs Wildfire, Owyhee, Idaho
+          - button "Select MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida" [ref=e18625] [cursor=pointer]:
+            - generic [ref=e18626]: MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida
+          - button "Select COUNTRY MEADOW Wildfire, Benton, Washington" [ref=e18627] [cursor=pointer]:
+            - generic [ref=e18628]: COUNTRY MEADOW Wildfire, Benton, Washington
+          - button "Select 340 Wildfire, Wakulla, Florida" [ref=e18629] [cursor=pointer]:
+            - generic [ref=e18630]: 340 Wildfire, Wakulla, Florida
+          - button "Select Mile Marker 44 Wildfire, Broward, Florida" [ref=e18631] [cursor=pointer]:
+            - generic [ref=e18632]: Mile Marker 44 Wildfire, Broward, Florida
+          - button "Select Quartz Wildfire, Pershing, Nevada" [ref=e18633] [cursor=pointer]:
+            - generic [ref=e18634]: Quartz Wildfire, Pershing, Nevada
+          - button "Select Thousand Wildfire, Northwest Arctic, Alaska" [ref=e18635] [cursor=pointer]:
+            - generic [ref=e18636]: Thousand Wildfire, Northwest Arctic, Alaska
+          - button "Select WaWa 2 Wildfire, Highlands, Florida" [ref=e18637] [cursor=pointer]:
+            - generic [ref=e18638]: WaWa 2 Wildfire, Highlands, Florida
+          - button "Select Shell Wildfire, Lake, Florida" [ref=e18639] [cursor=pointer]:
+            - generic [ref=e18640]: Shell Wildfire, Lake, Florida
+          - button "Select Trigg Wildfire, San Miguel, New Mexico" [ref=e18641] [cursor=pointer]:
+            - generic [ref=e18642]: Trigg Wildfire, San Miguel, New Mexico
+          - button "Select DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi" [ref=e18643] [cursor=pointer]:
+            - generic [ref=e18644]: DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi
+          - button "Select Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi" [ref=e18645] [cursor=pointer]:
+            - generic [ref=e18646]: Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi
+          - button "Select CADDUGGEN Wildfire, Carteret, North Carolina" [ref=e18647] [cursor=pointer]:
+            - generic [ref=e18648]: CADDUGGEN Wildfire, Carteret, North Carolina
+          - button "Select Rifle Range Rd Wildfire, Collier, Florida" [ref=e18649] [cursor=pointer]:
+            - generic [ref=e18650]: Rifle Range Rd Wildfire, Collier, Florida
+          - button "Select Foothill Wildfire, Santa Barbara, California" [ref=e18651] [cursor=pointer]:
+            - generic [ref=e18652]: Foothill Wildfire, Santa Barbara, California
+          - button "Select MTZ/SDU/TUSIL Wildfire, San Diego, California" [ref=e18653] [cursor=pointer]:
+            - generic [ref=e18654]: MTZ/SDU/TUSIL Wildfire, San Diego, California
+          - button "Select VERONA Wildfire, Riverside, California" [ref=e18655] [cursor=pointer]:
+            - generic [ref=e18656]: VERONA Wildfire, Riverside, California
+          - button "Select BAIN Wildfire, Riverside, California" [ref=e18657] [cursor=pointer]:
+            - generic [ref=e18658]: BAIN Wildfire, Riverside, California
+          - button "Select Sunfish Rx Prescribed Fire, Cook, Minnesota" [ref=e18659] [cursor=pointer]:
+            - generic [ref=e18660]: Sunfish Rx Prescribed Fire, Cook, Minnesota
+          - button "Select DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi" [ref=e18661] [cursor=pointer]:
+            - generic [ref=e18662]: DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi
+          - button "Select Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi" [ref=e18663] [cursor=pointer]:
+            - generic [ref=e18664]: Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi
+          - button "Select RX WINN BU 24 Prescribed Fire, Winn, Louisiana" [ref=e18665] [cursor=pointer]:
+            - generic [ref=e18666]: RX WINN BU 24 Prescribed Fire, Winn, Louisiana
+          - button "Select Kress Wildfire, Swisher, Texas" [ref=e18667] [cursor=pointer]:
+            - generic [ref=e18668]: Kress Wildfire, Swisher, Texas
+          - button "Select SANDY Wildfire, Ventura, California" [ref=e18669] [cursor=pointer]:
+            - generic [ref=e18670]: SANDY Wildfire, Ventura, California
+          - button "Select RIVER Wildfire, Kern, California" [ref=e18671] [cursor=pointer]:
+            - generic [ref=e18672]: RIVER Wildfire, Kern, California
+          - button "Select Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi" [ref=e18673] [cursor=pointer]:
+            - generic [ref=e18674]: Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi
+          - button "Select RX WINN BU 114 Prescribed Fire, Grant, Louisiana" [ref=e18675] [cursor=pointer]:
+            - generic [ref=e18676]: RX WINN BU 114 Prescribed Fire, Grant, Louisiana
+          - button "Select Stinky Wildfire, Potter, Texas" [ref=e18677] [cursor=pointer]:
+            - generic [ref=e18678]: Stinky Wildfire, Potter, Texas
+          - button "Select Sharpe Wildfire, Baca, Colorado" [ref=e18679] [cursor=pointer]:
+            - generic [ref=e18680]: Sharpe Wildfire, Baca, Colorado
+          - button "Select Proffitt Lake Wildfire, Meade, Kansas" [ref=e18681] [cursor=pointer]:
+            - generic [ref=e18682]: Proffitt Lake Wildfire, Meade, Kansas
+        - paragraph: Map focused on Tower Wildfire, Millard, Utah.
+    - complementary "Refine the Filtered Incident Set" [ref=e18683]:
+      - generic [ref=e18684]:
+        - paragraph [ref=e18685]: Filters
+        - heading "Refine the Filtered Incident Set" [level=2] [ref=e18686]
+      - generic [ref=e18687]:
+        - generic [ref=e18688]:
+          - text: Text search
+          - searchbox "Text search" [ref=e18689]
+        - generic [ref=e18690]:
+          - text: Category
+          - combobox "Category" [ref=e18691]:
+            - option "All categories"
+            - option "Earthquake"
+            - option "Wildfire" [selected]
+            - option "Severe Storm"
+            - option "Volcano"
+        - generic [ref=e18692]:
+          - text: Public Feed
+          - combobox "Public Feed" [ref=e18693]:
+            - option "All Public Feeds" [selected]
+            - option "NASA EONET"
+            - option "USGS Earthquakes"
+        - generic [ref=e18694]:
+          - text: Severity Score
+          - combobox "Severity Score" [ref=e18695]:
+            - option "All severities" [selected]
+            - option "minor"
+            - option "moderate"
+            - option "strong"
+        - button "Reset filters" [ref=e18696] [cursor=pointer]
+    - region "Live public Incidents" [ref=e18697]:
+      - generic [ref=e18698]:
+        - paragraph [ref=e18699]: Incident Feed
+        - heading "Live public Incidents" [level=2] [ref=e18700]
+      - generic [ref=e18701]:
+        - article [ref=e18702]:
+          - button "Wildfire strong · 65 Tower Wildfire, Millard, Utah" [ref=e18704] [cursor=pointer]:
+            - generic [ref=e18705]: Wildfire
+            - generic [ref=e18706]: strong · 65
+            - generic [ref=e18707]: Tower Wildfire, Millard, Utah
+          - generic [ref=e18708]:
+            - generic [ref=e18709]:
+              - term [ref=e18710]: Public Feed
+              - definition [ref=e18711]: NASA EONET
+            - generic [ref=e18712]:
+              - term [ref=e18713]: Severity Score
+              - definition [ref=e18714]: strong · 65
+            - generic [ref=e18715]:
+              - term [ref=e18716]: Started
+              - definition [ref=e18717]: Jun 7, 2026, 3:24 PM
+            - generic [ref=e18718]:
+              - term [ref=e18719]: Coordinates
+              - definition [ref=e18720]: 39.21, -112.16
+          - link "Open source attribution" [ref=e18721] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/6f3a4603-8a05-428a-b65c-16b6e2d33ab3
+        - article [ref=e18722]:
+          - button "Wildfire strong · 65 Raven Creek Wildfire, Weston, Wyoming" [ref=e18724] [cursor=pointer]:
+            - generic [ref=e18725]: Wildfire
+            - generic [ref=e18726]: strong · 65
+            - generic [ref=e18727]: Raven Creek Wildfire, Weston, Wyoming
+          - generic [ref=e18728]:
+            - generic [ref=e18729]:
+              - term [ref=e18730]: Public Feed
+              - definition [ref=e18731]: NASA EONET
+            - generic [ref=e18732]:
+              - term [ref=e18733]: Severity Score
+              - definition [ref=e18734]: strong · 65
+            - generic [ref=e18735]:
+              - term [ref=e18736]: Started
+              - definition [ref=e18737]: Jun 6, 2026, 8:44 PM
+            - generic [ref=e18738]:
+              - term [ref=e18739]: Coordinates
+              - definition [ref=e18740]: 44.08, -105.05
+          - link "Open source attribution" [ref=e18741] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/7c1335d1-37d1-436f-9f42-05f089f964b5
+        - article [ref=e18742]:
+          - button "Wildfire strong · 65 CHESTNUT Wildfire, Chelan, Washington" [ref=e18744] [cursor=pointer]:
+            - generic [ref=e18745]: Wildfire
+            - generic [ref=e18746]: strong · 65
+            - generic [ref=e18747]: CHESTNUT Wildfire, Chelan, Washington
+          - generic [ref=e18748]:
+            - generic [ref=e18749]:
+              - term [ref=e18750]: Public Feed
+              - definition [ref=e18751]: NASA EONET
+            - generic [ref=e18752]:
+              - term [ref=e18753]: Severity Score
+              - definition [ref=e18754]: strong · 65
+            - generic [ref=e18755]:
+              - term [ref=e18756]: Started
+              - definition [ref=e18757]: Jun 6, 2026, 2:14 PM
+            - generic [ref=e18758]:
+              - term [ref=e18759]: Coordinates
+              - definition [ref=e18760]: 47.79, -120.02
+          - link "Open source attribution" [ref=e18761] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/61b0da7b-ab05-43d3-a817-7087246a7765
+        - article [ref=e18762]:
+          - button "Wildfire strong · 65 WALTZ Wildfire, Mariposa, California" [ref=e18764] [cursor=pointer]:
+            - generic [ref=e18765]: Wildfire
+            - generic [ref=e18766]: strong · 65
+            - generic [ref=e18767]: WALTZ Wildfire, Mariposa, California
+          - generic [ref=e18768]:
+            - generic [ref=e18769]:
+              - term [ref=e18770]: Public Feed
+              - definition [ref=e18771]: NASA EONET
+            - generic [ref=e18772]:
+              - term [ref=e18773]: Severity Score
+              - definition [ref=e18774]: strong · 65
+            - generic [ref=e18775]:
+              - term [ref=e18776]: Started
+              - definition [ref=e18777]: Jun 5, 2026, 3:51 PM
+            - generic [ref=e18778]:
+              - term [ref=e18779]: Coordinates
+              - definition [ref=e18780]: 37.38, -120.25
+          - link "Open source attribution" [ref=e18781] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/b8f6d725-b08f-43a6-a286-4fa1e4686926
+        - article [ref=e18782]:
+          - button "Wildfire strong · 65 Kopshesut Wildfire, Northwest Arctic, Alaska" [ref=e18784] [cursor=pointer]:
+            - generic [ref=e18785]: Wildfire
+            - generic [ref=e18786]: strong · 65
+            - generic [ref=e18787]: Kopshesut Wildfire, Northwest Arctic, Alaska
+          - generic [ref=e18788]:
+            - generic [ref=e18789]:
+              - term [ref=e18790]: Public Feed
+              - definition [ref=e18791]: NASA EONET
+            - generic [ref=e18792]:
+              - term [ref=e18793]: Severity Score
+              - definition [ref=e18794]: strong · 65
+            - generic [ref=e18795]:
+              - term [ref=e18796]: Started
+              - definition [ref=e18797]: Jun 4, 2026, 6:04 PM
+            - generic [ref=e18798]:
+              - term [ref=e18799]: Coordinates
+              - definition [ref=e18800]: 67.09, -157.93
+          - link "Open source attribution" [ref=e18801] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/c798dd94-3c60-41ad-912b-157b8e4f5d90
+        - article [ref=e18802]:
+          - button "Wildfire strong · 65 MOXEE ORCHARD Wildfire, Yakima, Washington" [ref=e18804] [cursor=pointer]:
+            - generic [ref=e18805]: Wildfire
+            - generic [ref=e18806]: strong · 65
+            - generic [ref=e18807]: MOXEE ORCHARD Wildfire, Yakima, Washington
+          - generic [ref=e18808]:
+            - generic [ref=e18809]:
+              - term [ref=e18810]: Public Feed
+              - definition [ref=e18811]: NASA EONET
+            - generic [ref=e18812]:
+              - term [ref=e18813]: Severity Score
+              - definition [ref=e18814]: strong · 65
+            - generic [ref=e18815]:
+              - term [ref=e18816]: Started
+              - definition [ref=e18817]: Jun 4, 2026, 5:25 PM
+            - generic [ref=e18818]:
+              - term [ref=e18819]: Coordinates
+              - definition [ref=e18820]: 46.52, -120.08
+          - link "Open source attribution" [ref=e18821] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/48e1a724-9dc5-44cf-918c-cf541b1cd180
+        - article [ref=e18822]:
+          - button "Wildfire strong · 65 HAYSTACK BUTTE Wildfire, Klickitat, Washington" [ref=e18824] [cursor=pointer]:
+            - generic [ref=e18825]: Wildfire
+            - generic [ref=e18826]: strong · 65
+            - generic [ref=e18827]: HAYSTACK BUTTE Wildfire, Klickitat, Washington
+          - generic [ref=e18828]:
+            - generic [ref=e18829]:
+              - term [ref=e18830]: Public Feed
+              - definition [ref=e18831]: NASA EONET
+            - generic [ref=e18832]:
+              - term [ref=e18833]: Severity Score
+              - definition [ref=e18834]: strong · 65
+            - generic [ref=e18835]:
+              - term [ref=e18836]: Started
+              - definition [ref=e18837]: May 30, 2026, 8:21 PM
+            - generic [ref=e18838]:
+              - term [ref=e18839]: Coordinates
+              - definition [ref=e18840]: 45.67, -120.93
+          - link "Open source attribution" [ref=e18841] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/24e697c7-e671-47f2-9ec9-4c76a15af8be
+        - article [ref=e18842]:
+          - button "Wildfire strong · 65 BRANTLEY 2 Wildfire, Eddy, New Mexico" [ref=e18844] [cursor=pointer]:
+            - generic [ref=e18845]: Wildfire
+            - generic [ref=e18846]: strong · 65
+            - generic [ref=e18847]: BRANTLEY 2 Wildfire, Eddy, New Mexico
+          - generic [ref=e18848]:
+            - generic [ref=e18849]:
+              - term [ref=e18850]: Public Feed
+              - definition [ref=e18851]: NASA EONET
+            - generic [ref=e18852]:
+              - term [ref=e18853]: Severity Score
+              - definition [ref=e18854]: strong · 65
+            - generic [ref=e18855]:
+              - term [ref=e18856]: Started
+              - definition [ref=e18857]: May 30, 2026, 12:20 PM
+            - generic [ref=e18858]:
+              - term [ref=e18859]: Coordinates
+              - definition [ref=e18860]: 32.61, -104.36
+          - link "Open source attribution" [ref=e18861] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/d11f3073-cd5d-4c79-bd04-94b39d094049
+        - article [ref=e18862]:
+          - button "Wildfire strong · 65 KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan" [ref=e18864] [cursor=pointer]:
+            - generic [ref=e18865]: Wildfire
+            - generic [ref=e18866]: strong · 65
+            - generic [ref=e18867]: KALKASKA-RX 61150021 Fletcher Unit 2 Prescribed Fire, Kalkaska, Michigan
+          - generic [ref=e18868]:
+            - generic [ref=e18869]:
+              - term [ref=e18870]: Public Feed
+              - definition [ref=e18871]: NASA EONET
+            - generic [ref=e18872]:
+              - term [ref=e18873]: Severity Score
+              - definition [ref=e18874]: strong · 65
+            - generic [ref=e18875]:
+              - term [ref=e18876]: Started
+              - definition [ref=e18877]: May 28, 2026, 3:33 PM
+            - generic [ref=e18878]:
+              - term [ref=e18879]: Coordinates
+              - definition [ref=e18880]: 44.52, -84.92
+          - link "Open source attribution" [ref=e18881] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/2a7c3979-fc28-4d09-b15f-1cdc98be57e1
+        - article [ref=e18882]:
+          - button "Wildfire strong · 65 Bradshaw Wildfire, Powder River, Montana" [ref=e18884] [cursor=pointer]:
+            - generic [ref=e18885]: Wildfire
+            - generic [ref=e18886]: strong · 65
+            - generic [ref=e18887]: Bradshaw Wildfire, Powder River, Montana
+          - generic [ref=e18888]:
+            - generic [ref=e18889]:
+              - term [ref=e18890]: Public Feed
+              - definition [ref=e18891]: NASA EONET
+            - generic [ref=e18892]:
+              - term [ref=e18893]: Severity Score
+              - definition [ref=e18894]: strong · 65
+            - generic [ref=e18895]:
+              - term [ref=e18896]: Started
+              - definition [ref=e18897]: May 26, 2026, 11:30 PM
+            - generic [ref=e18898]:
+              - term [ref=e18899]: Coordinates
+              - definition [ref=e18900]: 45.06, -105.96
+          - link "Open source attribution" [ref=e18901] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/083f5cbb-4d42-4371-acfc-c39bc4e2a545
+        - article [ref=e18902]:
+          - button "Wildfire strong · 65 Black Ridge Wildfire, Lincoln, Idaho" [ref=e18904] [cursor=pointer]:
+            - generic [ref=e18905]: Wildfire
+            - generic [ref=e18906]: strong · 65
+            - generic [ref=e18907]: Black Ridge Wildfire, Lincoln, Idaho
+          - generic [ref=e18908]:
+            - generic [ref=e18909]:
+              - term [ref=e18910]: Public Feed
+              - definition [ref=e18911]: NASA EONET
+            - generic [ref=e18912]:
+              - term [ref=e18913]: Severity Score
+              - definition [ref=e18914]: strong · 65
+            - generic [ref=e18915]:
+              - term [ref=e18916]: Started
+              - definition [ref=e18917]: May 25, 2026, 8:50 PM
+            - generic [ref=e18918]:
+              - term [ref=e18919]: Coordinates
+              - definition [ref=e18920]: 43.05, -113.94
+          - link "Open source attribution" [ref=e18921] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/ed35c822-3212-4d00-af01-d65afe675168
+        - article [ref=e18922]:
+          - button "Wildfire strong · 65 0231 ZEN Wildfire, Wasco, Oregon" [ref=e18924] [cursor=pointer]:
+            - generic [ref=e18925]: Wildfire
+            - generic [ref=e18926]: strong · 65
+            - generic [ref=e18927]: 0231 ZEN Wildfire, Wasco, Oregon
+          - generic [ref=e18928]:
+            - generic [ref=e18929]:
+              - term [ref=e18930]: Public Feed
+              - definition [ref=e18931]: NASA EONET
+            - generic [ref=e18932]:
+              - term [ref=e18933]: Severity Score
+              - definition [ref=e18934]: strong · 65
+            - generic [ref=e18935]:
+              - term [ref=e18936]: Started
+              - definition [ref=e18937]: May 25, 2026, 7:11 PM
+            - generic [ref=e18938]:
+              - term [ref=e18939]: Coordinates
+              - definition [ref=e18940]: 44.86, -120.44
+          - link "Open source attribution" [ref=e18941] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/fda49146-327e-4651-835c-75b7f568a941
+        - article [ref=e18942]:
+          - button "Wildfire strong · 65 Egberts Wildfire, Elko, Nevada" [ref=e18944] [cursor=pointer]:
+            - generic [ref=e18945]: Wildfire
+            - generic [ref=e18946]: strong · 65
+            - generic [ref=e18947]: Egberts Wildfire, Elko, Nevada
+          - generic [ref=e18948]:
+            - generic [ref=e18949]:
+              - term [ref=e18950]: Public Feed
+              - definition [ref=e18951]: NASA EONET
+            - generic [ref=e18952]:
+              - term [ref=e18953]: Severity Score
+              - definition [ref=e18954]: strong · 65
+            - generic [ref=e18955]:
+              - term [ref=e18956]: Started
+              - definition [ref=e18957]: May 25, 2026, 5:55 PM
+            - generic [ref=e18958]:
+              - term [ref=e18959]: Coordinates
+              - definition [ref=e18960]: 40.97, -115.06
+          - link "Open source attribution" [ref=e18961] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/00055252-6610-421f-aa91-24bda42481bc
+        - article [ref=e18962]:
+          - button "Wildfire strong · 65 Summit Creek Wildfire, Cassia, Idaho" [ref=e18964] [cursor=pointer]:
+            - generic [ref=e18965]: Wildfire
+            - generic [ref=e18966]: strong · 65
+            - generic [ref=e18967]: Summit Creek Wildfire, Cassia, Idaho
+          - generic [ref=e18968]:
+            - generic [ref=e18969]:
+              - term [ref=e18970]: Public Feed
+              - definition [ref=e18971]: NASA EONET
+            - generic [ref=e18972]:
+              - term [ref=e18973]: Severity Score
+              - definition [ref=e18974]: strong · 65
+            - generic [ref=e18975]:
+              - term [ref=e18976]: Started
+              - definition [ref=e18977]: May 25, 2026, 4:59 PM
+            - generic [ref=e18978]:
+              - term [ref=e18979]: Coordinates
+              - definition [ref=e18980]: 42.18, -113.73
+          - link "Open source attribution" [ref=e18981] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/6b1c6eb1-30f7-4613-9c58-4801dc8fd822
+        - article [ref=e18982]:
+          - button "Wildfire strong · 65 Kinyon Springs Wildfire, Owyhee, Idaho" [ref=e18984] [cursor=pointer]:
+            - generic [ref=e18985]: Wildfire
+            - generic [ref=e18986]: strong · 65
+            - generic [ref=e18987]: Kinyon Springs Wildfire, Owyhee, Idaho
+          - generic [ref=e18988]:
+            - generic [ref=e18989]:
+              - term [ref=e18990]: Public Feed
+              - definition [ref=e18991]: NASA EONET
+            - generic [ref=e18992]:
+              - term [ref=e18993]: Severity Score
+              - definition [ref=e18994]: strong · 65
+            - generic [ref=e18995]:
+              - term [ref=e18996]: Started
+              - definition [ref=e18997]: May 25, 2026, 4:44 PM
+            - generic [ref=e18998]:
+              - term [ref=e18999]: Coordinates
+              - definition [ref=e19000]: 42.73, -115.24
+          - link "Open source attribution" [ref=e19001] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/80bc9926-a857-4a29-beaa-1fac54720463
+        - article [ref=e19002]:
+          - button "Wildfire strong · 65 MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida" [ref=e19004] [cursor=pointer]:
+            - generic [ref=e19005]: Wildfire
+            - generic [ref=e19006]: strong · 65
+            - generic [ref=e19007]: MILE MARKER 44 FIRE - BROWARD Wildfire, Broward, Florida
+          - generic [ref=e19008]:
+            - generic [ref=e19009]:
+              - term [ref=e19010]: Public Feed
+              - definition [ref=e19011]: NASA EONET
+            - generic [ref=e19012]:
+              - term [ref=e19013]: Severity Score
+              - definition [ref=e19014]: strong · 65
+            - generic [ref=e19015]:
+              - term [ref=e19016]: Started
+              - definition [ref=e19017]: May 23, 2026, 9:26 PM
+            - generic [ref=e19018]:
+              - term [ref=e19019]: Coordinates
+              - definition [ref=e19020]: 26.10, -80.78
+          - link "Open source attribution" [ref=e19021] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/29b8daf8-f1fc-462d-9b1f-dfe897a65f69
+        - article [ref=e19022]:
+          - button "Wildfire strong · 65 COUNTRY MEADOW Wildfire, Benton, Washington" [ref=e19024] [cursor=pointer]:
+            - generic [ref=e19025]: Wildfire
+            - generic [ref=e19026]: strong · 65
+            - generic [ref=e19027]: COUNTRY MEADOW Wildfire, Benton, Washington
+          - generic [ref=e19028]:
+            - generic [ref=e19029]:
+              - term [ref=e19030]: Public Feed
+              - definition [ref=e19031]: NASA EONET
+            - generic [ref=e19032]:
+              - term [ref=e19033]: Severity Score
+              - definition [ref=e19034]: strong · 65
+            - generic [ref=e19035]:
+              - term [ref=e19036]: Started
+              - definition [ref=e19037]: May 23, 2026, 5:39 PM
+            - generic [ref=e19038]:
+              - term [ref=e19039]: Coordinates
+              - definition [ref=e19040]: 46.17, -119.34
+          - link "Open source attribution" [ref=e19041] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/63870bd1-8655-43b9-b5e7-9566f1fbec82
+        - article [ref=e19042]:
+          - button "Wildfire strong · 65 340 Wildfire, Wakulla, Florida" [ref=e19044] [cursor=pointer]:
+            - generic [ref=e19045]: Wildfire
+            - generic [ref=e19046]: strong · 65
+            - generic [ref=e19047]: 340 Wildfire, Wakulla, Florida
+          - generic [ref=e19048]:
+            - generic [ref=e19049]:
+              - term [ref=e19050]: Public Feed
+              - definition [ref=e19051]: NASA EONET
+            - generic [ref=e19052]:
+              - term [ref=e19053]: Severity Score
+              - definition [ref=e19054]: strong · 65
+            - generic [ref=e19055]:
+              - term [ref=e19056]: Started
+              - definition [ref=e19057]: May 23, 2026, 4:29 PM
+            - generic [ref=e19058]:
+              - term [ref=e19059]: Coordinates
+              - definition [ref=e19060]: 30.05, -84.57
+          - link "Open source attribution" [ref=e19061] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/886edffc-e672-45db-aee1-631d4326f3e5
+        - article [ref=e19062]:
+          - button "Wildfire strong · 65 Mile Marker 44 Wildfire, Broward, Florida" [ref=e19064] [cursor=pointer]:
+            - generic [ref=e19065]: Wildfire
+            - generic [ref=e19066]: strong · 65
+            - generic [ref=e19067]: Mile Marker 44 Wildfire, Broward, Florida
+          - generic [ref=e19068]:
+            - generic [ref=e19069]:
+              - term [ref=e19070]: Public Feed
+              - definition [ref=e19071]: NASA EONET
+            - generic [ref=e19072]:
+              - term [ref=e19073]: Severity Score
+              - definition [ref=e19074]: strong · 65
+            - generic [ref=e19075]:
+              - term [ref=e19076]: Started
+              - definition [ref=e19077]: May 23, 2026, 3:44 PM
+            - generic [ref=e19078]:
+              - term [ref=e19079]: Coordinates
+              - definition [ref=e19080]: 26.15, -80.77
+          - link "Open source attribution" [ref=e19081] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/09e8c44f-679e-4e3a-9c34-334266a0595c
+        - article [ref=e19082]:
+          - button "Wildfire strong · 65 Quartz Wildfire, Pershing, Nevada" [ref=e19084] [cursor=pointer]:
+            - generic [ref=e19085]: Wildfire
+            - generic [ref=e19086]: strong · 65
+            - generic [ref=e19087]: Quartz Wildfire, Pershing, Nevada
+          - generic [ref=e19088]:
+            - generic [ref=e19089]:
+              - term [ref=e19090]: Public Feed
+              - definition [ref=e19091]: NASA EONET
+            - generic [ref=e19092]:
+              - term [ref=e19093]: Severity Score
+              - definition [ref=e19094]: strong · 65
+            - generic [ref=e19095]:
+              - term [ref=e19096]: Started
+              - definition [ref=e19097]: May 23, 2026, 3:06 PM
+            - generic [ref=e19098]:
+              - term [ref=e19099]: Coordinates
+              - definition [ref=e19100]: 40.71, -118.01
+          - link "Open source attribution" [ref=e19101] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/79662f7e-8c61-42ed-83ef-137d631e54c9
+        - article [ref=e19102]:
+          - button "Wildfire strong · 65 Thousand Wildfire, Northwest Arctic, Alaska" [ref=e19104] [cursor=pointer]:
+            - generic [ref=e19105]: Wildfire
+            - generic [ref=e19106]: strong · 65
+            - generic [ref=e19107]: Thousand Wildfire, Northwest Arctic, Alaska
+          - generic [ref=e19108]:
+            - generic [ref=e19109]:
+              - term [ref=e19110]: Public Feed
+              - definition [ref=e19111]: NASA EONET
+            - generic [ref=e19112]:
+              - term [ref=e19113]: Severity Score
+              - definition [ref=e19114]: strong · 65
+            - generic [ref=e19115]:
+              - term [ref=e19116]: Started
+              - definition [ref=e19117]: May 23, 2026, 11:59 AM
+            - generic [ref=e19118]:
+              - term [ref=e19119]: Coordinates
+              - definition [ref=e19120]: 66.44, -159.29
+          - link "Open source attribution" [ref=e19121] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/5dea170e-b7ea-40a2-a21f-4c4ebe0e28b6
+        - article [ref=e19122]:
+          - button "Wildfire strong · 65 WaWa 2 Wildfire, Highlands, Florida" [ref=e19124] [cursor=pointer]:
+            - generic [ref=e19125]: Wildfire
+            - generic [ref=e19126]: strong · 65
+            - generic [ref=e19127]: WaWa 2 Wildfire, Highlands, Florida
+          - generic [ref=e19128]:
+            - generic [ref=e19129]:
+              - term [ref=e19130]: Public Feed
+              - definition [ref=e19131]: NASA EONET
+            - generic [ref=e19132]:
+              - term [ref=e19133]: Severity Score
+              - definition [ref=e19134]: strong · 65
+            - generic [ref=e19135]:
+              - term [ref=e19136]: Started
+              - definition [ref=e19137]: May 23, 2026, 9:28 AM
+            - generic [ref=e19138]:
+              - term [ref=e19139]: Coordinates
+              - definition [ref=e19140]: 27.64, -81.26
+          - link "Open source attribution" [ref=e19141] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/626355b6-3088-4310-aa72-ec6546672e34
+        - article [ref=e19142]:
+          - button "Wildfire strong · 65 Shell Wildfire, Lake, Florida" [ref=e19144] [cursor=pointer]:
+            - generic [ref=e19145]: Wildfire
+            - generic [ref=e19146]: strong · 65
+            - generic [ref=e19147]: Shell Wildfire, Lake, Florida
+          - generic [ref=e19148]:
+            - generic [ref=e19149]:
+              - term [ref=e19150]: Public Feed
+              - definition [ref=e19151]: NASA EONET
+            - generic [ref=e19152]:
+              - term [ref=e19153]: Severity Score
+              - definition [ref=e19154]: strong · 65
+            - generic [ref=e19155]:
+              - term [ref=e19156]: Started
+              - definition [ref=e19157]: May 22, 2026, 10:24 AM
+            - generic [ref=e19158]:
+              - term [ref=e19159]: Coordinates
+              - definition [ref=e19160]: 29.07, -81.51
+          - link "Open source attribution" [ref=e19161] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/660f8e64-f1eb-41ab-aa04-7e11f89fdc6c
+        - article [ref=e19162]:
+          - button "Wildfire strong · 65 Trigg Wildfire, San Miguel, New Mexico" [ref=e19164] [cursor=pointer]:
+            - generic [ref=e19165]: Wildfire
+            - generic [ref=e19166]: strong · 65
+            - generic [ref=e19167]: Trigg Wildfire, San Miguel, New Mexico
+          - generic [ref=e19168]:
+            - generic [ref=e19169]:
+              - term [ref=e19170]: Public Feed
+              - definition [ref=e19171]: NASA EONET
+            - generic [ref=e19172]:
+              - term [ref=e19173]: Severity Score
+              - definition [ref=e19174]: strong · 65
+            - generic [ref=e19175]:
+              - term [ref=e19176]: Started
+              - definition [ref=e19177]: May 21, 2026, 11:07 PM
+            - generic [ref=e19178]:
+              - term [ref=e19179]: Coordinates
+              - definition [ref=e19180]: 35.53, -103.95
+          - link "Open source attribution" [ref=e19181] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/e7cb92a2-60e4-4c15-bffd-9ae0a5523b56
+        - article [ref=e19182]:
+          - button "Wildfire strong · 65 DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi" [ref=e19184] [cursor=pointer]:
+            - generic [ref=e19185]: Wildfire
+            - generic [ref=e19186]: strong · 65
+            - generic [ref=e19187]: DeSoto BB 8374 S RX Prescribed Fire, Harrison, Mississippi
+          - generic [ref=e19188]:
+            - generic [ref=e19189]:
+              - term [ref=e19190]: Public Feed
+              - definition [ref=e19191]: NASA EONET
+            - generic [ref=e19192]:
+              - term [ref=e19193]: Severity Score
+              - definition [ref=e19194]: strong · 65
+            - generic [ref=e19195]:
+              - term [ref=e19196]: Started
+              - definition [ref=e19197]: May 20, 2026, 11:12 AM
+            - generic [ref=e19198]:
+              - term [ref=e19199]: Coordinates
+              - definition [ref=e19200]: 30.67, -89.04
+          - link "Open source attribution" [ref=e19201] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/0aa79001-67d5-4ffb-aa44-82feeb972f29
+        - article [ref=e19202]:
+          - button "Wildfire strong · 65 Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi" [ref=e19204] [cursor=pointer]:
+            - generic [ref=e19205]: Wildfire
+            - generic [ref=e19206]: strong · 65
+            - generic [ref=e19207]: Chickasawhay CPT 451 452 RX Prescribed Fire, Greene, Mississippi
+          - generic [ref=e19208]:
+            - generic [ref=e19209]:
+              - term [ref=e19210]: Public Feed
+              - definition [ref=e19211]: NASA EONET
+            - generic [ref=e19212]:
+              - term [ref=e19213]: Severity Score
+              - definition [ref=e19214]: strong · 65
+            - generic [ref=e19215]:
+              - term [ref=e19216]: Started
+              - definition [ref=e19217]: May 20, 2026, 9:22 AM
+            - generic [ref=e19218]:
+              - term [ref=e19219]: Coordinates
+              - definition [ref=e19220]: 31.42, -88.66
+          - link "Open source attribution" [ref=e19221] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/29128400-a817-4d78-a1a7-3a5bb5b597fd
+        - article [ref=e19222]:
+          - button "Wildfire strong · 65 CADDUGGEN Wildfire, Carteret, North Carolina" [ref=e19224] [cursor=pointer]:
+            - generic [ref=e19225]: Wildfire
+            - generic [ref=e19226]: strong · 65
+            - generic [ref=e19227]: CADDUGGEN Wildfire, Carteret, North Carolina
+          - generic [ref=e19228]:
+            - generic [ref=e19229]:
+              - term [ref=e19230]: Public Feed
+              - definition [ref=e19231]: NASA EONET
+            - generic [ref=e19232]:
+              - term [ref=e19233]: Severity Score
+              - definition [ref=e19234]: strong · 65
+            - generic [ref=e19235]:
+              - term [ref=e19236]: Started
+              - definition [ref=e19237]: May 20, 2026, 7:59 AM
+            - generic [ref=e19238]:
+              - term [ref=e19239]: Coordinates
+              - definition [ref=e19240]: 34.93, -76.39
+          - link "Open source attribution" [ref=e19241] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/7dafe704-220a-4c5e-a9e6-d883cb9a7c35
+        - article [ref=e19242]:
+          - button "Wildfire strong · 65 Rifle Range Rd Wildfire, Collier, Florida" [ref=e19244] [cursor=pointer]:
+            - generic [ref=e19245]: Wildfire
+            - generic [ref=e19246]: strong · 65
+            - generic [ref=e19247]: Rifle Range Rd Wildfire, Collier, Florida
+          - generic [ref=e19248]:
+            - generic [ref=e19249]:
+              - term [ref=e19250]: Public Feed
+              - definition [ref=e19251]: NASA EONET
+            - generic [ref=e19252]:
+              - term [ref=e19253]: Severity Score
+              - definition [ref=e19254]: strong · 65
+            - generic [ref=e19255]:
+              - term [ref=e19256]: Started
+              - definition [ref=e19257]: May 19, 2026, 10:10 PM
+            - generic [ref=e19258]:
+              - term [ref=e19259]: Coordinates
+              - definition [ref=e19260]: 26.12, -81.64
+          - link "Open source attribution" [ref=e19261] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/66bfa6ae-29e9-4cde-b0e0-27aa4ec8cee0
+        - article [ref=e19262]:
+          - button "Wildfire strong · 65 Foothill Wildfire, Santa Barbara, California" [ref=e19264] [cursor=pointer]:
+            - generic [ref=e19265]: Wildfire
+            - generic [ref=e19266]: strong · 65
+            - generic [ref=e19267]: Foothill Wildfire, Santa Barbara, California
+          - generic [ref=e19268]:
+            - generic [ref=e19269]:
+              - term [ref=e19270]: Public Feed
+              - definition [ref=e19271]: NASA EONET
+            - generic [ref=e19272]:
+              - term [ref=e19273]: Severity Score
+              - definition [ref=e19274]: strong · 65
+            - generic [ref=e19275]:
+              - term [ref=e19276]: Started
+              - definition [ref=e19277]: May 19, 2026, 7:16 PM
+            - generic [ref=e19278]:
+              - term [ref=e19279]: Coordinates
+              - definition [ref=e19280]: 34.83, -119.60
+          - link "Open source attribution" [ref=e19281] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/fe13eac3-abc4-49be-87bf-1cc7b095ec74
+        - article [ref=e19282]:
+          - button "Wildfire strong · 65 MTZ/SDU/TUSIL Wildfire, San Diego, California" [ref=e19284] [cursor=pointer]:
+            - generic [ref=e19285]: Wildfire
+            - generic [ref=e19286]: strong · 65
+            - generic [ref=e19287]: MTZ/SDU/TUSIL Wildfire, San Diego, California
+          - generic [ref=e19288]:
+            - generic [ref=e19289]:
+              - term [ref=e19290]: Public Feed
+              - definition [ref=e19291]: NASA EONET
+            - generic [ref=e19292]:
+              - term [ref=e19293]: Severity Score
+              - definition [ref=e19294]: strong · 65
+            - generic [ref=e19295]:
+              - term [ref=e19296]: Started
+              - definition [ref=e19297]: May 19, 2026, 4:17 PM
+            - generic [ref=e19298]:
+              - term [ref=e19299]: Coordinates
+              - definition [ref=e19300]: 32.73, -116.36
+          - link "Open source attribution" [ref=e19301] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/86678603-6464-406f-bd21-065bbb15a368
+        - article [ref=e19302]:
+          - button "Wildfire strong · 65 VERONA Wildfire, Riverside, California" [ref=e19304] [cursor=pointer]:
+            - generic [ref=e19305]: Wildfire
+            - generic [ref=e19306]: strong · 65
+            - generic [ref=e19307]: VERONA Wildfire, Riverside, California
+          - generic [ref=e19308]:
+            - generic [ref=e19309]:
+              - term [ref=e19310]: Public Feed
+              - definition [ref=e19311]: NASA EONET
+            - generic [ref=e19312]:
+              - term [ref=e19313]: Severity Score
+              - definition [ref=e19314]: strong · 65
+            - generic [ref=e19315]:
+              - term [ref=e19316]: Started
+              - definition [ref=e19317]: May 19, 2026, 3:21 PM
+            - generic [ref=e19318]:
+              - term [ref=e19319]: Coordinates
+              - definition [ref=e19320]: 33.76, -117.08
+          - link "Open source attribution" [ref=e19321] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/5fa51a06-a7d8-4926-84cb-c4a1f2bbb6a8
+        - article [ref=e19322]:
+          - button "Wildfire strong · 65 BAIN Wildfire, Riverside, California" [ref=e19324] [cursor=pointer]:
+            - generic [ref=e19325]: Wildfire
+            - generic [ref=e19326]: strong · 65
+            - generic [ref=e19327]: BAIN Wildfire, Riverside, California
+          - generic [ref=e19328]:
+            - generic [ref=e19329]:
+              - term [ref=e19330]: Public Feed
+              - definition [ref=e19331]: NASA EONET
+            - generic [ref=e19332]:
+              - term [ref=e19333]: Severity Score
+              - definition [ref=e19334]: strong · 65
+            - generic [ref=e19335]:
+              - term [ref=e19336]: Started
+              - definition [ref=e19337]: May 19, 2026, 3:16 PM
+            - generic [ref=e19338]:
+              - term [ref=e19339]: Coordinates
+              - definition [ref=e19340]: 33.98, -117.51
+          - link "Open source attribution" [ref=e19341] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/a7c6f956-f17f-4a90-9fe7-011addde290c
+        - article [ref=e19342]:
+          - button "Wildfire strong · 65 Sunfish Rx Prescribed Fire, Cook, Minnesota" [ref=e19344] [cursor=pointer]:
+            - generic [ref=e19345]: Wildfire
+            - generic [ref=e19346]: strong · 65
+            - generic [ref=e19347]: Sunfish Rx Prescribed Fire, Cook, Minnesota
+          - generic [ref=e19348]:
+            - generic [ref=e19349]:
+              - term [ref=e19350]: Public Feed
+              - definition [ref=e19351]: NASA EONET
+            - generic [ref=e19352]:
+              - term [ref=e19353]: Severity Score
+              - definition [ref=e19354]: strong · 65
+            - generic [ref=e19355]:
+              - term [ref=e19356]: Started
+              - definition [ref=e19357]: May 19, 2026, 12:05 PM
+            - generic [ref=e19358]:
+              - term [ref=e19359]: Coordinates
+              - definition [ref=e19360]: 47.99, -90.15
+          - link "Open source attribution" [ref=e19361] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/3c911c5e-4cb7-4ca1-9905-6acf4b529813
+        - article [ref=e19362]:
+          - button "Wildfire strong · 65 DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi" [ref=e19364] [cursor=pointer]:
+            - generic [ref=e19365]: Wildfire
+            - generic [ref=e19366]: strong · 65
+            - generic [ref=e19367]: DeSoto BB 7310 S RX Prescribed Fire, Perry, Mississippi
+          - generic [ref=e19368]:
+            - generic [ref=e19369]:
+              - term [ref=e19370]: Public Feed
+              - definition [ref=e19371]: NASA EONET
+            - generic [ref=e19372]:
+              - term [ref=e19373]: Severity Score
+              - definition [ref=e19374]: strong · 65
+            - generic [ref=e19375]:
+              - term [ref=e19376]: Started
+              - definition [ref=e19377]: May 19, 2026, 10:02 AM
+            - generic [ref=e19378]:
+              - term [ref=e19379]: Coordinates
+              - definition [ref=e19380]: 31.02, -88.86
+          - link "Open source attribution" [ref=e19381] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/5eb5f2f6-8d24-41e3-a185-60f921e3fad4
+        - article [ref=e19382]:
+          - button "Wildfire strong · 65 Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi" [ref=e19384] [cursor=pointer]:
+            - generic [ref=e19385]: Wildfire
+            - generic [ref=e19386]: strong · 65
+            - generic [ref=e19387]: Chickasawhay CPT 366 RX Prescribed Fire, Wayne, Mississippi
+          - generic [ref=e19388]:
+            - generic [ref=e19389]:
+              - term [ref=e19390]: Public Feed
+              - definition [ref=e19391]: NASA EONET
+            - generic [ref=e19392]:
+              - term [ref=e19393]: Severity Score
+              - definition [ref=e19394]: strong · 65
+            - generic [ref=e19395]:
+              - term [ref=e19396]: Started
+              - definition [ref=e19397]: May 19, 2026, 9:35 AM
+            - generic [ref=e19398]:
+              - term [ref=e19399]: Coordinates
+              - definition [ref=e19400]: 31.46, -88.93
+          - link "Open source attribution" [ref=e19401] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/44e802a8-6362-4483-911b-0e60f6a2824c
+        - article [ref=e19402]:
+          - button "Wildfire strong · 65 RX WINN BU 24 Prescribed Fire, Winn, Louisiana" [ref=e19404] [cursor=pointer]:
+            - generic [ref=e19405]: Wildfire
+            - generic [ref=e19406]: strong · 65
+            - generic [ref=e19407]: RX WINN BU 24 Prescribed Fire, Winn, Louisiana
+          - generic [ref=e19408]:
+            - generic [ref=e19409]:
+              - term [ref=e19410]: Public Feed
+              - definition [ref=e19411]: NASA EONET
+            - generic [ref=e19412]:
+              - term [ref=e19413]: Severity Score
+              - definition [ref=e19414]: strong · 65
+            - generic [ref=e19415]:
+              - term [ref=e19416]: Started
+              - definition [ref=e19417]: May 19, 2026, 8:51 AM
+            - generic [ref=e19418]:
+              - term [ref=e19419]: Coordinates
+              - definition [ref=e19420]: 32.06, -92.84
+          - link "Open source attribution" [ref=e19421] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/fa5d7760-1c86-47cc-a58b-469caf22ed53
+        - article [ref=e19422]:
+          - button "Wildfire strong · 65 Kress Wildfire, Swisher, Texas" [ref=e19424] [cursor=pointer]:
+            - generic [ref=e19425]: Wildfire
+            - generic [ref=e19426]: strong · 65
+            - generic [ref=e19427]: Kress Wildfire, Swisher, Texas
+          - generic [ref=e19428]:
+            - generic [ref=e19429]:
+              - term [ref=e19430]: Public Feed
+              - definition [ref=e19431]: NASA EONET
+            - generic [ref=e19432]:
+              - term [ref=e19433]: Severity Score
+              - definition [ref=e19434]: strong · 65
+            - generic [ref=e19435]:
+              - term [ref=e19436]: Started
+              - definition [ref=e19437]: May 18, 2026, 7:06 PM
+            - generic [ref=e19438]:
+              - term [ref=e19439]: Coordinates
+              - definition [ref=e19440]: 34.39, -101.78
+          - link "Open source attribution" [ref=e19441] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/9b17d10e-20c4-4177-9b18-236dfae9d57d
+        - article [ref=e19442]:
+          - button "Wildfire strong · 65 SANDY Wildfire, Ventura, California" [ref=e19444] [cursor=pointer]:
+            - generic [ref=e19445]: Wildfire
+            - generic [ref=e19446]: strong · 65
+            - generic [ref=e19447]: SANDY Wildfire, Ventura, California
+          - generic [ref=e19448]:
+            - generic [ref=e19449]:
+              - term [ref=e19450]: Public Feed
+              - definition [ref=e19451]: NASA EONET
+            - generic [ref=e19452]:
+              - term [ref=e19453]: Severity Score
+              - definition [ref=e19454]: strong · 65
+            - generic [ref=e19455]:
+              - term [ref=e19456]: Started
+              - definition [ref=e19457]: May 18, 2026, 1:21 PM
+            - generic [ref=e19458]:
+              - term [ref=e19459]: Coordinates
+              - definition [ref=e19460]: 34.25, -118.74
+          - link "Open source attribution" [ref=e19461] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/a4eb258a-f5d1-46c3-9560-8fbc8042d9c3
+        - article [ref=e19462]:
+          - button "Wildfire strong · 65 RIVER Wildfire, Kern, California" [ref=e19464] [cursor=pointer]:
+            - generic [ref=e19465]: Wildfire
+            - generic [ref=e19466]: strong · 65
+            - generic [ref=e19467]: RIVER Wildfire, Kern, California
+          - generic [ref=e19468]:
+            - generic [ref=e19469]:
+              - term [ref=e19470]: Public Feed
+              - definition [ref=e19471]: NASA EONET
+            - generic [ref=e19472]:
+              - term [ref=e19473]: Severity Score
+              - definition [ref=e19474]: strong · 65
+            - generic [ref=e19475]:
+              - term [ref=e19476]: Started
+              - definition [ref=e19477]: May 18, 2026, 12:05 PM
+            - generic [ref=e19478]:
+              - term [ref=e19479]: Coordinates
+              - definition [ref=e19480]: 35.45, -118.79
+          - link "Open source attribution" [ref=e19481] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/91c7775a-98f7-45b3-a8c1-3433796360ca
+        - article [ref=e19482]:
+          - button "Wildfire strong · 65 Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi" [ref=e19484] [cursor=pointer]:
+            - generic [ref=e19485]: Wildfire
+            - generic [ref=e19486]: strong · 65
+            - generic [ref=e19487]: Chickasawhay CPT 400 RX Prescribed Fire, Wayne, Mississippi
+          - generic [ref=e19488]:
+            - generic [ref=e19489]:
+              - term [ref=e19490]: Public Feed
+              - definition [ref=e19491]: NASA EONET
+            - generic [ref=e19492]:
+              - term [ref=e19493]: Severity Score
+              - definition [ref=e19494]: strong · 65
+            - generic [ref=e19495]:
+              - term [ref=e19496]: Started
+              - definition [ref=e19497]: May 18, 2026, 9:55 AM
+            - generic [ref=e19498]:
+              - term [ref=e19499]: Coordinates
+              - definition [ref=e19500]: 31.52, -88.80
+          - link "Open source attribution" [ref=e19501] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/d271309e-154d-4b76-83e4-71e83869b4b6
+        - article [ref=e19502]:
+          - button "Wildfire strong · 65 RX WINN BU 114 Prescribed Fire, Grant, Louisiana" [ref=e19504] [cursor=pointer]:
+            - generic [ref=e19505]: Wildfire
+            - generic [ref=e19506]: strong · 65
+            - generic [ref=e19507]: RX WINN BU 114 Prescribed Fire, Grant, Louisiana
+          - generic [ref=e19508]:
+            - generic [ref=e19509]:
+              - term [ref=e19510]: Public Feed
+              - definition [ref=e19511]: NASA EONET
+            - generic [ref=e19512]:
+              - term [ref=e19513]: Severity Score
+              - definition [ref=e19514]: strong · 65
+            - generic [ref=e19515]:
+              - term [ref=e19516]: Started
+              - definition [ref=e19517]: May 18, 2026, 8:58 AM
+            - generic [ref=e19518]:
+              - term [ref=e19519]: Coordinates
+              - definition [ref=e19520]: 31.75, -92.48
+          - link "Open source attribution" [ref=e19521] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/971f49d7-75c2-43c7-9db0-05c7d006565c
+        - article [ref=e19522]:
+          - button "Wildfire strong · 65 Stinky Wildfire, Potter, Texas" [ref=e19524] [cursor=pointer]:
+            - generic [ref=e19525]: Wildfire
+            - generic [ref=e19526]: strong · 65
+            - generic [ref=e19527]: Stinky Wildfire, Potter, Texas
+          - generic [ref=e19528]:
+            - generic [ref=e19529]:
+              - term [ref=e19530]: Public Feed
+              - definition [ref=e19531]: NASA EONET
+            - generic [ref=e19532]:
+              - term [ref=e19533]: Severity Score
+              - definition [ref=e19534]: strong · 65
+            - generic [ref=e19535]:
+              - term [ref=e19536]: Started
+              - definition [ref=e19537]: May 17, 2026, 6:24 PM
+            - generic [ref=e19538]:
+              - term [ref=e19539]: Coordinates
+              - definition [ref=e19540]: 35.23, -102.02
+          - link "Open source attribution" [ref=e19541] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/fcccb1cd-f00f-484f-beeb-43874cb5fd86
+        - article [ref=e19542]:
+          - button "Wildfire strong · 65 Sharpe Wildfire, Baca, Colorado" [ref=e19544] [cursor=pointer]:
+            - generic [ref=e19545]: Wildfire
+            - generic [ref=e19546]: strong · 65
+            - generic [ref=e19547]: Sharpe Wildfire, Baca, Colorado
+          - generic [ref=e19548]:
+            - generic [ref=e19549]:
+              - term [ref=e19550]: Public Feed
+              - definition [ref=e19551]: NASA EONET
+            - generic [ref=e19552]:
+              - term [ref=e19553]: Severity Score
+              - definition [ref=e19554]: strong · 65
+            - generic [ref=e19555]:
+              - term [ref=e19556]: Started
+              - definition [ref=e19557]: May 17, 2026, 3:37 PM
+            - generic [ref=e19558]:
+              - term [ref=e19559]: Coordinates
+              - definition [ref=e19560]: 37.00, -102.62
+          - link "Open source attribution" [ref=e19561] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/59686f08-125a-4dc7-91e9-af37f0968ccd
+        - article [ref=e19562]:
+          - button "Wildfire strong · 65 Proffitt Lake Wildfire, Meade, Kansas" [ref=e19564] [cursor=pointer]:
+            - generic [ref=e19565]: Wildfire
+            - generic [ref=e19566]: strong · 65
+            - generic [ref=e19567]: Proffitt Lake Wildfire, Meade, Kansas
+          - generic [ref=e19568]:
+            - generic [ref=e19569]:
+              - term [ref=e19570]: Public Feed
+              - definition [ref=e19571]: NASA EONET
+            - generic [ref=e19572]:
+              - term [ref=e19573]: Severity Score
+              - definition [ref=e19574]: strong · 65
+            - generic [ref=e19575]:
+              - term [ref=e19576]: Started
+              - definition [ref=e19577]: May 17, 2026, 3:00 PM
+            - generic [ref=e19578]:
+              - term [ref=e19579]: Coordinates
+              - definition [ref=e19580]: 37.22, -100.11
+          - link "Open source attribution" [ref=e19581] [cursor=pointer]:
+            - /url: https://irwin.doi.gov/observer/incidents/474cb867-2af9-4bab-828f-a1ec34db0425
+    - complementary "Public Feed freshness" [ref=e19582]:
+      - generic [ref=e19583]:
+        - paragraph [ref=e19584]: Source Status
+        - heading "Public Feed freshness" [level=2] [ref=e19585]
+      - generic [ref=e19586]:
+        - article [ref=e19587]:
+          - generic [ref=e19588]:
+            - strong [ref=e19589]: USGS Earthquakes
+            - generic [ref=e19590]: Success
+          - paragraph [ref=e19591]: Public Feed refreshed successfully.
+          - generic [ref=e19592]: Attempted Jun 10, 2026, 9:55 PM UTC
+        - article [ref=e19593]:
+          - generic [ref=e19594]:
+            - strong [ref=e19595]: NASA EONET
+            - generic [ref=e19596]: Success
+          - paragraph [ref=e19597]: Public Feed refreshed successfully.
+          - generic [ref=e19598]: Attempted Jun 10, 2026, 9:55 PM UTC
