@@ -24,8 +24,8 @@ body {
     linear-gradient(90deg, rgba(125, 211, 252, 0.035) 1px, transparent 1px),
     #07111f;
   background-size: auto, auto, 72px 72px, 72px 72px, auto;
-  font-size: 15px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.38;
   overflow-x: hidden;
 }
 
@@ -68,9 +68,9 @@ select {
 }
 
 .dashboard-shell {
-  width: min(1580px, 100%);
+  width: min(1680px, 100%);
   margin: 0 auto;
-  padding: clamp(10px, 1.4vw, 20px);
+  padding: clamp(8px, 1vw, 16px);
 }
 
 .hero,
@@ -87,40 +87,40 @@ select {
 .saved-events-panel {
   position: relative;
   border: 1px solid rgba(125, 211, 252, 0.26);
-  background: rgba(4, 15, 31, 0.88);
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(186, 230, 253, 0.08);
-  backdrop-filter: blur(14px);
+  background: rgba(3, 11, 24, 0.94);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(186, 230, 253, 0.08);
+  backdrop-filter: blur(8px);
 }
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(360px, 1fr) minmax(210px, 0.28fr) minmax(420px, 0.72fr);
+  grid-template-columns: minmax(360px, 1.1fr) minmax(190px, 0.24fr) minmax(420px, 0.66fr);
   align-items: stretch;
-  gap: clamp(10px, 1.1vw, 14px);
-  padding: clamp(12px, 1.35vw, 18px);
-  border-radius: 14px;
+  gap: clamp(8px, 0.9vw, 12px);
+  padding: clamp(10px, 1vw, 14px);
+  border-radius: 5px;
 }
 
 .hero h1 {
   margin: 0;
   max-width: none;
-  font-size: clamp(1.8rem, 2.7vw, 3.05rem);
-  line-height: 0.94;
+  font-size: clamp(1.65rem, 2.45vw, 2.75rem);
+  line-height: 0.96;
   letter-spacing: -0.045em;
 }
 
 .hero-copy {
   max-width: 68ch;
-  margin: clamp(8px, 0.9vw, 10px) 0 0;
+  margin: 6px 0 0;
   color: #bac9da;
-  font-size: clamp(0.84rem, 0.95vw, 0.94rem);
-  line-height: 1.42;
+  font-size: clamp(0.8rem, 0.88vw, 0.9rem);
+  line-height: 1.36;
 }
 
 .eyebrow {
-  margin: 0 0 10px;
+  margin: 0 0 7px;
   color: #38bdf8;
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 900;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -130,14 +130,14 @@ select {
   min-width: 0;
   display: grid;
   align-content: center;
-  gap: 8px;
-  padding: clamp(10px, 1vw, 14px);
-  border-radius: 10px;
+  gap: 6px;
+  padding: clamp(8px, 0.8vw, 11px);
+  border-radius: 4px;
   background: rgba(2, 10, 24, 0.76);
 }
 
 .hero-status span {
-  font-size: 1.4rem;
+  font-size: 1.16rem;
   font-weight: 800;
 }
 
@@ -157,11 +157,11 @@ select {
 
 .control-button {
   max-width: 100%;
-  min-height: 42px;
+  min-height: 34px;
   width: fit-content;
-  border: 0;
-  border-radius: 8px;
-  padding: 9px 13px;
+  border: 1px solid rgba(103, 232, 249, 0.55);
+  border-radius: 3px;
+  padding: 7px 11px;
   color: #06111f;
   background: #67e8f9;
   font-size: 0.86rem;
@@ -169,6 +169,7 @@ select {
   line-height: 1.15;
   text-align: center;
   cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(6, 17, 31, 0.24), 0 8px 18px rgba(14, 165, 233, 0.12);
   transition:
     background-color 180ms ease,
     border-color 180ms ease,
@@ -178,6 +179,7 @@ select {
 }
 
 .control-button:hover {
+  background: #a5f3fc;
   transform: translateY(-1px);
 }
 
@@ -187,20 +189,26 @@ select {
   border: 1px solid rgba(148, 163, 184, 0.24);
 }
 
+.control-button--secondary:hover {
+  color: #f8fafc;
+  background: rgba(30, 64, 175, 0.34);
+  border-color: rgba(125, 211, 252, 0.34);
+}
+
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(12rem, 1fr));
-  gap: clamp(8px, 0.9vw, 12px);
-  margin: clamp(8px, 1vw, 12px) 0;
+  grid-template-columns: repeat(4, minmax(10rem, 1fr));
+  gap: clamp(7px, 0.75vw, 10px);
+  margin: clamp(7px, 0.85vw, 10px) 0;
 }
 
 .metric-card {
-  min-height: 92px;
+  min-height: 72px;
   display: grid;
   align-content: start;
-  gap: 5px;
-  padding: clamp(11px, 1.1vw, 14px);
-  border-radius: 12px;
+  gap: 4px;
+  padding: clamp(9px, 0.85vw, 12px);
+  border-radius: 4px;
 }
 
 .metric-card span {
@@ -212,7 +220,7 @@ select {
 }
 
 .metric-card strong {
-  font-size: clamp(1.45rem, 2.55vw, 2.35rem);
+  font-size: clamp(1.28rem, 2.1vw, 2rem);
   line-height: 0.95;
   letter-spacing: -0.05em;
   overflow-wrap: anywhere;
@@ -230,13 +238,13 @@ select {
 .command-grid {
   display: grid;
   align-items: start;
-  grid-template-columns: minmax(280px, 0.96fr) minmax(320px, 1.08fr) minmax(320px, 1.08fr);
+  grid-template-columns: minmax(380px, 1.18fr) minmax(380px, 1.18fr) minmax(280px, 0.64fr);
   grid-template-areas:
     "map map filters"
     "map map status"
     "feed analysis analysis"
     "saved saved saved";
-  gap: clamp(9px, 1vw, 13px);
+  gap: clamp(8px, 0.85vw, 11px);
 }
 
 .map-panel,
@@ -249,22 +257,22 @@ select {
 .ai-briefing-panel,
 .saved-events-panel {
   align-self: start;
-  border-radius: 12px;
-  padding: clamp(12px, 1.2vw, 16px);
+  border-radius: 4px;
+  padding: clamp(10px, 0.95vw, 13px);
   min-width: 0;
 }
 
 .map-panel {
   grid-area: map;
-  padding: clamp(14px, 1.4vw, 20px);
-  border-color: rgba(125, 211, 252, 0.36);
+  padding: clamp(11px, 1vw, 15px);
+  border-color: rgba(125, 211, 252, 0.5);
 }
 
 .area-search {
-  margin: 12px 0 0;
-  border-radius: 10px;
-  padding: clamp(12px, 1.3vw, 15px);
-  background: linear-gradient(135deg, rgba(14, 116, 144, 0.24), rgba(2, 6, 23, 0.64));
+  margin: 9px 0 0;
+  border-radius: 4px;
+  padding: clamp(9px, 0.9vw, 12px);
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.18), rgba(2, 6, 23, 0.72));
   border-color: rgba(125, 211, 252, 0.28);
 }
 
@@ -280,8 +288,8 @@ select {
   grid-area: analysis;
   display: grid;
   grid-template-columns: minmax(320px, 0.92fr) minmax(360px, 1.08fr);
-  gap: clamp(9px, 1vw, 13px);
-  padding: clamp(9px, 1vw, 12px);
+  gap: clamp(7px, 0.85vw, 10px);
+  padding: clamp(7px, 0.8vw, 10px);
   background:
     linear-gradient(135deg, rgba(56, 189, 248, 0.08), transparent 42%),
     rgba(2, 6, 23, 0.3);
@@ -317,16 +325,17 @@ select {
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8px 12px;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  gap: 6px 10px;
+  margin-bottom: 9px;
+  padding: 0 0 7px 8px;
   border-bottom: 1px solid rgba(125, 211, 252, 0.16);
+  border-left: 2px solid rgba(56, 189, 248, 0.62);
 }
 
 .panel-heading h2 {
   margin: 0;
   color: #f8fafc;
-  font-size: clamp(1rem, 1.25vw, 1.18rem);
+  font-size: clamp(0.94rem, 1.08vw, 1.08rem);
   line-height: 1.18;
   letter-spacing: -0.01em;
   overflow-wrap: anywhere;
@@ -334,10 +343,10 @@ select {
 
 .panel-subtitle {
   max-width: 760px;
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: #9fb0c6;
-  font-size: 0.86rem;
-  line-height: 1.42;
+  font-size: 0.8rem;
+  line-height: 1.34;
 }
 
 .area-search__heading,
@@ -353,23 +362,23 @@ select {
 
 .area-search__heading {
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .area-search__heading h3 {
   margin: 0;
   color: #f8fafc;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
 }
 
 .area-search__mode,
 .area-search-badge {
   border: 1px solid rgba(125, 211, 252, 0.34);
-  border-radius: 6px;
-  padding: 4px 8px;
+  border-radius: 3px;
+  padding: 3px 7px;
   color: #cffafe;
   background: rgba(14, 116, 144, 0.28);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -377,7 +386,7 @@ select {
 
 .area-search-form {
   display: grid;
-  gap: 9px;
+  gap: 7px;
 }
 
 .area-search-form label {
@@ -388,11 +397,11 @@ select {
 
 .area-search-form input {
   flex: 1 1 18rem;
-  min-height: 38px;
+  min-height: 34px;
   min-width: min(100%, 18rem);
   border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 8px;
-  padding: 9px 11px;
+  border-radius: 4px;
+  padding: 7px 9px;
   color: #e5eef8;
   background: rgba(2, 6, 23, 0.74);
   line-height: 1.25;
@@ -400,8 +409,8 @@ select {
 
 .area-search-status {
   display: grid;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 7px;
+  margin-top: 9px;
   color: #cbd5e1;
 }
 
@@ -455,11 +464,13 @@ select {
 }
 
 .map-canvas {
+  --globe-viewport-max: 820px;
+  --globe-viewport-gutter: 36px;
   position: relative;
   isolation: isolate;
-  min-height: clamp(520px, 58vh, 720px);
+  min-height: calc(var(--globe-viewport-max) + var(--globe-viewport-gutter));
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 4px;
   border: 1px solid rgba(125, 211, 252, 0.28);
   background:
     radial-gradient(circle at 18% 20%, rgba(125, 211, 252, 0.2), transparent 20rem),
@@ -469,6 +480,9 @@ select {
     linear-gradient(90deg, rgba(125, 211, 252, 0.06) 1px, transparent 1px),
     #020617;
   background-size: auto, auto, auto, 56px 56px, 56px 56px, auto;
+  box-shadow:
+    inset 0 0 0 1px rgba(186, 230, 253, 0.08),
+    inset 0 0 36px rgba(14, 165, 233, 0.1);
 }
 
 .map-viewport {
@@ -476,21 +490,28 @@ select {
   z-index: 1;
   top: 50%;
   left: 50%;
-  width: min(78%, 720px);
-  max-width: calc(100% - 44px);
+  width: min(84%, var(--globe-viewport-max));
+  max-width: calc(100% - var(--globe-viewport-gutter));
   aspect-ratio: 1;
   border-radius: 50%;
   overflow: hidden;
   transform: translate(-50%, -50%);
   transform-origin: 50% 50%;
   transition: transform 220ms ease;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
   box-shadow:
     inset -42px -24px 76px rgba(2, 6, 23, 0.62),
     inset 26px 18px 46px rgba(186, 230, 253, 0.16),
     0 0 0 1px rgba(186, 230, 253, 0.3),
-    0 0 0 14px rgba(14, 165, 233, 0.035),
-    0 0 74px rgba(14, 165, 233, 0.36),
-    0 30px 90px rgba(0, 0, 0, 0.42);
+    0 0 0 8px rgba(14, 165, 233, 0.03),
+    0 0 48px rgba(14, 165, 233, 0.26),
+    0 26px 74px rgba(0, 0, 0, 0.42);
+}
+
+.map-viewport:active {
+  cursor: grabbing;
 }
 
 .map-canvas--focused .map-viewport {
@@ -569,19 +590,19 @@ select {
   gap: 6px;
   max-width: min(340px, calc(100% - 28px));
   border: 1px solid rgba(226, 232, 240, 0.24);
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 4px;
+  padding: 6px;
   background: rgba(2, 10, 24, 0.82);
-  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.26);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.24);
+  backdrop-filter: blur(8px);
   pointer-events: none;
 }
 
 .globe-control {
-  min-width: 30px;
-  min-height: 30px;
+  min-width: 28px;
+  min-height: 28px;
   border: 1px solid rgba(125, 211, 252, 0.36);
-  border-radius: 6px;
+  border-radius: 3px;
   color: #dff8ff;
   background: rgba(14, 116, 144, 0.44);
   font-weight: 1000;
@@ -592,7 +613,7 @@ select {
 .globe-control-status {
   flex-basis: 100%;
   color: #cbd5e1;
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   text-align: right;
@@ -679,14 +700,14 @@ select {
   z-index: 3;
   display: inline-grid;
   place-items: center;
-  width: 9px;
-  height: 9px;
+  width: 6px;
+  height: 6px;
   padding: 0;
   overflow: hidden;
   border-radius: 999px;
   background: #38bdf8;
-  border: 1px solid #e0f2fe;
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18), 0 0 8px rgba(56, 189, 248, 0.48);
+  border: 1px solid rgba(224, 242, 254, 0.88);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.16), 0 0 5px rgba(56, 189, 248, 0.34);
   cursor: pointer;
   opacity: calc(0.7 + (var(--marker-depth, 1) * 0.3));
   transform: translate(-50%, -50%) scale(calc(0.82 + (var(--marker-depth, 1) * 0.18)));
@@ -700,34 +721,34 @@ select {
 .map-marker--wildfire,
 .map-marker--volcano {
   background: #fb7185;
-  box-shadow: 0 0 0 2px rgba(251, 113, 133, 0.18), 0 0 8px rgba(251, 113, 133, 0.48);
+  box-shadow: 0 0 0 1px rgba(251, 113, 133, 0.16), 0 0 5px rgba(251, 113, 133, 0.34);
 }
 
 .map-marker--earthquake {
   background: #facc15;
-  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.18), 0 0 8px rgba(250, 204, 21, 0.48);
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.16), 0 0 5px rgba(250, 204, 21, 0.34);
 }
 
 .map-marker--flood,
 .map-marker--sea_lake_ice {
   background: #60a5fa;
-  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.18), 0 0 8px rgba(96, 165, 250, 0.48);
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.16), 0 0 5px rgba(96, 165, 250, 0.34);
 }
 
 .map-marker--drought,
 .map-marker--dust_haze {
   background: #fb923c;
-  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.18), 0 0 8px rgba(251, 146, 60, 0.48);
+  box-shadow: 0 0 0 1px rgba(251, 146, 60, 0.16), 0 0 5px rgba(251, 146, 60, 0.34);
 }
 
 .map-marker--severity-major {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
 }
 
 .map-marker--severity-strong {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
 }
 
 .map-marker--severity-minor {
@@ -741,26 +762,44 @@ select {
 
 .map-marker--selected {
   z-index: 4;
-  outline: 2px solid #f8fafc;
+  outline: 1px solid #f8fafc;
   outline-offset: 2px;
   box-shadow:
-    0 0 0 3px rgba(14, 165, 233, 0.28),
-    0 0 10px rgba(226, 232, 240, 0.62);
-  transform: translate(-50%, -50%) scale(1.12);
+    0 0 0 2px rgba(14, 165, 233, 0.24),
+    0 0 7px rgba(226, 232, 240, 0.42);
+  transform: translate(-50%, -50%) scale(1.18);
+}
+
+.map-marker--aggregate {
+  min-width: 14px;
+  width: auto;
+  height: 14px;
+  padding: 0 3px;
+  border-color: rgba(226, 232, 240, 0.92);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.3), 0 0 6px rgba(14, 165, 233, 0.3);
+}
+
+.map-marker-count {
+  color: #e0f2fe;
+  font-size: 0.56rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
 }
 
 .map-marker--area-search-nearby {
   z-index: 4;
   box-shadow:
-    0 0 0 3px rgba(34, 211, 238, 0.24),
-    0 0 10px rgba(103, 232, 249, 0.58);
+    0 0 0 2px rgba(34, 211, 238, 0.22),
+    0 0 7px rgba(103, 232, 249, 0.42);
 }
 
 .map-marker--selected.map-marker--area-search-nearby {
   box-shadow:
-    0 0 0 3px rgba(248, 250, 252, 0.36),
-    0 0 0 6px rgba(34, 211, 238, 0.16),
-    0 0 12px rgba(103, 232, 249, 0.46);
+    0 0 0 2px rgba(248, 250, 252, 0.34),
+    0 0 0 4px rgba(34, 211, 238, 0.14),
+    0 0 8px rgba(103, 232, 249, 0.38);
 }
 
 .map-source-legend {
@@ -772,13 +811,13 @@ select {
   gap: 6px;
   max-width: min(520px, calc(100% - 28px));
   border: 1px solid rgba(226, 232, 240, 0.24);
-  border-radius: 8px;
-  padding: 9px;
+  border-radius: 4px;
+  padding: 7px;
   background:
     linear-gradient(135deg, rgba(14, 165, 233, 0.14), transparent 52%),
     rgba(2, 10, 24, 0.86);
-  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.34), 0 0 26px rgba(14, 165, 233, 0.16);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.32), 0 0 18px rgba(14, 165, 233, 0.1);
+  backdrop-filter: blur(8px);
   pointer-events: none;
 }
 
@@ -810,10 +849,10 @@ select {
   max-width: min(42rem, calc(100% - 48px));
   margin: 0;
   border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 8px;
-  padding: 8px 11px;
+  border-radius: 4px;
+  padding: 7px 10px;
   background: rgba(2, 6, 23, 0.68);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   line-height: 1.35;
   pointer-events: none;
@@ -829,12 +868,12 @@ select {
 
 .filters-form {
   display: grid;
-  gap: 12px;
+  gap: 9px;
 }
 
 .filters-form label {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   color: #cbd5e1;
   font-size: 0.84rem;
   font-weight: 700;
@@ -844,10 +883,10 @@ select {
 .filters-form input,
 .filters-form select {
   width: 100%;
-  min-height: 38px;
+  min-height: 34px;
   border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 8px;
-  padding: 9px 11px;
+  border-radius: 4px;
+  padding: 7px 9px;
   color: #e5eef8;
   background: rgba(2, 6, 23, 0.74);
   line-height: 1.25;
@@ -857,7 +896,7 @@ select {
 .source-status-list,
 .saved-events-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .feed-panel .incident-list {
@@ -871,8 +910,8 @@ select {
 .source-status-card,
 .saved-event-card {
   border: 1px solid rgba(125, 211, 252, 0.2);
-  border-radius: 10px;
-  padding: clamp(12px, 1.15vw, 15px);
+  border-radius: 4px;
+  padding: clamp(9px, 0.9vw, 12px);
   background:
     linear-gradient(135deg, rgba(14, 165, 233, 0.08), transparent 44%),
     rgba(2, 6, 23, 0.5);
@@ -882,12 +921,17 @@ select {
 
 .incident-card {
   display: grid;
-  gap: 11px;
+  gap: 8px;
   border-left: 3px solid rgba(56, 189, 248, 0.72);
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
     transform 180ms ease;
+}
+
+.incident-card:hover {
+  border-color: rgba(125, 211, 252, 0.42);
+  box-shadow: inset 0 1px 0 rgba(186, 230, 253, 0.12), 0 8px 20px rgba(8, 47, 73, 0.18);
 }
 
 .incident-card--wildfire,
@@ -919,7 +963,7 @@ select {
 
 .incident-card--selected {
   border-color: rgba(226, 232, 240, 0.58);
-  box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.36), 0 18px 40px rgba(8, 47, 73, 0.34);
+  box-shadow: 0 0 0 1px rgba(103, 232, 249, 0.5), 0 10px 28px rgba(8, 47, 73, 0.28);
   transform: translateY(-1px);
 }
 
@@ -932,7 +976,7 @@ select {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   border: 0;
   padding: 0;
@@ -945,9 +989,9 @@ select {
 
 .incident-select-title {
   flex-basis: 100%;
-  margin-top: 4px;
+  margin-top: 2px;
   color: #f8fafc;
-  font-size: clamp(1.02rem, 1.35vw, 1.14rem);
+  font-size: clamp(0.96rem, 1.12vw, 1.06rem);
   font-weight: 850;
   line-height: 1.3;
   overflow-wrap: break-word;
@@ -956,13 +1000,13 @@ select {
 .incident-card dl {
   display: grid;
   grid-template-columns: repeat(4, minmax(7rem, 1fr));
-  gap: 9px;
+  gap: 7px;
   margin: 0;
 }
 
 .incident-card dt {
   color: #8fb3d1;
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   line-height: 1.25;
@@ -970,8 +1014,8 @@ select {
 }
 
 .incident-card dd {
-  margin: 4px 0 0;
-  line-height: 1.45;
+  margin: 3px 0 0;
+  line-height: 1.34;
   overflow-wrap: break-word;
 }
 
@@ -980,7 +1024,7 @@ select {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 }
 
 .saved-event-toggle {
@@ -994,12 +1038,12 @@ select {
 .source-attribution {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
   max-width: 100%;
   width: fit-content;
   border: 1px solid rgba(125, 211, 252, 0.34);
-  border-radius: 6px;
-  padding: 5px 8px 5px 5px;
+  border-radius: 3px;
+  padding: 4px 7px 4px 4px;
   color: #dff8ff;
   background:
     linear-gradient(135deg, rgba(103, 232, 249, 0.14), transparent 48%),
@@ -1012,8 +1056,8 @@ select {
 
 .source-attribution__abbr {
   min-width: 2.5rem;
-  border-radius: 4px;
-  padding: 3px 6px;
+  border-radius: 2px;
+  padding: 2px 5px;
   color: #06111f;
   background: #67e8f9;
   text-align: center;
@@ -1054,6 +1098,15 @@ select {
   background: #fb7185;
 }
 
+.source-attribution--noaa-nws-alerts {
+  border-color: rgba(45, 212, 191, 0.42);
+  background: rgba(15, 118, 110, 0.3);
+}
+
+.source-attribution--noaa-nws-alerts .source-attribution__abbr {
+  background: #5eead4;
+}
+
 .source-attribution--map {
   background:
     linear-gradient(135deg, rgba(103, 232, 249, 0.16), transparent 48%),
@@ -1063,11 +1116,11 @@ select {
 .category-pill {
   width: fit-content;
   max-width: 100%;
-  border-radius: 5px;
-  padding: 5px 8px;
+  border-radius: 3px;
+  padding: 4px 7px;
   color: #cffafe;
   background: rgba(14, 165, 233, 0.22);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1099,11 +1152,11 @@ select {
 .severity-pill {
   width: fit-content;
   max-width: 100%;
-  border-radius: 5px;
-  padding: 5px 8px;
+  border-radius: 3px;
+  padding: 4px 7px;
   color: #dbeafe;
   background: rgba(148, 163, 184, 0.18);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1132,14 +1185,14 @@ select {
 .source-status-card,
 .incident-detail-card {
   display: grid;
-  gap: 12px;
+  gap: 9px;
 }
 
 .ai-briefing-panel {
   display: grid;
   align-content: start;
-  gap: 12px;
-  border-radius: 12px;
+  gap: 9px;
+  border-radius: 4px;
 }
 
 .ai-briefing-panel .panel-heading {
@@ -1149,7 +1202,7 @@ select {
 .ai-briefing-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 7px;
 }
 
 .ai-briefing-controls .control-button {
@@ -1167,16 +1220,16 @@ select {
 .ai-briefing-output li {
   margin: 0;
   color: #9fb0c6;
-  font-size: 0.98rem;
-  line-height: 1.55;
+  font-size: 0.86rem;
+  line-height: 1.42;
 }
 
 .ai-briefing-source-context {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   border: 1px solid rgba(125, 211, 252, 0.2);
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 4px;
+  padding: 8px;
   background: rgba(2, 6, 23, 0.24);
 }
 
@@ -1201,11 +1254,11 @@ select {
 
 .ai-briefing-status {
   display: grid;
-  gap: 10px;
+  gap: 7px;
   margin-top: 0;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.16);
-  padding: 11px;
+  padding: 9px;
   background: rgba(2, 6, 23, 0.24);
 }
 
@@ -1246,15 +1299,15 @@ select {
 
 .ai-briefing-output {
   display: grid;
-  gap: 11px;
+  gap: 8px;
 }
 
 .ai-briefing-output section {
   display: grid;
-  gap: 8px;
-  border-radius: 8px;
+  gap: 6px;
+  border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.2);
-  padding: 11px;
+  padding: 9px;
   background: rgba(2, 6, 23, 0.28);
   min-width: 0;
 }
@@ -1272,10 +1325,26 @@ select {
   padding-left: 1.2rem;
 }
 
+.ai-briefing-public-social-context li {
+  display: grid;
+  gap: 4px;
+}
+
+.ai-briefing-public-social-context li strong {
+  color: rgba(186, 230, 253, 0.96);
+  font-size: 0.84rem;
+  letter-spacing: 0.02em;
+}
+
+.ai-briefing-public-social-context li small {
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
 .incident-detail-card {
   border-left: 3px solid rgba(56, 189, 248, 0.72);
-  border-radius: 10px;
-  padding: clamp(12px, 1.15vw, 15px);
+  border-radius: 4px;
+  padding: clamp(9px, 0.9vw, 12px);
   background:
     linear-gradient(135deg, rgba(14, 165, 233, 0.09), transparent 46%),
     rgba(2, 6, 23, 0.42);
@@ -1313,7 +1382,7 @@ select {
 }
 
 .incident-detail-card h3 {
-  font-size: clamp(1.25rem, 1.8vw, 1.45rem);
+  font-size: clamp(1.08rem, 1.38vw, 1.24rem);
   line-height: 1.24;
   overflow-wrap: break-word;
 }
@@ -1321,7 +1390,7 @@ select {
 .incident-detail-grid,
 .incident-detail-metrics dl {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
 }
 
@@ -1332,7 +1401,7 @@ select {
 .incident-detail-grid dt,
 .incident-detail-metrics dt {
   color: #8fb3d1;
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   line-height: 1.25;
@@ -1341,16 +1410,16 @@ select {
 
 .incident-detail-grid dd,
 .incident-detail-metrics dd {
-  margin: 4px 0 0;
+  margin: 3px 0 0;
   color: #dbeafe;
-  line-height: 1.45;
+  line-height: 1.36;
   overflow-wrap: break-word;
 }
 
 .incident-detail-metrics {
   display: grid;
-  gap: 9px;
-  padding-top: 11px;
+  gap: 7px;
+  padding-top: 9px;
   border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
 
@@ -1364,7 +1433,7 @@ select {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px;
 }
 
 .source-status-card__timestamps {
@@ -1373,11 +1442,11 @@ select {
 }
 
 .source-status-card span {
-  border-radius: 5px;
-  padding: 5px 8px;
+  border-radius: 3px;
+  padding: 4px 7px;
   color: #022c22;
   background: #86efac;
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -1394,8 +1463,8 @@ select {
 
 .saved-events-count {
   min-width: 2.25rem;
-  border-radius: 5px;
-  padding: 6px 10px;
+  border-radius: 3px;
+  padding: 5px 9px;
   color: #06111f;
   background: #67e8f9;
   line-height: 1.15;
@@ -1405,7 +1474,7 @@ select {
 
 .saved-event-card {
   display: grid;
-  gap: 11px;
+  gap: 8px;
   border-left: 3px solid rgba(56, 189, 248, 0.72);
 }
 
@@ -1419,13 +1488,13 @@ select {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
 }
 
 .saved-event-card h3 {
   margin: 0;
   color: #f8fafc;
-  font-size: clamp(1.02rem, 1.35vw, 1.14rem);
+  font-size: clamp(0.96rem, 1.12vw, 1.06rem);
   line-height: 1.3;
   overflow-wrap: break-word;
 }
@@ -1444,7 +1513,6 @@ select {
   letter-spacing: 0.08em;
   line-height: 1.25;
   text-transform: uppercase;
-  box-shadow: 0 0 18px rgba(134, 239, 172, 0.2);
 }
 
 .saved-event-card dd {
@@ -1484,10 +1552,10 @@ select {
 
 .empty-state,
 .loading-card {
-  min-height: 260px;
-  border-radius: 12px;
+  min-height: 220px;
+  border-radius: 4px;
   border: 1px dashed rgba(148, 163, 184, 0.34);
-  padding: clamp(18px, 2.4vw, 26px);
+  padding: clamp(14px, 1.8vw, 22px);
   background:
     radial-gradient(circle at top, rgba(125, 211, 252, 0.08), transparent 18rem),
     rgba(2, 6, 23, 0.22);
@@ -1497,7 +1565,7 @@ select {
 .loading-card h2 {
   margin: 0;
   color: #f8fafc;
-  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  font-size: clamp(1.06rem, 1.45vw, 1.28rem);
   line-height: 1.2;
 }
 
@@ -1505,14 +1573,14 @@ select {
 .loading-card p {
   max-width: 42rem;
   margin: 8px auto 0;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .loading-card {
-  min-height: 360px;
-  margin-top: 20px;
-  gap: 14px;
+  min-height: 300px;
+  margin-top: 12px;
+  gap: 10px;
 }
 
 .loading-card--error {
@@ -1546,18 +1614,18 @@ select {
     radial-gradient(circle at 84% 8%, rgba(37, 99, 235, 0.16), transparent 26rem),
     linear-gradient(rgba(14, 165, 233, 0.055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(14, 165, 233, 0.045) 1px, transparent 1px);
-  --dashboard-surface: rgba(3, 13, 28, 0.9);
-  --dashboard-surface-strong: rgba(1, 8, 20, 0.94);
-  --dashboard-surface-soft: rgba(4, 17, 34, 0.74);
-  --dashboard-border: rgba(125, 211, 252, 0.24);
-  --dashboard-border-strong: rgba(103, 232, 249, 0.38);
+  --dashboard-surface: rgba(2, 9, 21, 0.94);
+  --dashboard-surface-strong: rgba(1, 6, 16, 0.96);
+  --dashboard-surface-soft: rgba(4, 14, 28, 0.78);
+  --dashboard-border: rgba(125, 211, 252, 0.22);
+  --dashboard-border-strong: rgba(103, 232, 249, 0.5);
   --dashboard-focus: #67e8f9;
   --dashboard-accent: #38bdf8;
   --dashboard-accent-text: #06111f;
   --dashboard-warning: #facc15;
   --dashboard-danger: #fb7185;
-  --dashboard-panel-glow: inset 0 1px 0 rgba(186, 230, 253, 0.12), inset 0 0 24px rgba(14, 165, 233, 0.055);
-  --dashboard-shadow: 0 16px 44px rgba(0, 0, 0, 0.32), 0 0 30px rgba(14, 165, 233, 0.06);
+  --dashboard-panel-glow: inset 0 1px 0 rgba(186, 230, 253, 0.08);
+  --dashboard-shadow: 0 10px 28px rgba(0, 0, 0, 0.3), 0 0 18px rgba(14, 165, 233, 0.035);
   --dashboard-map-background:
     radial-gradient(circle at 50% 50%, rgba(125, 211, 252, 0.1), transparent 34%),
     repeating-radial-gradient(circle at 50% 50%, rgba(125, 211, 252, 0.11) 0 1px, transparent 1px 58px),
@@ -1666,8 +1734,7 @@ a {
 .ai-briefing-panel {
   border-color: var(--dashboard-border);
   background:
-    linear-gradient(135deg, rgba(14, 165, 233, 0.1), transparent 32%),
-    linear-gradient(180deg, rgba(186, 230, 253, 0.065), transparent 36%),
+    linear-gradient(180deg, rgba(186, 230, 253, 0.035), transparent 34%),
     var(--dashboard-surface);
   box-shadow: var(--dashboard-panel-glow), var(--dashboard-shadow);
   overflow: hidden;
@@ -1676,16 +1743,16 @@ a {
 .settings-control {
   position: relative;
   min-width: 0;
+  min-height: 100%;
   display: grid;
   align-content: center;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 10px;
-  padding: clamp(10px, 1.05vw, 14px);
+  gap: 6px 9px;
+  padding: clamp(8px, 0.85vw, 11px);
   border: 1px solid var(--dashboard-border);
-  border-radius: 10px;
+  border-radius: 4px;
   background:
-    linear-gradient(135deg, rgba(34, 211, 238, 0.14), transparent 42%),
-    linear-gradient(180deg, rgba(186, 230, 253, 0.08), transparent 46%),
+    linear-gradient(180deg, rgba(186, 230, 253, 0.05), transparent 46%),
     var(--dashboard-surface-strong);
   box-shadow: var(--dashboard-panel-glow);
   overflow: hidden;
@@ -1707,9 +1774,9 @@ a {
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.09), transparent),
-    repeating-linear-gradient(180deg, transparent 0 11px, rgba(125, 211, 252, 0.025) 11px 12px);
-  opacity: 0.72;
+    linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.05), transparent),
+    repeating-linear-gradient(180deg, transparent 0 14px, rgba(125, 211, 252, 0.018) 14px 15px);
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -1720,7 +1787,8 @@ a {
 
 .settings-control__field {
   display: grid;
-  gap: 6px;
+  align-content: start;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -1731,7 +1799,7 @@ a {
 
 .settings-control label {
   color: var(--dashboard-page-strong);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1739,9 +1807,10 @@ a {
 
 .settings-control select {
   width: 100%;
+  min-height: 34px;
   border: 1px solid var(--dashboard-border);
-  border-radius: 7px;
-  padding: 7px 9px;
+  border-radius: 3px;
+  padding: 6px 8px;
   color: var(--dashboard-page-text);
   background: var(--dashboard-surface-strong);
   font-weight: 800;
@@ -1781,8 +1850,8 @@ a {
 .ai-briefing-choice-prompt {
   margin: 0;
   border: 1px solid rgba(125, 211, 252, 0.28);
-  border-radius: 12px;
-  padding: 8px 10px;
+  border-radius: 4px;
+  padding: 7px 9px;
   background: rgba(14, 165, 233, 0.12);
   font-size: 0.8rem;
   line-height: 1.45;
@@ -1810,7 +1879,7 @@ a {
 .ai-briefing-output section {
   border-color: var(--dashboard-border);
   background:
-    linear-gradient(135deg, rgba(14, 165, 233, 0.08), transparent 46%),
+    linear-gradient(180deg, rgba(14, 165, 233, 0.045), transparent 42%),
     var(--dashboard-surface-soft);
 }
 
@@ -1907,9 +1976,9 @@ a {
 
   .hero {
     grid-template-columns: minmax(320px, 1fr) minmax(168px, 0.2fr) minmax(360px, 0.62fr);
-    gap: 10px;
-    padding: 14px;
-    border-radius: 18px;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 4px;
   }
 
   .hero h1 {
@@ -1971,8 +2040,8 @@ a {
   .metric-card {
     min-height: 0;
     gap: 4px;
-    padding: 10px 12px;
-    border-radius: 16px;
+    padding: 8px 10px;
+    border-radius: 4px;
   }
 
   .metric-card span {
@@ -1992,7 +2061,7 @@ a {
 
 @media (max-width: 1120px) {
   .dashboard-shell {
-    padding: 20px;
+    padding: 12px;
   }
 
   .hero,
@@ -2030,7 +2099,7 @@ a {
 
 @media (max-width: 680px) {
   .dashboard-shell {
-    padding: 14px;
+    padding: 10px;
   }
 
   .hero,
@@ -2042,12 +2111,12 @@ a {
   .status-panel,
   .ai-briefing-panel,
   .saved-events-panel {
-    padding: 18px;
-    border-radius: 22px;
+    padding: 12px;
+    border-radius: 4px;
   }
 
   .hero {
-    gap: 14px;
+    gap: 10px;
   }
 
   .hero-status,
@@ -2075,14 +2144,15 @@ a {
   }
 
   .map-canvas {
-    min-height: 420px;
-    border-radius: 18px;
+    --globe-viewport-max: min(560px, calc(100vw - 68px));
+    min-height: calc(var(--globe-viewport-max) + 40px);
+    border-radius: 4px;
   }
 
   .map-note {
     inset: auto 14px 14px;
     max-width: calc(100% - 28px);
-    border-radius: 16px;
+    border-radius: 4px;
   }
 
   .map-selection-actions {
@@ -2117,8 +2187,8 @@ a {
   .status-panel,
   .ai-briefing-panel,
   .saved-events-panel {
-    padding: 14px;
-    border-radius: 18px;
+    padding: 10px;
+    border-radius: 4px;
   }
 
   .hero h1 {
@@ -2135,18 +2205,21 @@ a {
   }
 
   .map-marker {
-    min-width: 30px;
-    height: 30px;
-    padding: 0 6px;
+    min-width: 12px;
+    width: 12px;
+    height: 12px;
+    padding: 0;
   }
 
   .map-marker--severity-major {
-    min-width: 38px;
-    height: 38px;
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
   }
 
   .map-marker--severity-strong {
-    min-width: 34px;
-    height: 34px;
+    min-width: 14px;
+    width: 14px;
+    height: 14px;
   }
 }

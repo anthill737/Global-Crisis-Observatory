@@ -4,6 +4,7 @@ import {
   buildNasaEonetEventsEndpoint,
   fetchCombinedIncidentCollection,
   fetchGdacsIncidents,
+  fetchNoaaNwsAlerts,
   fetchNasaEonetIncidents,
   fetchUsgsEarthquakeFeed,
   filterIncidents,
@@ -11,9 +12,13 @@ import {
   GDACS_RSS_PROXY_ENDPOINT,
   GDACS_RSS_FEED_ENDPOINT,
   GDACS_RSS_REQUEST_HEADERS,
+  NOAA_NWS_ACTIVE_ALERTS_ENDPOINT,
+  NOAA_NWS_ALERTS_PROXY_ENDPOINT,
+  NOAA_NWS_ALERTS_REQUEST_HEADERS,
   normalizeIncident,
   normalizeGdacsRssIncident,
   normalizeNasaEonetIncident,
+  normalizeNoaaNwsAlertIncident,
   normalizeUsgsEarthquakeIncident,
   scoreIncidentSeverity,
   type FeedAdapterFetch,
@@ -21,6 +26,7 @@ import {
   type GdacsRssIncidentPayload,
   type Incident,
   type NasaEonetFeedPayload,
+  type NoaaNwsAlertsFeedPayload,
   type UsgsEarthquakeFeedPayload,
 } from "../src/lib/incidents";
 
@@ -495,6 +501,122 @@ describe("USGS Earthquakes Feed Adapter", () => {
   });
 });
 
+describe("NOAA/NWS Active Alerts Feed Adapter", () => {
+  const retrievedAt = new Date("2026-06-10T14:30:00Z");
+  const noaaNwsPayload: NoaaNwsAlertsFeedPayload = {
+    type: "FeatureCollection",
+    title: "Current watches, warnings, and advisories for the United States",
+    features: [
+      {
+        id: "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.example",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [-97.52, 35.49],
+              [-97.1, 35.44],
+              [-97.22, 35.75],
+              [-97.52, 35.49],
+            ],
+          ],
+        },
+        properties: {
+          id: "urn:oid:2.49.0.1.840.0.example",
+          areaDesc: "Oklahoma County",
+          event: "Severe Thunderstorm Warning",
+          headline: "Severe Thunderstorm Warning issued June 10 at 2:00PM CDT until June 10 at 2:45PM CDT",
+          category: "Met",
+          severity: "Severe",
+          certainty: "Observed",
+          urgency: "Immediate",
+          sent: "2026-06-10T14:00:00-05:00",
+          effective: "2026-06-10T14:00:00-05:00",
+          onset: "2026-06-10T14:05:00-05:00",
+          expires: "2026-06-10T14:45:00-05:00",
+          web: "https://alerts.weather.gov/cap/wwacapget.php?x=OK-example",
+        },
+      },
+    ],
+  };
+
+  it("normalizes NOAA/NWS severe weather data into source-attributed Incidents", () => {
+    const feature = noaaNwsPayload.features?.[0];
+    expect(feature).toBeDefined();
+
+    const incident = normalizeNoaaNwsAlertIncident(feature!, { retrievedAt });
+
+    expect(incident).toMatchObject({
+      id: "noaa-nws-alerts:urn:oid:2.49.0.1.840.0.example",
+      title: "Severe Thunderstorm Warning issued June 10 at 2:00PM CDT until June 10 at 2:45PM CDT",
+      category: "severe_storm",
+      source: "noaa-nws-alerts",
+      sourceName: "NOAA/NWS Active Alerts",
+      sourceUrl: "https://alerts.weather.gov/cap/wwacapget.php?x=OK-example",
+      coordinates: { latitude: 35.49, longitude: -97.52 },
+      startedAt: "2026-06-10T19:05:00.000Z",
+      updatedAt: null,
+      severityScore: 75,
+      severityLabel: "major",
+      rawSource: {
+        publicFeed: "noaa-nws-alerts",
+        publicFeedName: "NOAA/NWS Active Alerts",
+        originalId: "urn:oid:2.49.0.1.840.0.example",
+        retrievedAt: "2026-06-10T14:30:00.000Z",
+        payload: feature,
+      },
+    });
+  });
+
+  it("fetches NOAA/NWS Active Alerts through the no-secret local proxy with required headers", async () => {
+    const requestedInputs: Array<string | URL> = [];
+    const requestedHeaders: Array<Record<string, string> | undefined> = [];
+    const fetcher: FeedAdapterFetch = async (input, init) => {
+      requestedInputs.push(input);
+      requestedHeaders.push(init?.headers);
+      return { ok: true, status: 200, json: async () => noaaNwsPayload };
+    };
+
+    const result = await fetchNoaaNwsAlerts({ fetcher, now: () => retrievedAt });
+
+    expect(NOAA_NWS_ACTIVE_ALERTS_ENDPOINT).toBe(
+      "https://api.weather.gov/alerts/active?status=actual&message_type=alert",
+    );
+    expect(String(requestedInputs[0])).toBe(NOAA_NWS_ALERTS_PROXY_ENDPOINT);
+    expect(requestedHeaders[0]).toEqual(NOAA_NWS_ALERTS_REQUEST_HEADERS);
+    expect(result.sourceStatus).toEqual({
+      publicFeed: "noaa-nws-alerts",
+      publicFeedName: "NOAA/NWS Active Alerts",
+      state: "success",
+      lastAttemptedAt: "2026-06-10T14:30:00.000Z",
+      lastSuccessfulAt: "2026-06-10T14:30:00.000Z",
+      message: null,
+    });
+    expect(result.incidents).toHaveLength(1);
+    expect(result.incidents[0]?.source).toBe("noaa-nws-alerts");
+  });
+
+  it("reports degraded Source Status without fabricating Incidents for unusable NOAA/NWS payloads", async () => {
+    const fetcher: FeedAdapterFetch = async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ features: [{ properties: { event: "Missing time" } }] }),
+    });
+
+    const result = await fetchNoaaNwsAlerts({ fetcher, now: () => retrievedAt });
+
+    expect(result.incidents).toEqual([]);
+    expect(result.sourceStatus).toEqual({
+      publicFeed: "noaa-nws-alerts",
+      publicFeedName: "NOAA/NWS Active Alerts",
+      state: "degraded",
+      lastAttemptedAt: "2026-06-10T14:30:00.000Z",
+      lastSuccessfulAt: "2026-06-10T14:30:00.000Z",
+      message: "Skipped 1 NOAA/NWS Active Alerts features missing required Incident fields.",
+    });
+  });
+});
+
+
 describe("Combined Incident collection", () => {
   const refreshedAt = new Date("2026-06-10T15:00:00Z");
   const usgsPayload = JSON.parse(
@@ -533,8 +655,26 @@ describe("Combined Incident collection", () => {
         </item>
       </channel>
     </rss>`;
+  const noaaNwsPayload: NoaaNwsAlertsFeedPayload = {
+    features: [
+      {
+        id: "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.combined",
+        geometry: { type: "Point", coordinates: [-97.52, 35.49] },
+        properties: {
+          id: "urn:oid:2.49.0.1.840.0.combined",
+          event: "Severe Thunderstorm Warning",
+          headline: "Severe Thunderstorm Warning for Oklahoma County",
+          category: "Met",
+          severity: "Severe",
+          sent: "2026-06-10T14:00:00-05:00",
+          effective: "2026-06-10T14:00:00-05:00",
+          web: "https://alerts.weather.gov/cap/wwacapget.php?x=OK-combined",
+        },
+      },
+    ],
+  };
 
-  it("merges USGS, NASA EONET, and restored GDACS output with Source Status for each Public Feed", async () => {
+  it("merges USGS, NASA EONET, restored GDACS, and NOAA/NWS output with Source Status for each Public Feed", async () => {
     const fetcher: FeedAdapterFetch = async (input) => {
       const url = String(input);
 
@@ -550,6 +690,10 @@ describe("Combined Incident collection", () => {
         return { ok: true, status: 200, json: async () => ({}), text: async () => gdacsRss };
       }
 
+      if (url === NOAA_NWS_ALERTS_PROXY_ENDPOINT) {
+        return { ok: true, status: 200, json: async () => noaaNwsPayload };
+      }
+
       throw new Error(`Unexpected Public Feed URL: ${url}`);
     };
 
@@ -558,13 +702,15 @@ describe("Combined Incident collection", () => {
       usgsEarthquakes: { fetcher },
       nasaEonet: { fetcher, limit: 1 },
       gdacs: { fetcher },
+      noaaNwsAlerts: { fetcher },
     });
 
     expect(collection.refreshedAt).toBe("2026-06-10T15:00:00.000Z");
-    expect(collection.incidents).toHaveLength(4);
+    expect(collection.incidents).toHaveLength(5);
     expect(collection.incidents.map((incident) => incident.source).sort()).toEqual([
       "gdacs",
       "nasa-eonet",
+      "noaa-nws-alerts",
       "usgs-earthquakes",
       "usgs-earthquakes",
     ]);
@@ -593,10 +739,18 @@ describe("Combined Incident collection", () => {
         lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
         message: null,
       },
+      {
+        publicFeed: "noaa-nws-alerts",
+        publicFeedName: "NOAA/NWS Active Alerts",
+        state: "success",
+        lastAttemptedAt: "2026-06-10T15:00:00.000Z",
+        lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
+        message: null,
+      },
     ]);
     expect(collection.sourceStatusSummary).toEqual({
-      sourceCount: 3,
-      successCount: 3,
+      sourceCount: 4,
+      successCount: 4,
       degradedCount: 0,
       unavailableCount: 0,
       lastAttemptedAt: "2026-06-10T15:00:00.000Z",
@@ -616,6 +770,10 @@ describe("Combined Incident collection", () => {
         return { ok: true, status: 200, json: async () => ({}), text: async () => gdacsRss };
       }
 
+      if (url === NOAA_NWS_ALERTS_PROXY_ENDPOINT) {
+        return { ok: true, status: 200, json: async () => ({ features: [] }) };
+      }
+
       throw new Error("NASA EONET outage");
     };
 
@@ -624,6 +782,7 @@ describe("Combined Incident collection", () => {
       usgsEarthquakes: { fetcher },
       nasaEonet: { fetcher },
       gdacs: { fetcher },
+      noaaNwsAlerts: { fetcher },
       previousSourceStatuses: [
         {
           publicFeed: "nasa-eonet",
@@ -666,9 +825,17 @@ describe("Combined Incident collection", () => {
       lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
       message: null,
     });
+    expect(collection.sourceStatuses).toContainEqual({
+      publicFeed: "noaa-nws-alerts",
+      publicFeedName: "NOAA/NWS Active Alerts",
+      state: "success",
+      lastAttemptedAt: "2026-06-10T15:00:00.000Z",
+      lastSuccessfulAt: "2026-06-10T15:00:00.000Z",
+      message: null,
+    });
     expect(collection.sourceStatusSummary).toMatchObject({
-      sourceCount: 3,
-      successCount: 2,
+      sourceCount: 4,
+      successCount: 3,
       degradedCount: 0,
       unavailableCount: 1,
     });

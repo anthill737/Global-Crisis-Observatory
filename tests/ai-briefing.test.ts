@@ -5,6 +5,7 @@ import {
   AiBriefingRequestError,
   buildFilteredIncidentSetBriefingRequest,
   buildSingleIncidentBriefingRequest,
+  buildSelectedIncidentPublicSocialContext,
   generateAiBriefing,
   type AiBriefingFetch,
   validateAiBriefingRequestPayload,
@@ -202,6 +203,52 @@ describe("AI Briefing request pipeline", () => {
     expect(JSON.stringify(request)).not.toContain("10 Main Street");
     expect(JSON.stringify(request)).not.toContain("the bridge is out");
     expect(JSON.stringify(request)).not.toContain("+1 555 123 4567");
+  });
+
+  it("shapes selected-Incident Public Social Context from local public source facts", () => {
+    const publicSocialContext = buildSelectedIncidentPublicSocialContext(incident, "gemini");
+
+    expect(publicSocialContext).toEqual({
+      safetyNotice: "Localized public signal summaries aggregated from public sources.",
+      locality: "12 km S of Example, Alaska",
+      signals: [
+        {
+          topic: "Earthquake public context scope",
+          localizedSummary:
+            "Broad public signals are relevant only when they match the selected Earthquake Incident near 12 km S of Example, Alaska and its source-attributed facts.",
+          sourceType: "public_social",
+          observedAt: "2026-06-10T12:00:00.000Z",
+          sourceUrl: "https://earthquake.usgs.gov/earthquakes/eventpage/alpha",
+        },
+        {
+          topic: "Source separation",
+          localizedSummary:
+            "USGS Earthquakes remains the core Public Feed source; treat broader public context as separate, contextual, and uncertain.",
+          sourceType: "public_official",
+          observedAt: "2026-06-10T15:30:00.000Z",
+          sourceUrl: "https://earthquake.usgs.gov/earthquakes/eventpage/alpha",
+        },
+      ],
+    });
+
+    const request = buildSingleIncidentBriefingRequest(incident, { aiBriefingChoice: "gemini", publicSocialContext });
+    validateAiBriefingRequestPayload(request);
+    expect(request.publicSocialContext).toEqual(publicSocialContext);
+    expect(JSON.stringify(request)).not.toContain("privateOperationalNote");
+    expect(JSON.stringify(request)).not.toContain("@");
+  });
+
+  it("fails closed instead of shaping Public Social Context for Disabled or unsafe selected Incidents", () => {
+    expect(buildSelectedIncidentPublicSocialContext(incident, "disabled")).toBeNull();
+    expect(
+      buildSelectedIncidentPublicSocialContext(
+        {
+          ...incident,
+          title: 'M 5.4 - Example resident said "my address is 10 Main Street"',
+        },
+        "openai",
+      ),
+    ).toBeNull();
   });
 
   it("omits Public Social Context when unavailable or unsupported while keeping the public request shape valid", () => {
@@ -449,6 +496,30 @@ describe("AI Briefing request pipeline", () => {
     ).rejects.toMatchObject({
       message: expect.stringContaining("quota or rate limit"),
     });
+  });
+
+  it("does not dispatch Public Social Context to a provider without the matching API key", async () => {
+    const fetcher = vi.fn(async (_input: string | URL, _init) => ({
+      ok: true,
+      status: 200,
+      json: async () => ({}),
+    })) satisfies AiBriefingFetch;
+    const payload = buildSingleIncidentBriefingRequest(incident, {
+      aiBriefingChoice: "anthropic",
+      publicSocialContext: buildSelectedIncidentPublicSocialContext(incident, "anthropic"),
+    });
+
+    await expect(
+      generateProviderAiBriefing({
+        payload,
+        aiBriefingProvider: "anthropic",
+        apiKeys: { openai: "sk-test", anthropic: "", gemini: "gemini-key" },
+        fetcher,
+      }),
+    ).rejects.toMatchObject({
+      message: expect.stringContaining("ANTHROPIC_API_KEY is not configured"),
+    });
+    expect(fetcher).not.toHaveBeenCalled();
   });
 
   it("reports provider-specific authentication failures for the selected AI Briefing Provider", async () => {

@@ -9,7 +9,7 @@ export type IncidentCategory =
   | "dust_haze"
   | "other";
 
-export type PublicFeedId = "usgs-earthquakes" | "nasa-eonet" | "gdacs";
+export type PublicFeedId = "usgs-earthquakes" | "nasa-eonet" | "gdacs" | "noaa-nws-alerts";
 
 export type SourceStatusState = "success" | "degraded" | "unavailable";
 
@@ -82,6 +82,7 @@ export interface CombinedIncidentCollectionOptions {
   usgsEarthquakes?: UsgsEarthquakeFeedAdapterOptions;
   nasaEonet?: NasaEonetFeedAdapterOptions;
   gdacs?: GdacsFeedAdapterOptions;
+  noaaNwsAlerts?: NoaaNwsAlertsFeedAdapterOptions;
   previousSourceStatuses?: readonly SourceStatus[];
   now?: () => Date;
 }
@@ -172,6 +173,38 @@ export interface GdacsRssIncidentPayload {
   coordinates: Coordinates | null;
 }
 
+export interface NoaaNwsAlertFeature {
+  id?: unknown;
+  geometry?: {
+    type?: unknown;
+    coordinates?: unknown;
+  } | null;
+  properties?: {
+    id?: unknown;
+    areaDesc?: unknown;
+    event?: unknown;
+    headline?: unknown;
+    description?: unknown;
+    instruction?: unknown;
+    category?: unknown;
+    severity?: unknown;
+    certainty?: unknown;
+    urgency?: unknown;
+    sent?: unknown;
+    effective?: unknown;
+    onset?: unknown;
+    expires?: unknown;
+    ends?: unknown;
+    web?: unknown;
+  } | null;
+}
+
+export interface NoaaNwsAlertsFeedPayload {
+  type?: unknown;
+  title?: unknown;
+  features?: NoaaNwsAlertFeature[] | null;
+}
+
 export interface NasaEonetFeedAdapterOptions {
   endpoint?: string | URL;
   fetcher?: FeedAdapterFetch;
@@ -180,6 +213,12 @@ export interface NasaEonetFeedAdapterOptions {
 }
 
 export interface GdacsFeedAdapterOptions {
+  endpoint?: string | URL;
+  fetcher?: FeedAdapterFetch;
+  now?: () => Date;
+}
+
+export interface NoaaNwsAlertsFeedAdapterOptions {
   endpoint?: string | URL;
   fetcher?: FeedAdapterFetch;
   now?: () => Date;
@@ -208,6 +247,7 @@ const PUBLIC_FEED_NAMES: Record<PublicFeedId, string> = {
   "usgs-earthquakes": "USGS Earthquakes",
   "nasa-eonet": "NASA EONET",
   gdacs: "GDACS",
+  "noaa-nws-alerts": "NOAA/NWS Active Alerts",
 };
 
 export const NASA_EONET_EVENTS_ENDPOINT = "https://eonet.gsfc.nasa.gov/api/v3/events";
@@ -217,6 +257,11 @@ export const USGS_EARTHQUAKE_FEED_ENDPOINT =
 export const GDACS_RSS_FEED_ENDPOINT = "https://www.gdacs.org/xml/rss.xml";
 export const GDACS_RSS_PROXY_ENDPOINT = "/api/public-feeds/gdacs/rss.xml";
 export const GDACS_RSS_REQUEST_HEADERS = { Accept: "*/*" };
+export const NOAA_NWS_ACTIVE_ALERTS_ENDPOINT = "https://api.weather.gov/alerts/active?status=actual&message_type=alert";
+export const NOAA_NWS_ALERTS_PROXY_ENDPOINT = "/api/public-feeds/noaa-nws/alerts/active";
+export const NOAA_NWS_ALERTS_REQUEST_HEADERS = { Accept: "application/geo+json, application/json" };
+export const NOAA_NWS_BROWSER_RUNTIME_LIMITATION_MESSAGE =
+  "NOAA/NWS Active Alerts could not be fetched from this browser-like runtime because the local Public Feed proxy was not reachable; USGS Earthquakes, NASA EONET, and GDACS remain active while NOAA/NWS reports unavailable.";
 export const GDACS_BROWSER_RUNTIME_LIMITATION_MESSAGE =
   "GDACS RSS could not be fetched from this browser-like runtime because its public endpoint does not advertise browser CORS access and the local Public Feed proxy was not reachable; USGS Earthquakes and NASA EONET remain active while GDACS reports unavailable.";
 
@@ -339,6 +384,39 @@ export function normalizeGdacsRssIncident(
     severityScore: scoreGdacsAlertLevel(payload.alertLevel),
     retrievedAt: options.retrievedAt ?? null,
     rawPayload: payload,
+  });
+}
+
+export function normalizeNoaaNwsAlertIncident(
+  feature: NoaaNwsAlertFeature,
+  options: { retrievedAt?: string | number | Date | null } = {},
+): Incident<NoaaNwsAlertFeature> | null {
+  const properties = feature.properties;
+  if (properties === null || properties === undefined) {
+    return null;
+  }
+
+  const rawId = readString(properties.id) ?? readString(feature.id);
+  const title = readString(properties.headline) ?? readString(properties.event);
+  const startedAt = readTimestamp(properties.onset) ?? readTimestamp(properties.effective) ?? readTimestamp(properties.sent);
+
+  if (rawId === null || title === null || startedAt === null) {
+    return null;
+  }
+
+  return normalizeIncident({
+    rawId,
+    title,
+    category: mapNoaaNwsAlertCategory(properties.category, properties.event),
+    source: "noaa-nws-alerts",
+    sourceName: PUBLIC_FEED_NAMES["noaa-nws-alerts"],
+    sourceUrl: normalizeNullableUrl(readString(properties.web)) ?? normalizeNullableUrl(rawId),
+    coordinates: readNoaaNwsAlertCoordinates(feature.geometry),
+    startedAt,
+    updatedAt: null,
+    severityScore: scoreNoaaNwsSeverity(properties.severity),
+    retrievedAt: options.retrievedAt ?? null,
+    rawPayload: feature,
   });
 }
 
@@ -549,6 +627,78 @@ export async function fetchGdacsIncidents(options: GdacsFeedAdapterOptions = {})
   }
 }
 
+export async function fetchNoaaNwsAlerts(
+  options: NoaaNwsAlertsFeedAdapterOptions = {},
+): Promise<FeedAdapterResult<NoaaNwsAlertFeature>> {
+  const now = options.now ?? (() => new Date());
+  const attemptedAt = now().toISOString();
+  const endpoint = options.endpoint ?? NOAA_NWS_ALERTS_PROXY_ENDPOINT;
+  const fetcher = options.fetcher ?? readGlobalFetch();
+
+  if (fetcher === null) {
+    return createNoaaNwsAdapterResult(
+      [],
+      "unavailable",
+      attemptedAt,
+      null,
+      "NOAA/NWS Active Alerts fetch is unavailable in this runtime; the Global Crisis Dashboard remains usable with other reachable Public Feeds.",
+    );
+  }
+
+  try {
+    const response = await fetcher(endpoint, {
+      headers: { ...NOAA_NWS_ALERTS_REQUEST_HEADERS },
+    });
+
+    if (!response.ok) {
+      return createNoaaNwsAdapterResult(
+        [],
+        "unavailable",
+        attemptedAt,
+        null,
+        describePublicFeedHttpFailure("NOAA/NWS Active Alerts", response),
+      );
+    }
+
+    const payload = await response.json();
+    const features = readNoaaNwsAlertFeatures(payload);
+
+    if (features === null) {
+      return createNoaaNwsAdapterResult(
+        [],
+        "degraded",
+        attemptedAt,
+        null,
+        "NOAA/NWS Active Alerts returned unusable public data: expected a GeoJSON features list.",
+      );
+    }
+
+    const incidents = features.flatMap((feature) => {
+      const incident = normalizeNoaaNwsAlertIncident(feature, { retrievedAt: attemptedAt });
+      return incident === null ? [] : [incident];
+    });
+    const skippedCount = features.length - incidents.length;
+    const message =
+      skippedCount > 0 ? `Skipped ${skippedCount} NOAA/NWS Active Alerts features missing required Incident fields.` : null;
+
+    return createNoaaNwsAdapterResult(
+      incidents,
+      skippedCount > 0 ? "degraded" : "success",
+      attemptedAt,
+      attemptedAt,
+      message,
+    );
+  } catch (error) {
+    return createNoaaNwsAdapterResult(
+      [],
+      "unavailable",
+      attemptedAt,
+      null,
+      describeNoaaNwsFetchFailure(endpoint, error),
+    );
+  }
+}
+
 export async function fetchCombinedIncidentCollection(
   options: CombinedIncidentCollectionOptions = {},
 ): Promise<CombinedIncidentCollection> {
@@ -558,6 +708,7 @@ export async function fetchCombinedIncidentCollection(
   const usgsOptions: UsgsEarthquakeFeedAdapterOptions = { ...(options.usgsEarthquakes ?? {}) };
   const nasaOptions: NasaEonetFeedAdapterOptions = { ...(options.nasaEonet ?? {}) };
   const gdacsOptions: GdacsFeedAdapterOptions = { ...(options.gdacs ?? {}) };
+  const noaaNwsOptions: NoaaNwsAlertsFeedAdapterOptions = { ...(options.noaaNwsAlerts ?? {}) };
 
   if (usgsOptions.now === undefined) {
     usgsOptions.now = defaultAdapterNow;
@@ -571,7 +722,11 @@ export async function fetchCombinedIncidentCollection(
     gdacsOptions.now = defaultAdapterNow;
   }
 
-  const [usgsResult, nasaResult, gdacsResult] = await Promise.all([
+  if (noaaNwsOptions.now === undefined) {
+    noaaNwsOptions.now = defaultAdapterNow;
+  }
+
+  const [usgsResult, nasaResult, gdacsResult, noaaNwsResult] = await Promise.all([
     fetchUsgsEarthquakeFeed(usgsOptions).then(toCombinedFeedAdapterResult, (error) =>
       createUnavailableCombinedFeedAdapterResult(
         "usgs-earthquakes",
@@ -593,13 +748,23 @@ export async function fetchCombinedIncidentCollection(
         `GDACS adapter failed before returning Source Status: ${describeError(error)}.`,
       ),
     ),
+    fetchNoaaNwsAlerts(noaaNwsOptions).then(toCombinedFeedAdapterResult, (error) =>
+      createUnavailableCombinedFeedAdapterResult(
+        "noaa-nws-alerts",
+        refreshedAt,
+        `NOAA/NWS Active Alerts adapter failed before returning Source Status: ${describeError(error)}.`,
+      ),
+    ),
   ]);
 
   const previousSourceStatuses = options.previousSourceStatuses ?? [];
-  const sourceStatuses = [usgsResult.sourceStatus, nasaResult.sourceStatus, gdacsResult.sourceStatus].map((sourceStatus) =>
-    carryForwardSourceStatusFreshness(sourceStatus, previousSourceStatuses),
-  );
-  const incidents = [...usgsResult.incidents, ...nasaResult.incidents, ...gdacsResult.incidents].sort(
+  const sourceStatuses = [
+    usgsResult.sourceStatus,
+    nasaResult.sourceStatus,
+    gdacsResult.sourceStatus,
+    noaaNwsResult.sourceStatus,
+  ].map((sourceStatus) => carryForwardSourceStatusFreshness(sourceStatus, previousSourceStatuses));
+  const incidents = [...usgsResult.incidents, ...nasaResult.incidents, ...gdacsResult.incidents, ...noaaNwsResult.incidents].sort(
     compareIncidentsByFreshness,
   );
 
@@ -809,6 +974,20 @@ function describeGdacsFetchFailure(endpoint: string | URL, error: unknown): stri
   return describePublicFeedFetchFailure("GDACS", error);
 }
 
+function describeNoaaNwsFetchFailure(endpoint: string | URL, error: unknown): string {
+  const endpointText = String(endpoint);
+  const message = describeError(error).toLowerCase();
+
+  if (
+    endpointText === NOAA_NWS_ALERTS_PROXY_ENDPOINT &&
+    (message.includes("failed to fetch") || message.includes("failed to parse url") || message.includes("cors"))
+  ) {
+    return NOAA_NWS_BROWSER_RUNTIME_LIMITATION_MESSAGE;
+  }
+
+  return describePublicFeedFetchFailure("NOAA/NWS Active Alerts", error);
+}
+
 function createUsgsEarthquakeAdapterResult(
   incidents: Incident<UsgsEarthquakeFeature>[],
   state: SourceStatusState,
@@ -861,6 +1040,26 @@ function createGdacsAdapterResult(
     sourceStatus: {
       publicFeed: "gdacs",
       publicFeedName: PUBLIC_FEED_NAMES.gdacs,
+      state,
+      lastAttemptedAt,
+      lastSuccessfulAt,
+      message,
+    },
+  };
+}
+
+function createNoaaNwsAdapterResult(
+  incidents: Incident<NoaaNwsAlertFeature>[],
+  state: SourceStatusState,
+  lastAttemptedAt: string,
+  lastSuccessfulAt: string | null,
+  message: string | null,
+): FeedAdapterResult<NoaaNwsAlertFeature> {
+  return {
+    incidents,
+    sourceStatus: {
+      publicFeed: "noaa-nws-alerts",
+      publicFeedName: PUBLIC_FEED_NAMES["noaa-nws-alerts"],
       state,
       lastAttemptedAt,
       lastSuccessfulAt,
@@ -956,6 +1155,14 @@ function readNasaEonetEvents(payload: unknown): NasaEonetIncidentPayload[] | nul
   }
 
   return payload.events.filter(isRecord);
+}
+
+function readNoaaNwsAlertFeatures(payload: unknown): NoaaNwsAlertFeature[] | null {
+  if (!isRecord(payload) || !Array.isArray(payload.features)) {
+    return null;
+  }
+
+  return payload.features.filter(isRecord);
 }
 
 function readGlobalFetch(): FeedAdapterFetch | null {
@@ -1233,6 +1440,19 @@ function readNasaEonetCoordinates(value: unknown): Coordinates | null {
   return normalizeCoordinates({ latitude: position[1], longitude: position[0] });
 }
 
+function readNoaaNwsAlertCoordinates(geometry: NoaaNwsAlertFeature["geometry"]): Coordinates | null {
+  if (geometry === null || geometry === undefined) {
+    return null;
+  }
+
+  const position = findFirstPosition(geometry.coordinates);
+  if (position === null) {
+    return null;
+  }
+
+  return normalizeCoordinates({ latitude: position[1], longitude: position[0] });
+}
+
 function findFirstPosition(value: unknown): [number, number] | null {
   if (!Array.isArray(value)) {
     return null;
@@ -1295,6 +1515,39 @@ function mapGdacsEventType(value: unknown): IncidentCategory {
   return "other";
 }
 
+function mapNoaaNwsAlertCategory(category: unknown, event: unknown): IncidentCategory {
+  const normalizedCategory = readString(category)?.toLowerCase() ?? "";
+  const normalizedEvent = readString(event)?.toLowerCase() ?? "";
+  const searchableText = `${normalizedCategory} ${normalizedEvent}`;
+
+  if (searchableText.includes("fire") || searchableText.includes("red flag")) {
+    return "wildfire";
+  }
+  if (
+    searchableText.includes("storm") ||
+    searchableText.includes("tornado") ||
+    searchableText.includes("hurricane") ||
+    searchableText.includes("thunder") ||
+    searchableText.includes("wind")
+  ) {
+    return "severe_storm";
+  }
+  if (searchableText.includes("flood") || searchableText.includes("surge")) {
+    return "flood";
+  }
+  if (searchableText.includes("drought")) {
+    return "drought";
+  }
+  if (searchableText.includes("dust") || searchableText.includes("smoke") || searchableText.includes("air quality")) {
+    return "dust_haze";
+  }
+  if (searchableText.includes("ice") || searchableText.includes("snow") || searchableText.includes("blizzard")) {
+    return "sea_lake_ice";
+  }
+
+  return "other";
+}
+
 function scoreGdacsAlertLevel(value: unknown): number | null {
   switch (readString(value)?.toLowerCase()) {
     case "red":
@@ -1303,6 +1556,21 @@ function scoreGdacsAlertLevel(value: unknown): number | null {
       return 70;
     case "green":
       return 35;
+    default:
+      return null;
+  }
+}
+
+function scoreNoaaNwsSeverity(value: unknown): number | null {
+  switch (readString(value)?.toLowerCase()) {
+    case "extreme":
+      return 95;
+    case "severe":
+      return 75;
+    case "moderate":
+      return 55;
+    case "minor":
+      return 30;
     default:
       return null;
   }

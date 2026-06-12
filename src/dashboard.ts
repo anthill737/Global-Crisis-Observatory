@@ -20,6 +20,8 @@ export interface DashboardMetric {
 export interface DashboardMapMarker {
   id: string;
   title: string;
+  incidentIds: string[];
+  incidentCount: number;
   category: IncidentCategory;
   source: PublicFeedId;
   sourceName: string;
@@ -138,13 +140,16 @@ const CATEGORY_ORDER: IncidentCategory[] = [
 
 const SEVERITY_LABEL_ORDER: SeverityLabel[] = ["minor", "moderate", "strong", "major"];
 const SOURCE_STATUS_ATTENTION_STATES = new Set<SourceStatusState>(["degraded", "unavailable"]);
-const MARKER_COLLISION_MIN_LEFT_PERCENT = 1.75;
-const MARKER_COLLISION_MIN_TOP_PERCENT = 1.75;
+const MARKER_COLLISION_MIN_LEFT_PERCENT = 1.3;
+const MARKER_COLLISION_MIN_TOP_PERCENT = 1.3;
 const MARKER_LEFT_MIN_PERCENT = 8;
 const MARKER_LEFT_MAX_PERCENT = 92;
 const MARKER_TOP_MIN_PERCENT = 8;
 const MARKER_TOP_MAX_PERCENT = 92;
 const MARKER_GLOBE_RADIUS_PERCENT = 41;
+const MARKER_AGGREGATION_MIN_COUNT = 3;
+const MARKER_AGGREGATION_MAX_RADIUS_PERCENT = 3.2;
+const MARKER_AGGREGATION_MIN_RADIUS_PERCENT = 1.1;
 const MARKER_RESERVED_OVERLAY_AREAS: MarkerReservedOverlayArea[] = [
   { minLeftPercent: 8, maxLeftPercent: 72, minTopPercent: 8, maxTopPercent: 24 },
   { minLeftPercent: 52, maxLeftPercent: 92, minTopPercent: 8, maxTopPercent: 27 },
@@ -269,7 +274,12 @@ export function buildGlobalCrisisDashboardViewModel(
     refreshedAt: collection.refreshedAt,
     incidents: collection.incidents,
     filteredIncidentSet,
-    mapMarkers: spreadOverlappingDashboardMapMarkers(filteredIncidentSet.flatMap((incident) => toDashboardMapMarker(incident, globeView))),
+    mapMarkers: spreadOverlappingDashboardMapMarkers(
+      aggregateDashboardMapMarkers(
+        filteredIncidentSet.flatMap((incident) => toDashboardMapMarker(incident, globeView)),
+        globeView,
+      ),
+    ),
     sourceStatuses: collection.sourceStatuses,
     metrics: buildDashboardMetrics(collection, filteredIncidentSet),
     filterOptions: buildDashboardFilterOptions(collection.incidents),
@@ -298,7 +308,7 @@ export function findSelectedDashboardMapMarker(
     return null;
   }
 
-  return markers.find((marker) => marker.id === selectedIncidentId) ?? null;
+  return markers.find((marker) => marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId)) ?? null;
 }
 
 export function formatDashboardTimestamp(timestamp: string | null): string {
@@ -604,6 +614,8 @@ function toDashboardMapMarker(incident: Incident, globeView: DashboardGlobeView)
     {
       id: incident.id,
       title: incident.title,
+      incidentIds: [incident.id],
+      incidentCount: 1,
       category: incident.category,
       source: incident.source,
       sourceName: incident.sourceName,
@@ -617,6 +629,95 @@ function toDashboardMapMarker(incident: Incident, globeView: DashboardGlobeView)
       isVisible: projection.isVisible,
     },
   ];
+}
+
+function aggregateDashboardMapMarkers(
+  markers: DashboardMapMarker[],
+  globeView: DashboardGlobeView,
+): DashboardMapMarker[] {
+  const aggregationRadiusPercent = calculateMarkerAggregationRadiusPercent(globeView);
+  const usedMarkerIds = new Set<string>();
+  const aggregatedMarkers: DashboardMapMarker[] = [];
+
+  for (const marker of markers) {
+    if (usedMarkerIds.has(marker.id)) {
+      continue;
+    }
+
+    if (!marker.isVisible) {
+      aggregatedMarkers.push(marker);
+      usedMarkerIds.add(marker.id);
+      continue;
+    }
+
+    const nearbyMarkers = markers.filter(
+      (candidate) =>
+        candidate.isVisible &&
+        !usedMarkerIds.has(candidate.id) &&
+        calculateMarkerPlacementDistance(marker, candidate) <= aggregationRadiusPercent ** 2,
+    );
+
+    if (nearbyMarkers.length < MARKER_AGGREGATION_MIN_COUNT) {
+      aggregatedMarkers.push(marker);
+      usedMarkerIds.add(marker.id);
+      continue;
+    }
+
+    for (const nearbyMarker of nearbyMarkers) {
+      usedMarkerIds.add(nearbyMarker.id);
+    }
+    aggregatedMarkers.push(toAggregateDashboardMapMarker(nearbyMarkers));
+  }
+
+  return aggregatedMarkers;
+}
+
+function calculateMarkerAggregationRadiusPercent(globeView: DashboardGlobeView): number {
+  const normalizedGlobeView = normalizeDashboardGlobeView(globeView);
+  return clamp(
+    MARKER_AGGREGATION_MAX_RADIUS_PERCENT / normalizedGlobeView.zoom,
+    MARKER_AGGREGATION_MIN_RADIUS_PERCENT,
+    MARKER_AGGREGATION_MAX_RADIUS_PERCENT,
+  );
+}
+
+function toAggregateDashboardMapMarker(markers: DashboardMapMarker[]): DashboardMapMarker {
+  const primaryMarker = [...markers].sort(compareDashboardMapMarkerPriority)[0] ?? markers[0]!;
+  const incidentIds = markers.flatMap((marker) => marker.incidentIds).sort();
+  const leftPercent = markers.reduce((sum, marker) => sum + marker.leftPercent, 0) / markers.length;
+  const topPercent = markers.reduce((sum, marker) => sum + marker.topPercent, 0) / markers.length;
+  const depth = markers.reduce((sum, marker) => sum + marker.depth, 0) / markers.length;
+  const latitude = markers.reduce((sum, marker) => sum + marker.latitude, 0) / markers.length;
+  const longitude = markers.reduce((sum, marker) => sum + marker.longitude, 0) / markers.length;
+
+  return {
+    ...primaryMarker,
+    title: `${incidentIds.length} nearby Incidents including ${primaryMarker.title}`,
+    incidentIds,
+    incidentCount: incidentIds.length,
+    leftPercent: Number(leftPercent.toFixed(6)),
+    topPercent: Number(topPercent.toFixed(6)),
+    depth: Number(depth.toFixed(6)),
+    latitude: Number(latitude.toFixed(6)),
+    longitude: Number(longitude.toFixed(6)),
+    isVisible: true,
+  };
+}
+
+function compareDashboardMapMarkerPriority(left: DashboardMapMarker, right: DashboardMapMarker): number {
+  const rightSeverityScore = right.severityScore ?? -1;
+  const leftSeverityScore = left.severityScore ?? -1;
+  if (rightSeverityScore !== leftSeverityScore) {
+    return rightSeverityScore - leftSeverityScore;
+  }
+
+  const rightSeverityRank = right.severityLabel === null ? -1 : SEVERITY_LABEL_ORDER.indexOf(right.severityLabel);
+  const leftSeverityRank = left.severityLabel === null ? -1 : SEVERITY_LABEL_ORDER.indexOf(left.severityLabel);
+  if (rightSeverityRank !== leftSeverityRank) {
+    return rightSeverityRank - leftSeverityRank;
+  }
+
+  return left.id.localeCompare(right.id);
 }
 
 function projectCoordinatesToGlobe(

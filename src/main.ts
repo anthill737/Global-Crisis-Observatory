@@ -19,9 +19,11 @@ import {
   AiBriefingError,
   buildFilteredIncidentSetBriefingRequest,
   buildSingleIncidentBriefingRequest,
+  buildSelectedIncidentPublicSocialContext,
   generateAiBriefing,
   type AiBriefingOutput,
   type AiBriefingScope,
+  type PublicSocialContext,
 } from "./lib/ai-briefing";
 import {
   AI_BRIEFING_PROVIDERS,
@@ -82,8 +84,11 @@ interface DashboardState {
 interface AiBriefingPanelState {
   status: "idle" | "loading" | "ready" | "error";
   activeScope: AiBriefingScope | null;
+  incidentId: string | null;
   output: AiBriefingOutput | null;
   errorMessage: string | null;
+  publicSocialContext: PublicSocialContext | null;
+  publicSocialContextLimitation: string | null;
 }
 
 type SavedEventToggleSurface = "feed" | "map" | "detail";
@@ -97,8 +102,25 @@ interface ProjectedGlobeCoordinate {
   isVisible: boolean;
 }
 
+interface GlobeDragState {
+  isDragging: boolean;
+  hasMoved: boolean;
+  pointerId: number | null;
+  lastClientX: number;
+  lastClientY: number;
+  lastTimestamp: number;
+  velocityLongitude: number;
+  velocityLatitude: number;
+  inertiaFrame: number | null;
+}
+
 const GLOBE_GEOGRAPHY_RADIUS_PERCENT = 45.5;
 const GLOBE_GEOGRAPHY_HORIZON_DEPTH = -0.08;
+const GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL = 0.32;
+const GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL = 0.22;
+const GLOBE_DRAG_CLICK_SUPPRESSION_PIXELS = 5;
+const GLOBE_INERTIA_DECAY = 0.92;
+const GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME = 0.05;
 
 const appRoot = document.querySelector<HTMLDivElement>("#app");
 
@@ -124,14 +146,29 @@ const state: DashboardState = {
   aiBriefing: {
     status: "idle",
     activeScope: null,
+    incidentId: null,
     output: null,
     errorMessage: null,
+    publicSocialContext: null,
+    publicSocialContextLimitation: null,
   },
   isLoading: true,
   loadError: null,
 };
 
 let aiBriefingRequestToken = 0;
+let suppressNextGlobeClick = false;
+const globeDragState: GlobeDragState = {
+  isDragging: false,
+  hasMoved: false,
+  pointerId: null,
+  lastClientX: 0,
+  lastClientY: 0,
+  lastTimestamp: 0,
+  velocityLongitude: 0,
+  velocityLatitude: 0,
+  inertiaFrame: null,
+};
 
 applyVisibilityMode(state.visibilityMode);
 render();
@@ -148,9 +185,6 @@ async function refreshGlobalCrisisDashboard(): Promise<void> {
     state.collection = await fetchCombinedIncidentCollection(collectionOptions);
     if (state.areaSearch.status !== "idle") {
       state.areaSearch = resolveAreaSearchQuery(state.areaSearch.query, state.collection.incidents);
-      if (state.areaSearch.status === "success") {
-        state.globeView = focusGlobeViewOnAreaSearchArea(state.areaSearch.area, state.globeView);
-      }
     }
   } catch (error) {
     state.collection = null;
@@ -171,6 +205,7 @@ function render(): void {
   const viewModel = buildGlobalCrisisDashboardViewModel(state.collection, state.filters, state.globeView);
   const selectedIncidentId = resolveSelectedIncidentId(viewModel.filteredIncidentSet, state.selectedIncidentId);
   state.selectedIncidentId = selectedIncidentId;
+  resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
   const selectedIncident =
     selectedIncidentId === null ? null : viewModel.filteredIncidentSet.find((incident) => incident.id === selectedIncidentId) ?? null;
   const savedEventItems = buildSavedEventViewItems(state.savedEvents, viewModel.incidents);
@@ -430,7 +465,11 @@ function renderMap(
   }
 
   const selectedMarker = findSelectedDashboardMapMarker(markers, selectedIncident?.id ?? null);
-  const renderedMarkers = markers.filter((marker) => marker.isVisible || marker.id === selectedIncident?.id);
+  const selectedIncidentId = selectedIncident?.id ?? null;
+  const renderedMarkers = markers.filter(
+    (marker) =>
+      marker.isVisible || marker.id === selectedIncidentId || (selectedIncidentId !== null && marker.incidentIds.includes(selectedIncidentId)),
+  );
   const mapFocusStyle =
     selectedMarker === null
       ? ""
@@ -455,7 +494,7 @@ function renderMap(
   const normalizedGlobeView = normalizeDashboardGlobeView(globeView);
 
   return `
-    <div class="map-canvas${mapFocusClass}" role="group" aria-label="Spherical Globe Map with styled Incident Markers"${mapFocusStyle}>
+    <div class="map-canvas${mapFocusClass}" role="group" aria-label="Spherical Globe Map with styled Incident Markers" data-globe-interaction="drag-spin-zoom-focus"${mapFocusStyle}>
       <div class="globe-controls" aria-label="Globe Map rotation and zoom controls">
         <button class="globe-control" type="button" data-globe-control="spin-west" aria-label="Spin Globe Map west">◀</button>
         <button class="globe-control" type="button" data-globe-control="spin-east" aria-label="Spin Globe Map east">▶</button>
@@ -465,31 +504,37 @@ function renderMap(
         <button class="globe-control" type="button" data-globe-control="zoom-in" aria-label="Zoom Globe Map in">+</button>
         <span class="globe-control-status">Center ${normalizedGlobeView.rotationLatitude.toFixed(0)}°, ${normalizedGlobeView.rotationLongitude.toFixed(0)}° · ${Math.round(normalizedGlobeView.zoom * 100)}% zoom</span>
       </div>
-      <div class="map-viewport">
+      <div class="map-viewport" data-globe-drag-surface aria-label="Draggable round Globe Map surface">
         <div class="globe-sphere" aria-hidden="true"></div>
         ${renderGlobeGeography(normalizedGlobeView)}
         <div class="map-grid"></div>
         ${renderedMarkers
           .map((marker) => {
-            const isSelected = selectedIncident?.id === marker.id;
-            const isAreaSearchNearby = areaSearchNearbyIncidentIds.has(marker.id);
+            const isAggregated = marker.incidentCount > 1;
+            const isSelected = selectedIncidentId !== null && (marker.id === selectedIncidentId || marker.incidentIds.includes(selectedIncidentId));
+            const isAreaSearchNearby = marker.incidentIds.some((incidentId) => areaSearchNearbyIncidentIds.has(incidentId));
             const severity = marker.severityLabel ?? "unscored";
+            const markerLabel = isAggregated
+              ? `${marker.title} near ${marker.latitude.toFixed(1)}, ${marker.longitude.toFixed(1)}; select the highest Severity Score Incident in this local aggregate`
+              : `${marker.title} from ${marker.sourceName}`;
 
             return `
               <button
-                class="map-marker map-marker--${escapeHtml(marker.category)} map-marker--severity-${escapeHtml(severity)}${isSelected ? " map-marker--selected" : ""}${isAreaSearchNearby ? " map-marker--area-search-nearby" : ""}"
+                class="map-marker map-marker--${escapeHtml(marker.category)} map-marker--severity-${escapeHtml(severity)}${isAggregated ? " map-marker--aggregate" : ""}${isSelected ? " map-marker--selected" : ""}${isAreaSearchNearby ? " map-marker--area-search-nearby" : ""}"
                 type="button"
                 style="left: ${marker.leftPercent.toFixed(2)}%; top: ${marker.topPercent.toFixed(2)}%; --marker-depth: ${marker.depth.toFixed(2)};"
-                title="${escapeHtml(`${marker.title} from ${marker.sourceName}`)}"
-                aria-label="Select ${escapeHtml(marker.title)} from ${escapeHtml(marker.sourceName)}"
+                title="${escapeHtml(markerLabel)}"
+                aria-label="Select ${escapeHtml(markerLabel)}"
                 aria-pressed="${isSelected ? "true" : "false"}"
                 data-select-incident="${escapeHtml(marker.id)}"
                 data-selection-surface="map"
                 data-source="${escapeHtml(marker.source)}"
+                data-incident-count="${marker.incidentCount}"
                 data-area-search-nearby="${isAreaSearchNearby ? "true" : "false"}"
                 data-globe-visibility="${marker.isVisible ? "front" : "far-side"}"
               >
-                <span class="sr-only">${escapeHtml(`${marker.title} from ${marker.sourceName}`)}</span>
+                ${isAggregated ? `<span class="map-marker-count" aria-hidden="true">${marker.incidentCount}</span>` : ""}
+                <span class="sr-only">${escapeHtml(markerLabel)}</span>
               </button>
             `;
           })
@@ -952,6 +997,7 @@ function renderAiBriefingStatus(aiBriefing: AiBriefingPanelState, activeScopeTex
       <div class="ai-briefing-error">
         <strong>AI Briefing unavailable</strong>
         <p>${escapeHtml(aiBriefing.errorMessage ?? "The AI Briefing request failed. The Global Crisis Dashboard remains interactive.")}</p>
+        <small>Public Social Context was not produced for this request; Incident selection and the rest of the Global Crisis Dashboard remain usable.</small>
       </div>
     `;
   }
@@ -967,6 +1013,7 @@ function renderAiBriefingStatus(aiBriefing: AiBriefingPanelState, activeScopeTex
           <h3>Likely impact considerations</h3>
           <p>${escapeHtml(aiBriefing.output.impactConsiderations)}</p>
         </section>
+        ${renderPublicSocialContextSection(aiBriefing.publicSocialContext)}
         <section>
           <h3>Response Priority Recommendation</h3>
           <p>${escapeHtml(aiBriefing.output.responsePriorityRecommendation)}</p>
@@ -978,10 +1025,62 @@ function renderAiBriefingStatus(aiBriefing: AiBriefingPanelState, activeScopeTex
           </ul>
         </section>
       </article>
+      ${renderPublicSocialContextLimitation(aiBriefing.publicSocialContextLimitation)}
     `;
   }
 
   return `<p>Choose a selected Incident or the current Filtered Incident Set to generate an AI Briefing.</p>`;
+}
+
+function renderPublicSocialContextSection(publicSocialContext: PublicSocialContext | null): string {
+  if (publicSocialContext === null) {
+    return "";
+  }
+
+  return `
+    <section class="ai-briefing-public-social-context">
+      <h3>Public Social Context</h3>
+      <p>${escapeHtml(publicSocialContext.safetyNotice)} Locality: ${escapeHtml(publicSocialContext.locality)}.</p>
+      <ul>
+        ${publicSocialContext.signals
+          .map(
+            (signal) => `
+              <li>
+                <strong>${escapeHtml(signal.topic)}</strong>
+                <span>${escapeHtml(signal.localizedSummary)}</span>
+                <small>${escapeHtml(formatPublicSocialContextSignalSource(signal))}</small>
+              </li>
+            `,
+          )
+          .join("")}
+      </ul>
+    </section>
+  `;
+}
+
+function formatPublicSocialContextSignalSource(signal: PublicSocialContext["signals"][number]): string {
+  const sourceType =
+    signal.sourceType === "public_official"
+      ? "Public official"
+      : signal.sourceType === "public_web"
+        ? "Public web"
+        : "Public social";
+  const observedAt = signal.observedAt === null ? "Observed time unavailable" : `Observed ${formatDashboardTimestamp(signal.observedAt)}`;
+  const sourceUrl = signal.sourceUrl === null ? "source URL unavailable" : "source URL retained after safety review";
+
+  return `${sourceType} signal · ${observedAt} · ${sourceUrl}`;
+}
+
+function renderPublicSocialContextLimitation(publicSocialContextLimitation: string | null): string {
+  if (publicSocialContextLimitation === null) {
+    return "";
+  }
+
+  return `
+    <p class="ai-briefing-context-limitation">
+      ${escapeHtml(publicSocialContextLimitation)}
+    </p>
+  `;
 }
 
 function renderSavedEventsView(savedEventItems: SavedEventViewItem[]): string {
@@ -1084,6 +1183,10 @@ function renderAiBriefingSourceContext(selectedIncident: Incident | null, filter
     selectedIncident === null
       ? `Filtered Incident Set includes ${filteredIncidentSet.length} public Incidents from ${sourceAttributions.length} Public Feeds.`
       : `Selected Incident source record: ${selectedIncident.rawSource.originalId ?? "unavailable"}.`;
+  const publicSocialContextText =
+    selectedIncident === null
+      ? "Public Social Context is requested only for a selected Incident and remains separate from Filtered Incident Set public-feed facts."
+      : "Public Social Context is scoped to this selected Incident's place, time, category, and source facts, and remains separate from core Public Feed facts.";
 
   return `
     <div class="ai-briefing-source-context" aria-label="AI Briefing source attribution">
@@ -1100,6 +1203,7 @@ function renderAiBriefingSourceContext(selectedIncident: Incident | null, filter
         }
       </div>
       <small>${escapeHtml(detailText)}</small>
+      <small>${escapeHtml(publicSocialContextText)}</small>
     </div>
   `;
 }
@@ -1138,6 +1242,8 @@ function formatPublicFeedShortName(publicFeed: string, publicFeedName: string): 
       return "EONET";
     case "gdacs":
       return "GDACS";
+    case "noaa-nws-alerts":
+      return "NWS";
     default: {
       const acronym = publicFeedName
         .split(/\s+/u)
@@ -1180,8 +1286,11 @@ function bindGlobalCrisisDashboardActions(): void {
     state.aiBriefing = {
       status: "idle",
       activeScope: null,
+      incidentId: null,
       output: null,
       errorMessage: null,
+      publicSocialContext: null,
+      publicSocialContextLimitation: null,
     };
     render();
   });
@@ -1192,10 +1301,34 @@ function bindGlobalCrisisDashboardActions(): void {
 
   dashboardRoot.querySelectorAll<HTMLButtonElement>("[data-globe-control]").forEach((button) => {
     button.addEventListener("click", () => {
+      cancelGlobeInertia();
       adjustGlobeView(button.dataset.globeControl ?? "");
       render();
     });
   });
+
+  dashboardRoot.querySelector<HTMLElement>("[data-globe-drag-surface]")?.addEventListener("pointerdown", startGlobeDrag);
+  dashboardRoot.querySelector<HTMLElement>(".map-canvas")?.addEventListener(
+    "click",
+    (event) => {
+      const clickTarget = event.target;
+      const isDragSurfaceClick =
+        clickTarget instanceof Element && clickTarget.closest("[data-globe-drag-surface]") !== null;
+
+      if (!suppressNextGlobeClick) {
+        return;
+      }
+
+      suppressNextGlobeClick = false;
+      if (!isDragSurfaceClick) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    },
+    true,
+  );
 
   dashboardRoot.querySelector<HTMLFormElement>("[data-area-search-form]")?.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1241,6 +1374,7 @@ function bindGlobalCrisisDashboardActions(): void {
       }
 
       state.selectedIncidentId = selectedIncidentId;
+      resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
       if (button.dataset.selectionSurface !== "map") {
         focusGlobeOnIncident(selectedIncidentId);
       }
@@ -1262,6 +1396,7 @@ function bindGlobalCrisisDashboardActions(): void {
 
       state.filters = {};
       state.selectedIncidentId = selectedIncidentId;
+      resetSingleIncidentAiBriefingIfStale(selectedIncidentId);
       focusGlobeOnIncident(selectedIncidentId);
       render();
       scrollSelectedIncidentIntoView(selectedIncidentId);
@@ -1314,6 +1449,162 @@ function bindGlobalCrisisDashboardActions(): void {
     state.filters = readDashboardFilters(form);
     render();
   });
+}
+
+function resetSingleIncidentAiBriefingIfStale(selectedIncidentId: string | null): void {
+  if (state.aiBriefing.activeScope !== "single-incident" || state.aiBriefing.incidentId === selectedIncidentId) {
+    return;
+  }
+
+  aiBriefingRequestToken += 1;
+  state.aiBriefing = {
+    status: "idle",
+    activeScope: null,
+    incidentId: null,
+    output: null,
+    errorMessage: null,
+    publicSocialContext: null,
+    publicSocialContextLimitation: null,
+  };
+}
+
+function startGlobeDrag(event: PointerEvent): void {
+  if (event.button !== 0) {
+    return;
+  }
+
+  cancelGlobeInertia();
+  globeDragState.isDragging = true;
+  globeDragState.hasMoved = false;
+  globeDragState.pointerId = typeof event.pointerId === "number" ? event.pointerId : null;
+  globeDragState.lastClientX = event.clientX;
+  globeDragState.lastClientY = event.clientY;
+  globeDragState.lastTimestamp = event.timeStamp;
+  globeDragState.velocityLongitude = 0;
+  globeDragState.velocityLatitude = 0;
+
+  const surface = event.currentTarget;
+  if (surface instanceof HTMLElement && globeDragState.pointerId !== null && typeof surface.setPointerCapture === "function") {
+    surface.setPointerCapture(globeDragState.pointerId);
+  }
+
+  document.addEventListener("pointermove", continueGlobeDrag);
+  document.addEventListener("pointerup", stopGlobeDrag);
+  document.addEventListener("pointercancel", cancelActiveGlobeDrag);
+}
+
+function continueGlobeDrag(event: PointerEvent): void {
+  if (!globeDragState.isDragging) {
+    return;
+  }
+
+  if (globeDragState.pointerId !== null && typeof event.pointerId === "number" && event.pointerId !== globeDragState.pointerId) {
+    return;
+  }
+
+  const deltaX = event.clientX - globeDragState.lastClientX;
+  const deltaY = event.clientY - globeDragState.lastClientY;
+  const timeDelta = event.timeStamp - globeDragState.lastTimestamp;
+
+  if (Math.abs(deltaX) + Math.abs(deltaY) >= GLOBE_DRAG_CLICK_SUPPRESSION_PIXELS) {
+    globeDragState.hasMoved = true;
+  }
+
+  applyGlobeDragDelta(deltaX, deltaY);
+
+  if (timeDelta > 0) {
+    globeDragState.velocityLongitude = (-deltaX * GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL * 16) / timeDelta;
+    globeDragState.velocityLatitude = (deltaY * GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL * 16) / timeDelta;
+  }
+
+  globeDragState.lastClientX = event.clientX;
+  globeDragState.lastClientY = event.clientY;
+  globeDragState.lastTimestamp = event.timeStamp;
+  render();
+  event.preventDefault();
+}
+
+function stopGlobeDrag(event: PointerEvent): void {
+  if (globeDragState.pointerId !== null && typeof event.pointerId === "number" && event.pointerId !== globeDragState.pointerId) {
+    return;
+  }
+
+  const shouldSuppressClick = globeDragState.hasMoved;
+  finishGlobeDrag();
+  suppressNextGlobeClick = shouldSuppressClick;
+  startGlobeInertia();
+}
+
+function cancelActiveGlobeDrag(): void {
+  finishGlobeDrag();
+}
+
+function finishGlobeDrag(): void {
+  globeDragState.isDragging = false;
+  globeDragState.hasMoved = false;
+  globeDragState.pointerId = null;
+  document.removeEventListener("pointermove", continueGlobeDrag);
+  document.removeEventListener("pointerup", stopGlobeDrag);
+  document.removeEventListener("pointercancel", cancelActiveGlobeDrag);
+}
+
+function applyGlobeDragDelta(deltaX: number, deltaY: number): void {
+  if (deltaX === 0 && deltaY === 0) {
+    return;
+  }
+
+  state.globeView = normalizeDashboardGlobeView({
+    ...state.globeView,
+    rotationLongitude: state.globeView.rotationLongitude - deltaX * GLOBE_DRAG_LONGITUDE_DEGREES_PER_PIXEL,
+    rotationLatitude: state.globeView.rotationLatitude + deltaY * GLOBE_DRAG_LATITUDE_DEGREES_PER_PIXEL,
+  });
+}
+
+function startGlobeInertia(): void {
+  const hasInertia =
+    Math.abs(globeDragState.velocityLongitude) >= GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME ||
+    Math.abs(globeDragState.velocityLatitude) >= GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME;
+
+  if (!hasInertia || typeof window.requestAnimationFrame !== "function") {
+    globeDragState.velocityLongitude = 0;
+    globeDragState.velocityLatitude = 0;
+    return;
+  }
+
+  const step = (): void => {
+    state.globeView = normalizeDashboardGlobeView({
+      ...state.globeView,
+      rotationLongitude: state.globeView.rotationLongitude + globeDragState.velocityLongitude,
+      rotationLatitude: state.globeView.rotationLatitude + globeDragState.velocityLatitude,
+    });
+    globeDragState.velocityLongitude *= GLOBE_INERTIA_DECAY;
+    globeDragState.velocityLatitude *= GLOBE_INERTIA_DECAY;
+    render();
+
+    if (
+      Math.abs(globeDragState.velocityLongitude) < GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME &&
+      Math.abs(globeDragState.velocityLatitude) < GLOBE_INERTIA_MINIMUM_DEGREES_PER_FRAME
+    ) {
+      globeDragState.inertiaFrame = null;
+      globeDragState.velocityLongitude = 0;
+      globeDragState.velocityLatitude = 0;
+      return;
+    }
+
+    globeDragState.inertiaFrame = window.requestAnimationFrame(step);
+  };
+
+  globeDragState.inertiaFrame = window.requestAnimationFrame(step);
+}
+
+function cancelGlobeInertia(): void {
+  if (globeDragState.inertiaFrame !== null && typeof window.cancelAnimationFrame === "function") {
+    window.cancelAnimationFrame(globeDragState.inertiaFrame);
+  }
+
+  globeDragState.inertiaFrame = null;
+  globeDragState.velocityLongitude = 0;
+  globeDragState.velocityLatitude = 0;
 }
 
 function adjustGlobeView(action: string): void {
@@ -1397,8 +1688,11 @@ async function requestAiBriefing(scope: AiBriefingScope): Promise<void> {
     state.aiBriefing = {
       status: "idle",
       activeScope: null,
+      incidentId: null,
       output: null,
       errorMessage: null,
+      publicSocialContext: null,
+      publicSocialContextLimitation: null,
     };
     render();
     return;
@@ -1413,8 +1707,11 @@ async function requestAiBriefing(scope: AiBriefingScope): Promise<void> {
     state.aiBriefing = {
       status: "error",
       activeScope: scope,
+      incidentId: null,
       output: null,
       errorMessage: "Select an Incident before requesting an AI Briefing for one Incident.",
+      publicSocialContext: null,
+      publicSocialContextLimitation: null,
     };
     render();
     return;
@@ -1424,23 +1721,37 @@ async function requestAiBriefing(scope: AiBriefingScope): Promise<void> {
     state.aiBriefing = {
       status: "error",
       activeScope: scope,
+      incidentId: null,
       output: null,
       errorMessage: "The current Filtered Incident Set is empty. Adjust filters before requesting an AI Briefing.",
+      publicSocialContext: null,
+      publicSocialContextLimitation: null,
     };
     render();
     return;
   }
 
+  const selectedIncidentPublicSocialContext =
+    scope === "single-incident" ? buildSelectedIncidentPublicSocialContext(selectedIncident!, state.aiBriefingChoice) : null;
   const request =
     scope === "single-incident"
-      ? buildSingleIncidentBriefingRequest(selectedIncident!)
-      : buildFilteredIncidentSetBriefingRequest(viewModel.filteredIncidentSet, state.filters);
+      ? buildSingleIncidentBriefingRequest(selectedIncident!, {
+          aiBriefingChoice: state.aiBriefingChoice,
+          publicSocialContext: selectedIncidentPublicSocialContext,
+        })
+      : buildFilteredIncidentSetBriefingRequest(viewModel.filteredIncidentSet, state.filters, {
+          aiBriefingChoice: state.aiBriefingChoice,
+        });
+  const publicSocialContextLimitation = formatPublicSocialContextLimitation(scope, selectedIncidentPublicSocialContext);
   const requestToken = ++aiBriefingRequestToken;
   state.aiBriefing = {
     status: "loading",
     activeScope: scope,
+    incidentId: scope === "single-incident" ? selectedIncident?.id ?? null : null,
     output: null,
     errorMessage: null,
+    publicSocialContext: selectedIncidentPublicSocialContext,
+    publicSocialContextLimitation: publicSocialContextLimitation,
   };
   render();
 
@@ -1453,8 +1764,11 @@ async function requestAiBriefing(scope: AiBriefingScope): Promise<void> {
     state.aiBriefing = {
       status: "ready",
       activeScope: scope,
+      incidentId: scope === "single-incident" ? selectedIncident?.id ?? null : null,
       output,
       errorMessage: null,
+      publicSocialContext: selectedIncidentPublicSocialContext,
+      publicSocialContextLimitation,
     };
   } catch (error) {
     if (requestToken !== aiBriefingRequestToken) {
@@ -1464,14 +1778,28 @@ async function requestAiBriefing(scope: AiBriefingScope): Promise<void> {
     state.aiBriefing = {
       status: "error",
       activeScope: scope,
+      incidentId: scope === "single-incident" ? selectedIncident?.id ?? null : null,
       output: null,
       errorMessage: formatAiBriefingError(error),
+      publicSocialContext: null,
+      publicSocialContextLimitation,
     };
   } finally {
     if (requestToken === aiBriefingRequestToken) {
       render();
     }
   }
+}
+
+function formatPublicSocialContextLimitation(
+  scope: AiBriefingScope,
+  publicSocialContext: PublicSocialContext | null,
+): string | null {
+  if (scope !== "single-incident" || publicSocialContext !== null) {
+    return null;
+  }
+
+  return "Public Social Context unavailable: no safe localized public signal summary could be produced for this selected Incident, so the AI Briefing used only core Public Feed facts.";
 }
 
 function findLiveIncidentById(incidentId: string): Incident | null {
