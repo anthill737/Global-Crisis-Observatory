@@ -30,6 +30,7 @@ import {
   type CombinedIncidentCollection,
   type Incident,
   type NasaEonetIncidentPayload,
+  type NoaaNwsAlertsFeedPayload,
   type SourceStatus,
   type UsgsEarthquakeFeedPayload,
 } from "../src/lib/incidents";
@@ -312,6 +313,29 @@ function stubPublicFeedFetchWithRestoredFeedSuccess(): void {
         </item>
       </channel>
     </rss>`;
+  const noaaNwsPayload: NoaaNwsAlertsFeedPayload = {
+    features: [
+      {
+        id: "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.dashboard",
+        geometry: { type: "Point", coordinates: [-97.52, 35.49] },
+        properties: {
+          id: "urn:oid:2.49.0.1.840.0.dashboard",
+          areaDesc: "Oklahoma County",
+          event: "Severe Thunderstorm Warning",
+          headline: "Severe Thunderstorm Warning for Oklahoma County",
+          category: "Met",
+          severity: "Severe",
+          certainty: "Observed",
+          urgency: "Immediate",
+          sent: "2026-06-10T14:00:00-05:00",
+          effective: "2026-06-10T14:00:00-05:00",
+          onset: "2026-06-10T14:05:00-05:00",
+          expires: "2026-06-10T14:45:00-05:00",
+          web: "https://alerts.weather.gov/cap/wwacapget.php?x=OK-dashboard",
+        },
+      },
+    ],
+  };
 
   vi.stubGlobal(
     "fetch",
@@ -325,7 +349,7 @@ function stubPublicFeedFetchWithRestoredFeedSuccess(): void {
         return { ok: true, status: 200, json: async () => ({}), text: async () => gdacsRss };
       }
       if (endpoint.includes("noaa-nws")) {
-        return { ok: true, status: 200, json: async () => ({ features: [] }) };
+        return { ok: true, status: 200, json: async () => noaaNwsPayload };
       }
 
       return { ok: true, status: 200, json: async () => usgsPayload };
@@ -404,6 +428,32 @@ async function renderDashboardAppWithAiBriefingMock(
   document.body.innerHTML = '<div id="app"></div>';
   window.localStorage.setItem(AI_BRIEFING_CHOICE_STORAGE_KEY, aiBriefingChoice);
   stubPublicFeedFetchForMainImport();
+
+  await import("../src/main");
+  await flushDashboardRefresh();
+
+  const app = document.querySelector<HTMLElement>("#app");
+  if (app === null) {
+    throw new Error("Dashboard app root was not rendered.");
+  }
+  return app;
+}
+
+async function renderDashboardAppWithRestoredFeedsAndAiBriefingMock(
+  generateAiBriefingMock: typeof generateAiBriefing,
+  aiBriefingChoice = "openai",
+): Promise<HTMLElement> {
+  vi.resetModules();
+  vi.doMock("../src/lib/ai-briefing", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("../src/lib/ai-briefing")>();
+    return {
+      ...actual,
+      generateAiBriefing: generateAiBriefingMock,
+    };
+  });
+  document.body.innerHTML = '<div id="app"></div>';
+  window.localStorage.setItem(AI_BRIEFING_CHOICE_STORAGE_KEY, aiBriefingChoice);
+  stubPublicFeedFetchWithRestoredFeedSuccess();
 
   await import("../src/main");
   await flushDashboardRefresh();
@@ -610,6 +660,13 @@ describe("Global Crisis Dashboard shell view model", () => {
     expect(app.textContent).toContain("M 5.4 - 12 km S of Example, Alaska");
     expect(app.textContent).toContain("Flooding in Queensland, Australia");
     expect(app.textContent).toContain("Orange tropical cyclone alert for Example Islands");
+    expect(app.textContent).toContain("Severe Thunderstorm Warning for Oklahoma County");
+    expect(
+      app.querySelector('[data-incident-id="noaa-nws-alerts:urn:oid:2.49.0.1.840.0.dashboard"]'),
+    ).not.toBeNull();
+    expect(
+      app.querySelector('[data-select-incident="noaa-nws-alerts:urn:oid:2.49.0.1.840.0.dashboard"][data-selection-surface="map"]'),
+    ).not.toBeNull();
     expect(gdacsRequest?.[1]).toEqual(expect.objectContaining({ headers: { Accept: "*/*" } }));
     expect(noaaNwsRequest?.[1]).toEqual(
       expect.objectContaining({ headers: { Accept: "application/geo+json, application/json" } }),
@@ -1718,6 +1775,100 @@ describe("Global Crisis Dashboard shell view model", () => {
     expect(getAiBriefingStatus(app).dataset.state).toBe("ready");
     expect(getAiBriefingStatus(app).textContent).toContain("Operations view summarized the selected Incident.");
     expect(app.querySelector("[data-selected-incident-id]")?.getAttribute("data-selected-incident-id")).toBe(incidentId);
+  });
+
+  it("passes a phase integration regression across launcher startup, Public Feeds, Globe Map, settings, Saved Events, and AI Briefings", async () => {
+    const generateAiBriefingMock = vi.fn(async (payload: AiBriefingRequestPayload): Promise<AiBriefingOutput> => {
+      expect(payload.scope).toEqual(
+        expect.objectContaining({
+          kind: "selected_incident",
+          incident: expect.objectContaining({ id: "usgs-earthquakes:us7000abcd" }),
+        }),
+      );
+      expect(payload.publicSocialContext).toEqual(
+        expect.objectContaining({
+          locality: "12 km S of Example, Alaska",
+          signals: expect.arrayContaining([
+            expect.objectContaining({ topic: "Earthquake public context scope" }),
+            expect.objectContaining({ topic: "Source separation" }),
+          ]),
+        }),
+      );
+      expect(JSON.stringify(payload)).not.toContain("rawSource");
+      expect(JSON.stringify(payload)).not.toContain('"payload"');
+
+      return {
+        situationSummary: "OpenAI integrated the selected Incident with safe Public Social Context.",
+        impactConsiderations: "Operational teams should monitor nearby public disruption signals.",
+        responsePriorityRecommendation: "Review the selected Incident before lower Severity Score Incidents.",
+        uncertaintyNotes: ["Public Feed details and public signals can change."],
+      };
+    });
+    const launcher = readFileSync("Start Global Crisis Dashboard.bat", "utf8").replace(/\r\n/g, "\n");
+    const app = await renderDashboardAppWithRestoredFeedsAndAiBriefingMock(generateAiBriefingMock, "openai");
+    const sourceStatusCards = Array.from(app.querySelectorAll<HTMLElement>(".source-status-card"));
+    const publicFeedsOnlineMetric = Array.from(app.querySelectorAll<HTMLElement>(".metric-card")).find((card) =>
+      card.textContent?.includes("Public Feeds Online"),
+    );
+    const markerRule = readFileSync("src/styles.css", "utf8").match(/\.map-marker\s*\{(?<rule>[\s\S]*?)\n\}/)?.groups
+      ?.rule;
+    const incidentId = "usgs-earthquakes:us7000abcd";
+
+    expect(launcher).toContain('set "LOCAL_APP_URL=http://127.0.0.1:5173/"');
+    expect(launcher).toContain('set "LAUNCH_COMMAND=npm run dev -- --open"');
+    expect(launcher).toContain("call %LAUNCH_COMMAND%");
+    expect(getDefinedElement(app.querySelector<HTMLElement>('[data-dashboard-layout="compact-operations"]'))).not.toBeNull();
+    expect(app.querySelector(".map-canvas")?.getAttribute("data-globe-interaction")).toBe("drag-spin-zoom-focus");
+    expect(app.querySelector(".map-geography")?.getAttribute("role")).toBe("img");
+    expect(markerRule).toContain("width: 6px;");
+    expect(markerRule).toContain("height: 6px;");
+    expect(app.querySelector(".map-marker-source-abbr")).toBeNull();
+    expect(publicFeedsOnlineMetric?.textContent).toContain("4/4");
+    expect(sourceStatusCards).toHaveLength(4);
+    expect(sourceStatusCards.every((card) => card.dataset.state === "success")).toBe(true);
+    expect(app.textContent).toContain("Severe Thunderstorm Warning for Oklahoma County");
+    expect(
+      app.querySelector('[data-select-incident="noaa-nws-alerts:urn:oid:2.49.0.1.840.0.dashboard"][data-selection-surface="map"]'),
+    ).not.toBeNull();
+
+    getDefinedElement(app.querySelector<HTMLSelectElement>("[data-visibility-mode-control]")).value = "high-contrast";
+    getDefinedElement(app.querySelector<HTMLSelectElement>("[data-visibility-mode-control]")).dispatchEvent(
+      new Event("change", { bubbles: true }),
+    );
+    expect(window.localStorage.getItem(VISIBILITY_MODE_STORAGE_KEY)).toBe("high-contrast");
+    expect(document.documentElement.dataset.visibilityMode).toBe("high-contrast");
+
+    app.querySelector<HTMLButtonElement>(`[data-select-incident="${incidentId}"][data-selection-surface="feed"]`)?.click();
+    const selectedBeforeDragLongitude = getDefinedElement(
+      app.querySelector<SVGSVGElement>(".map-geography"),
+    ).dataset.globeCenterLongitude;
+    const dragSurface = getDefinedElement(app.querySelector<HTMLElement>("[data-globe-drag-surface]"));
+    dragSurface.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true, button: 0, clientX: 160, clientY: 160 }));
+    document.dispatchEvent(new MouseEvent("pointermove", { bubbles: true, clientX: 230, clientY: 110 }));
+    document.dispatchEvent(new MouseEvent("pointerup", { bubbles: true, clientX: 230, clientY: 110 }));
+
+    expect(app.querySelector("[data-selected-incident-id]")?.getAttribute("data-selected-incident-id")).toBe(incidentId);
+    expect(app.querySelector(".map-marker--selected")?.getAttribute("data-select-incident")).toBe(incidentId);
+    expect(app.querySelector<SVGSVGElement>(".map-geography")?.dataset.globeCenterLongitude).not.toBe(
+      selectedBeforeDragLongitude,
+    );
+
+    getSavedEventToggle(app, incidentId, "detail").click();
+    expect(JSON.parse(window.localStorage.getItem(SAVED_EVENTS_STORAGE_KEY) ?? "[]")).toEqual([
+      expect.objectContaining({ id: incidentId }),
+    ]);
+    expect(getSavedEventCard(app, incidentId).textContent).toContain("USGS Earthquakes");
+
+    getAiBriefingRequestControl(app, "single-incident").click();
+    await flushDashboardRefresh();
+
+    expect(generateAiBriefingMock).toHaveBeenCalledWith(expect.any(Object), { aiBriefingChoice: "openai" });
+    expect(getAiBriefingStatus(app).dataset.state).toBe("ready");
+    expect(getAiBriefingStatus(app).textContent).toContain("OpenAI integrated the selected Incident");
+    expect(getAiBriefingStatus(app).textContent).toContain("Public Social Context");
+    expect(app.querySelector("[data-selected-incident-id]")?.getAttribute("data-selected-incident-id")).toBe(incidentId);
+    expect(getSavedEventCard(app, incidentId).dataset.state).toBe("live");
+    expect(app.querySelectorAll(".source-status-card")).toHaveLength(4);
   });
 
   it("clears selected map focus when the selected Incident has no coordinates", () => {
