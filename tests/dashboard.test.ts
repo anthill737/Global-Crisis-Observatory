@@ -1140,6 +1140,47 @@ describe("Global Crisis Dashboard shell view model", () => {
     expect(layout.querySelector(":scope > .status-panel")).not.toBeNull();
   });
 
+  it("restores both Settings Control choices after a dashboard reload without duplicate entry points", async () => {
+    const app = await renderDashboardApp();
+    const visibilityModeControl = getDefinedElement(app.querySelector<HTMLSelectElement>("[data-visibility-mode-control]"));
+    const aiBriefingChoiceControl = getDefinedElement(app.querySelector<HTMLSelectElement>("[data-ai-briefing-choice-control]"));
+
+    visibilityModeControl.value = "high-contrast";
+    visibilityModeControl.dispatchEvent(new Event("change", { bubbles: true }));
+    aiBriefingChoiceControl.value = "gemini";
+    aiBriefingChoiceControl.dispatchEvent(new Event("change", { bubbles: true }));
+
+    expect(window.localStorage.getItem(VISIBILITY_MODE_STORAGE_KEY)).toBe("high-contrast");
+    expect(window.localStorage.getItem(AI_BRIEFING_CHOICE_STORAGE_KEY)).toBe("gemini");
+
+    const reloadedApp = await renderDashboardApp();
+    const settingsControl = getDefinedElement(reloadedApp.querySelector<HTMLElement>("[data-settings-control]"));
+    const restoredVisibilityModeControl = getDefinedElement(
+      reloadedApp.querySelector<HTMLSelectElement>("[data-visibility-mode-control]"),
+    );
+    const restoredAiBriefingChoiceControl = getDefinedElement(
+      reloadedApp.querySelector<HTMLSelectElement>("[data-ai-briefing-choice-control]"),
+    );
+
+    expect(reloadedApp.querySelectorAll("[data-settings-control]")).toHaveLength(1);
+    expect(reloadedApp.querySelectorAll("[data-visibility-mode-control]")).toHaveLength(1);
+    expect(reloadedApp.querySelectorAll("[data-ai-briefing-choice-control]")).toHaveLength(1);
+    expect(settingsControl.closest(".hero")).not.toBeNull();
+    expect(restoredVisibilityModeControl.closest("[data-settings-control]")).toBe(settingsControl);
+    expect(restoredAiBriefingChoiceControl.closest("[data-settings-control]")).toBe(settingsControl);
+    expect(restoredVisibilityModeControl.value).toBe("high-contrast");
+    expect(restoredAiBriefingChoiceControl.value).toBe("gemini");
+    expect(settingsControl.dataset.currentVisibilityMode).toBe("high-contrast");
+    expect(settingsControl.dataset.currentAiBriefingChoice).toBe("gemini");
+    expect(document.documentElement.dataset.visibilityMode).toBe("high-contrast");
+    expect(settingsControl.textContent).toContain("Current Visibility Mode: High contrast");
+    expect(settingsControl.textContent).toContain("AI Briefing Choice: Gemini");
+    expect(reloadedApp.querySelector(".filters-panel [data-visibility-mode-control]")).toBeNull();
+    expect(reloadedApp.querySelector(".filters-panel [data-ai-briefing-choice-control]")).toBeNull();
+    expect(reloadedApp.querySelector(".metrics-grid [data-visibility-mode-control]")).toBeNull();
+    expect(reloadedApp.querySelector(".metrics-grid [data-ai-briefing-choice-control]")).toBeNull();
+  });
+
   it("docks Incident Detail and AI Briefing in readable analysis panels with public-data privacy copy", async () => {
     const app = await renderDashboardApp();
     const dock = getDefinedElement(app.querySelector<HTMLElement>(".incident-analysis-dock"));
