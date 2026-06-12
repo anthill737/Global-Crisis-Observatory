@@ -29,7 +29,7 @@ You can also open the same folder in Windows File Explorer for the double-click 
 
 ## 3. Install dependencies
 
-Run this once before the first launch:
+Run this exact install command once before the first launch:
 
 ```powershell
 npm install
@@ -96,6 +96,7 @@ If the launcher window shows a different local URL because port `5173` is busy, 
 To stop the local server, click the launcher window, press `Ctrl+C`, then press any key if the launcher asks.
 
 Do not open `index.html` directly; the Vite local server is required for the GDACS Public Feed proxy and AI Briefing request middleware.
+The same Vite local server also provides the NOAA/NWS Active Alerts Public Feed proxy, so using the launcher or manual Vite command is required for the full Public Feed set.
 
 ## 6. Manual PowerShell launch
 
@@ -127,8 +128,8 @@ After launching, confirm these checks:
 2. The Global Crisis Dashboard opens in the default browser, or the same fallback URL opens it manually.
 3. The Global Crisis Dashboard loads without asking for an account or PII.
 4. The visible surfaces include summary metrics, filters, Source Status, the Globe Map, the Incident feed, Incident Detail, Saved Events View, Settings Control, and AI Briefing areas.
-5. Source Status lists USGS Earthquakes, NASA EONET, and GDACS with clear reachable, degraded, or unavailable messaging.
-6. Reachable Public Feeds provide source-attributed Incidents; GDACS refreshes through the local Public Feed proxy when the Vite server is running, and Source Status explains any GDACS upstream or proxy limitation without blocking the rest of the Global Crisis Dashboard.
+5. Source Status lists USGS Earthquakes, NASA EONET, GDACS, and NOAA/NWS Active Alerts with clear reachable, degraded, or unavailable messaging.
+6. Reachable Public Feeds provide source-attributed Incidents; GDACS and NOAA/NWS refresh through local Public Feed proxies when the Vite server is running, and Source Status explains any upstream or proxy limitation without blocking the rest of the Global Crisis Dashboard.
 7. The Globe Map shows Incident Markers for Incidents with coordinates; selecting an Incident Marker or Incident keeps Incident Detail synchronized.
 8. Incident filters update the Filtered Incident Set without breaking Source Status, Incident Detail, or Saved Events View.
 9. The Settings Control changes Visibility Mode and persists the selected mode across refreshes.

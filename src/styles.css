@@ -771,21 +771,39 @@ select {
 }
 
 .map-marker--aggregate {
-  min-width: 14px;
+  min-width: 15px;
   width: auto;
-  height: 14px;
-  padding: 0 3px;
+  height: 15px;
+  padding: 0 4px;
   border-color: rgba(226, 232, 240, 0.92);
   background: rgba(15, 23, 42, 0.9);
   box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.3), 0 0 6px rgba(14, 165, 233, 0.3);
 }
 
+.map-marker--selected.map-marker--aggregate {
+  outline-color: #fef08a;
+  outline-offset: 1px;
+  border-color: #fef08a;
+  background: rgba(8, 47, 73, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(254, 240, 138, 0.34),
+    0 0 0 2px rgba(14, 165, 233, 0.22);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.map-marker--aggregate-drill-down-selected {
+  border-color: rgba(254, 240, 138, 0.92);
+}
+
 .map-marker-count {
   color: #e0f2fe;
-  font-size: 0.56rem;
+  display: inline-block;
+  min-width: 0.72rem;
+  font-size: 0.58rem;
   font-weight: 900;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
+  text-align: center;
 }
 
 .map-marker--area-search-nearby {
@@ -800,6 +818,12 @@ select {
     0 0 0 2px rgba(248, 250, 252, 0.34),
     0 0 0 4px rgba(34, 211, 238, 0.14),
     0 0 8px rgba(103, 232, 249, 0.38);
+}
+
+.map-marker--selected.map-marker--aggregate.map-marker--area-search-nearby {
+  box-shadow:
+    inset 0 0 0 1px rgba(254, 240, 138, 0.34),
+    0 0 0 2px rgba(34, 211, 238, 0.28);
 }
 
 .map-source-legend {
@@ -1947,6 +1971,11 @@ a {
   outline-offset: 4px;
 }
 
+.map-marker--aggregate:focus-visible {
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+
 :root[data-visibility-mode="high-contrast"] .incident-card--selected {
   border-color: var(--dashboard-focus);
   box-shadow: 0 0 0 3px var(--dashboard-focus);
@@ -2211,6 +2240,10 @@ a {
     padding: 0;
   }
 
+  .map-marker--selected.map-marker--aggregate {
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+
   .map-marker--severity-major {
     min-width: 16px;
     width: 16px;
@@ -2221,5 +2254,12 @@ a {
     min-width: 14px;
     width: 14px;
     height: 14px;
+  }
+
+  .map-marker--aggregate {
+    min-width: 17px;
+    width: auto;
+    height: 16px;
+    padding: 0 4px;
   }
 }
